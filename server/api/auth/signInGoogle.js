@@ -44,6 +44,7 @@ exports.init = router => {
     "/api/sign-in/google/redirect",
     async (ctx, next) => {
       await passport.authenticate("google", async (err, user) => {
+        console.log(" err:: ", err, " user:: ", user);
         if (!user) {
           console.log(user);
           authReject();
