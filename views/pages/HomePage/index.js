@@ -12,7 +12,7 @@ export default class HomePage extends Component {
   render() {
     return (
       <section className="home">
-        <h1>TimeKeeper</h1>
+        <h1>SmmKeeper</h1>
         <div>
           <Link to="/sign-in">Sign in</Link>
           <Link to="/sign-up">Sign up</Link>
