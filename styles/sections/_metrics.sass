@@ -1,0 +1,45 @@
+.metrics
+  width: 100%
+  max-width: 90%
+  margin: 0 auto
+  padding: 20px
+  border-radius: 5px
+  background-color: #FDFDFD
+  box-shadow: rgba(#25265E, .1) 0 4px 24px 0
+  h3
+    font-size: 24px
+    margin-top: 10px
+    margin-bottom: 35px
+    font-weight: 500
+
+
+  .lineChart
+    position: relative
+    width: 100%
+    height: 320px
+    margin: 40px 0 15px
+  
+
+.DateRangePicker
+  font-family: Helvetica, "sans-serif"
+  .DateInput_input 
+    font-size: 14px
+    line-height: 14px
+    padding: 10px 15px 8px
+    &__focused
+      border-bottom: 2px solid rgba($green-accent, .75)
+  .CalendarMonth_table
+    margin-top: 15px
+  .CalendarDay
+    vertical-align: middle
+    &__selected, &__selected:active, &__selected:hover
+      // background: rgba($violet-accent, .85)
+      background: rgba($green-accent, .95)
+      border: 1px double rgba($green-accent, .65)
+    &__hovered_span
+      background: rgba($green-accent, .7)
+      border: 1px double rgba($green-accent, .65)
+      color: #fff
+    &__selected_span
+      border: 1px double rgba($green-accent, .65)
+      background: rgba($green-accent, .7)
