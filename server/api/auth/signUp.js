@@ -34,13 +34,7 @@ exports.init = router =>
         await connectedUser.save();
         user = connectedUser;
       } else {
-        try {
-          user = await User.create(ctx.request.body);
-        } catch (e) {
-          if (e.name === "ValidationError") {
-            throw new UserExistsError();
-          }
-        }
+        user = await User.create(ctx.request.body);
       }
 
       // payload - Info that will be saved into JWT token
