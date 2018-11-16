@@ -1,6 +1,5 @@
 // @flow
 
-import { baseURL } from "config";
 import axios from "axios";
 import { takeEvery, take, put, call, select } from "redux-saga/effects";
 import { stateSelector as authStateSelector } from "ducks/auth";
@@ -177,7 +176,6 @@ export function* checkPasswordExistenceSaga(): Generator<any, any, any> {
       const checkPasswordExistenceRef = {
         method: "post",
         url: "/api/check-password-existence",
-        baseURL,
         data: {
           id: user.id,
           token: localStorage.getItem("tktoken")
@@ -237,7 +235,6 @@ export function* setPasswordSaga({
       const setPasswordRef = {
         method: "post",
         url: "/api/set-password",
-        baseURL,
         data: {
           id: user.id,
           email: user.email,
@@ -295,7 +292,6 @@ export function* updatePasswordSaga({
       const updatePasswordRef = {
         method: "post",
         url: "/api/update-password",
-        baseURL,
         data: {
           id: user.id,
           email: user.email,

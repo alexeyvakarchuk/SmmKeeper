@@ -4,8 +4,6 @@ const axios = require("axios");
 
 const port = require("test/config.js").port;
 
-const baseURL = `http://localhost:${port}`;
-
 const app = require("server/server.js");
 
 const User = require("server/models/User");
@@ -29,7 +27,6 @@ describe("POST /api/todo/add", () => {
   //   User.create(reqData, () => {
   //     userData = axios
   //       .post("/api/sign-in", reqData, {
-  //         baseURL,
   //         headers: {
   //           "Content-Type": "application/json"
   //         }
@@ -56,7 +53,6 @@ describe("POST /api/todo/add", () => {
       method: "post",
       url: "/api/sign-in",
       data: reqData,
-      baseURL,
       headers: {
         "Content-Type": "application/json"
       }
@@ -79,7 +75,6 @@ describe("POST /api/todo/add", () => {
         const response = await axios({
           method: "post",
           url: "/api/todo/add",
-          baseURL,
           data: {
             id: userData.user.id,
             name: "Todo 1",
@@ -103,7 +98,6 @@ describe("POST /api/todo/add", () => {
         const response = await axios({
           method: "post",
           url: "/api/todo/add",
-          baseURL,
           data: {
             id: "123",
             name: "Todo 1",
@@ -127,7 +121,6 @@ describe("POST /api/todo/add", () => {
         const response = await axios({
           method: "post",
           url: "/api/todo/add",
-          baseURL,
           data: {
             id: userData.user.id,
             name: "",
@@ -150,7 +143,6 @@ describe("POST /api/todo/add", () => {
       const response = await axios({
         method: "post",
         url: "/api/todo/add",
-        baseURL,
         data: {
           id: userData.user.id,
           name: "Todo 1",

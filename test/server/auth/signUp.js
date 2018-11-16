@@ -4,8 +4,6 @@ const axios = require("axios");
 
 const port = require("test/config.js").port;
 
-const baseURL = `http://localhost:${port}`;
-
 const app = require("server/server.js");
 
 const User = require("server/models/User");
@@ -39,7 +37,6 @@ describe("POST /api/sign-up", () => {
         const response = await axios({
           method: "post",
           url: "/api/sign-up",
-          baseURL,
           data: {
             email: data.email,
             password: ""
@@ -62,7 +59,6 @@ describe("POST /api/sign-up", () => {
         const response = await axios({
           method: "post",
           url: "/api/sign-up",
-          baseURL,
           data: {
             email: "",
             password: data.password
@@ -85,7 +81,6 @@ describe("POST /api/sign-up", () => {
         const response = await axios({
           method: "post",
           url: "/api/sign-up",
-          baseURL,
           data: {
             email: "",
             password: ""
@@ -108,7 +103,6 @@ describe("POST /api/sign-up", () => {
         const response = await axios({
           method: "post",
           url: "/api/sign-up",
-          baseURL,
           data: {
             email: data.email,
             password: "1234567"
@@ -133,7 +127,6 @@ describe("POST /api/sign-up", () => {
         const response = await axios({
           method: "post",
           url: "/api/sign-up",
-          baseURL,
           data: {
             email: "alex",
             password: data.password
@@ -161,7 +154,6 @@ describe("POST /api/sign-up", () => {
         const response = await axios({
           method: "post",
           url: "/api/sign-up",
-          baseURL,
           data,
           headers: {
             "Content-Type": "application/json"
@@ -184,7 +176,6 @@ describe("POST /api/sign-up", () => {
       const response = await axios({
         method: "post",
         url: "/api/sign-up",
-        baseURL,
         data,
         headers: {
           "Content-Type": "application/json"

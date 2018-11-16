@@ -1,7 +1,6 @@
 // @flow
 
 import { all, take, takeEvery, put, call, select } from "redux-saga/effects";
-import { baseURL } from "config";
 import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
 import { SOCKET_CONN_END } from "ducks/socket";
@@ -137,7 +136,6 @@ export function* signInSaga({
     const signInRef = {
       method: "post",
       url: "/api/sign-in",
-      baseURL,
       data: {
         email,
         password
@@ -182,7 +180,6 @@ function* signUpSaga({ payload: { email, password } }) {
     const signUpRef = {
       method: "post",
       url: "/api/sign-up",
-      baseURL,
       data: {
         email,
         password
@@ -225,8 +222,7 @@ export function* signInWithGoogleSaga(): Generator<any, any, any> {
   try {
     const checkAuthRef = {
       method: "post",
-      url: "/api/sign-in/google/check",
-      baseURL
+      url: "/api/sign-in/google/check"
     };
 
     const {
