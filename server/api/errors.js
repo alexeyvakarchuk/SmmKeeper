@@ -56,24 +56,24 @@ class PaswordsDoNotMatchError extends Error {
   }
 }
 
-class UserExistsError extends Error {
-  constructor(...params) {
-    super(...params);
+// class UserExistsError extends Error {
+//   constructor(...params) {
+//     super(...params);
 
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, InvalidTodoIdError);
-    }
+//     if (Error.captureStackTrace) {
+//       Error.captureStackTrace(this, InvalidTodoIdError);
+//     }
 
-    this.statusCode = 400;
-    this.name = "UserExistsError";
-    this.message = "User with this email already exists";
-  }
-}
+//     this.statusCode = 400;
+//     this.name = "UserExistsError";
+//     this.message = "User with this email already exists";
+//   }
+// }
 
 module.exports = {
   InvalidUserIdError,
   InvalidTodoIdError,
   PaswordIsRequiredError,
-  PaswordsDoNotMatchError,
-  UserExistsError
+  PaswordsDoNotMatchError
+  // UserExistsError
 };
