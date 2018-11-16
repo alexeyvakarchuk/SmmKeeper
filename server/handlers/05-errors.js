@@ -11,8 +11,6 @@ exports.init = app =>
       } else {
         const { name, message } = e;
 
-        console.log("NAME:::", name, e);
-
         if (name === "CastError") {
           ctx.status = 404;
           ctx.body = {
@@ -47,7 +45,8 @@ exports.init = app =>
           name === "InvalidUserIdError" ||
           name === "InvalidTodoIdError" ||
           name === "PaswordIsRequiredError" ||
-          name === "PaswordsDoNotMatchError"
+          name === "PaswordsDoNotMatchError" ||
+          name === "UserExistsError"
         ) {
           ctx.status = e.statusCode;
           ctx.body = {

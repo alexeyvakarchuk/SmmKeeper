@@ -3,6 +3,7 @@ const pick = require("lodash/pick");
 const jwt = require("jsonwebtoken");
 const validator = require("email-validator");
 const { jwtsecret } = require("server/config/default"); // Secret key for JWT signing
+const { UserExistsError } = require("server/api/errors");
 
 exports.init = router =>
   router.post("/api/sign-up", async function(ctx) {
@@ -33,7 +34,13 @@ exports.init = router =>
         await connectedUser.save();
         user = connectedUser;
       } else {
-        user = await User.create(ctx.request.body);
+        try {
+          user = await User.create(ctx.request.body);
+        } catch (e) {
+          if (e.name === "ValidationError") {
+            throw new UserExistsError();
+          }
+        }
       }
 
       // payload - Info that will be saved into JWT token

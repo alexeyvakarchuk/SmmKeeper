@@ -3,11 +3,7 @@ const passport = require("koa-passport");
 const { jwtsecret } = require("server/config/default"); // Secret key for JWT signing
 const User = require("server/models/User");
 const socket = require("server/libs/socket");
-const {
-  InvalidUserIdError,
-  PaswordIsRequiredError,
-  PaswordsDoNotMatchError
-} = require("server/api/errors");
+const { UserExistsError } = require("server/api/errors");
 
 exports.init = router =>
   router.post("/api/update-password", async (ctx, next) => {
