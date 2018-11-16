@@ -2,14 +2,15 @@ const mongoose = require("mongoose");
 const crypto = require("crypto");
 const validator = require("email-validator");
 const config = require("server/config/default");
-const beautifyUnique = require("mongoose-beautiful-unique-validation");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
       required: "Email is required",
-      unique: "User with this email already exists",
+      unique: true,
+      uniqueCaseInsensitive: true,
       validate: [value => validator.validate(value), "Email is invalid"],
       index: true
     },
@@ -72,7 +73,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // Will show MongoError instead of ValidationError
-userSchema.plugin(beautifyUnique);
+userSchema.plugin(uniqueValidator, { message: "{PATH} is not unique" });
 
 // userSchema.path("email").set(function(email) {
 //   if (!this.password) {

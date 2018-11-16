@@ -25,11 +25,21 @@ exports.init = app =>
 
         if (name === "ValidationError") {
           ctx.status = 400;
-          ctx.body = {
-            error: {
-              message: Object.values(e.errors).map(el => el.message)[0]
-            }
-          };
+          const message = Object.values(e.errors).map(el => el.message)[0];
+          if (message === "email is not unique") {
+            ctx.body = {
+              error: {
+                message: "User with this email already exists"
+              }
+            };
+          } else {
+            ctx.body = {
+              error: {
+                message
+              }
+            };
+          }
+
           return true;
         }
 
