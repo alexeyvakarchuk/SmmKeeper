@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: "Email is required",
-      unique: "User with this email already exists",
+      unique: true,
       validate: [value => validator.validate(value), "Email is invalid"],
       index: true
     },

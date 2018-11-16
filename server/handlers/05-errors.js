@@ -3,12 +3,15 @@ exports.init = app =>
     try {
       await next();
     } catch (e) {
+      console.log(e);
       if (e.status) {
         // could use template methods to render error page
         ctx.body = e.message;
         ctx.status = e.status;
       } else {
         const { name, message } = e;
+
+        console.log("NAME:::", name, e);
 
         if (name === "CastError") {
           ctx.status = 404;
