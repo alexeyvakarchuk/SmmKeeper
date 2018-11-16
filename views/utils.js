@@ -2,6 +2,7 @@ import { push } from "react-router-redux";
 import axios from "axios";
 import store from "store";
 import { signInSuccess } from "ducks/auth";
+import { baseURL } from "config";
 
 export const fetchUserAuth = async () => {
   const token = await localStorage.getItem("tktoken");
@@ -11,6 +12,7 @@ export const fetchUserAuth = async () => {
       const { data } = await axios({
         method: "get",
         url: "/api/check-token",
+        baseURL,
         headers: {
           "Content-Type": "application/json",
           Authorization: token

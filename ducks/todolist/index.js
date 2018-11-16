@@ -1,5 +1,6 @@
 // @flow
 
+import { baseURL } from "config";
 import axios from "axios";
 import { takeEvery, take, put, call, select } from "redux-saga/effects";
 import { eventChannel, END } from "redux-saga";
@@ -148,6 +149,7 @@ export function* fetchToDoListSaga(): Generator<any, any, any> {
       const fetchToDoListRef = {
         method: "post",
         url: "/api/todo/fetch",
+        baseURL,
         data: {
           id: user.id,
           token: localStorage.getItem("tktoken")
@@ -194,6 +196,7 @@ export function* addToDoSaga({
       const addToDoRef = {
         method: "post",
         url: "/api/todo/add",
+        baseURL,
         data: {
           id: user.id,
           token: localStorage.getItem("tktoken"),
@@ -242,6 +245,7 @@ export function* completeToDoSaga({
       const addToDoRef = {
         method: "post",
         url: "/api/todo/complete",
+        baseURL,
         data: {
           userId: user.id,
           token: localStorage.getItem("tktoken"),
@@ -285,6 +289,7 @@ export function* incompleteToDoSaga({
       const addToDoRef = {
         method: "post",
         url: "/api/todo/incomplete",
+        baseURL,
         data: {
           userId: user.id,
           token: localStorage.getItem("tktoken"),

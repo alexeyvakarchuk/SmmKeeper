@@ -4,6 +4,8 @@ const axios = require("axios");
 
 const port = require("test/config.js").port;
 
+const baseURL = `http://localhost:${port}`;
+
 const app = require("server/server.js");
 
 const User = require("server/models/User");
@@ -32,6 +34,7 @@ describe("POST /api/todo/incomplete", () => {
       method: "post",
       url: "/api/sign-in",
       data: reqData,
+      baseURL,
       headers: {
         "Content-Type": "application/json"
       }
@@ -42,6 +45,7 @@ describe("POST /api/todo/incomplete", () => {
     await axios({
       method: "post",
       url: "/api/todo/add",
+      baseURL,
       data: {
         id: userData.user.id,
         name: "Todo 1",
@@ -71,6 +75,7 @@ describe("POST /api/todo/incomplete", () => {
         const response = await axios({
           method: "post",
           url: "/api/todo/incomplete",
+          baseURL,
           data: {
             userId: userData.user.id,
             token: "123",
@@ -94,6 +99,7 @@ describe("POST /api/todo/incomplete", () => {
         const response = await axios({
           method: "post",
           url: "/api/todo/incomplete",
+          baseURL,
           data: {
             userId: "123",
             token: userData.token,
@@ -117,6 +123,7 @@ describe("POST /api/todo/incomplete", () => {
         const response = await axios({
           method: "post",
           url: "/api/todo/incomplete",
+          baseURL,
           data: {
             userId: userData.user.id,
             token: userData.token,
@@ -139,6 +146,7 @@ describe("POST /api/todo/incomplete", () => {
       const response = await axios({
         method: "post",
         url: "/api/todo/incomplete",
+        baseURL,
         data: {
           userId: userData.user.id,
           token: userData.token,
