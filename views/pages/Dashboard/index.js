@@ -47,6 +47,12 @@ class Dashboard extends Component<Props, State> {
                   <img src={profilePic} alt="Profile picture" />
                 </div>
               ))}
+              <button
+                className="dashboard__new-profile"
+                onClick={() => this.changePopupVisibility(true)}
+              >
+                +
+              </button>
             </div>
           ) : (
             <div className="dashboard__empty">
@@ -55,12 +61,13 @@ class Dashboard extends Component<Props, State> {
                 handleClick={() => this.changePopupVisibility(true)}
                 value={"Connect account"}
               />
-              <ConnectAccPopup
+              
+            </div>
+          ))}
+          <ConnectAccPopup
                 popupVisible={this.state.popupVisible}
                 changePopupVisibility={this.changePopupVisibility}
               />
-            </div>
-          ))}
       </section>
     );
   }
