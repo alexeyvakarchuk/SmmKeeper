@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Auth from "pages/Auth";
-import Dashboard from "pages/Dashboard";
+import Internal from "pages/Internal";
 import NoMatch from "pages/NoMatch";
 import AuthSuccess from "pages/AuthSuccess";
 import { Provider } from "react-redux";
@@ -35,7 +35,7 @@ export default class App extends Component {
                 path="/auth/success"
                 render={() => <AuthSuccess />}
               />
-              <PrivateRoute path="/app" render={() => <Dashboard />} />
+              <PrivateRoute path="/app" render={() => <Internal />} />
               <Route component={NoMatch} />
             </Switch>
           </div>

@@ -1,48 +1,72 @@
-import React, { Component } from "react";
-import { Link, Route, Switch, Redirect } from "react-router-dom";
-import TopBar from "components/TopBar";
-import LeftBar from "components/LeftBar";
-import { socketConnect } from "ducks/socket";
-import { fetchToDoList } from "ducks/todolist";
-import { checkPasswordExistence } from "ducks/password";
-import NoMatch from "pages/NoMatch";
-import Settings from "pages/Settings";
-import Metrics from "pages/Metrics";
-import { connect } from "react-redux";
-import ToDo from "../ToDo";
-import store from "store";
+// @flow
 
-class Dashboard extends Component {
-  componentDidMount() {
-    store.dispatch(socketConnect());
-    store.dispatch(fetchToDoList());
-    store.dispatch(checkPasswordExistence());
-  }
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import ToDoInput from "components/ToDoInput";
+import TaskCard from "components/TaskCard";
+import GradientButton from "components/GradientButton";
+import ConnectAccPopup from "components/ConnectAccPopup";
+import type { Props, State } from "./types";
+
+class Dashboard extends Component<Props, State> {
+  state = {
+    popupVisible: false
+  };
+
+  changePopupVisibility = (popupVisible: boolean) =>
+    this.setState({ popupVisible });
 
   render() {
+    const { accList, progress } = this.props;
+
+    const connectedAccounts = [];
+
+    // const content = accList.length ? (
+    //   "aaa"
+    // ) : (
+    //   <div className="dashboard__empty">
+    //     <h3>User has no connected accounts</h3>
+    //     <GradientButton
+    //       handleClick={() => this.changePopupVisibility(true)}
+    //       value={"Connect account"}
+    //     />
+    //     <ConnectAccPopup
+    //       popupVisible={this.state.popupVisible}
+    //       changePopupVisibility={this.changePopupVisibility}
+    //     />
+    //   </div>
+    // );
+
     return (
       <section className="dashboard">
-        <TopBar />
-        <LeftBar />
-        {/* <Main /> */}
-
-        <div className="main">
-          <Switch>
-            <Route exact path="/app" component={ToDo} />
-            <Route exact path="/app/metrics" component={Metrics} />
-            <Route exact path="/app/settings" component={Settings} />
-            <Redirect to="/app" />
-          </Switch>
-        </div>
-        {/* <button
-          onClick={() => store.dispatch(signOut())}
-          className="gradientButton"
-        >
-          Sign out
-        </button> */}
+        {accList !== null &&
+          (accList.length ? (
+            <div className="left-bar">
+              {accList.map(({ profilePic }) => (
+                <div>
+                  <img src={profilePic} alt="Profile picture" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="dashboard__empty">
+              <h3>User has no connected accounts</h3>
+              <GradientButton
+                handleClick={() => this.changePopupVisibility(true)}
+                value={"Connect account"}
+              />
+              <ConnectAccPopup
+                popupVisible={this.state.popupVisible}
+                changePopupVisibility={this.changePopupVisibility}
+              />
+            </div>
+          ))}
       </section>
     );
   }
 }
 
-export default Dashboard;
+export default connect(({ inst: { accList, progress } }) => ({
+  accList,
+  progress
+}))(Dashboard);

@@ -56,7 +56,8 @@ exports.init = app =>
           name === "InvalidUserIdError" ||
           name === "InvalidTodoIdError" ||
           name === "PaswordIsRequiredError" ||
-          name === "PaswordsDoNotMatchError"
+          name === "PaswordsDoNotMatchError" ||
+          name === "InvalidInstAccDataError"
         ) {
           ctx.status = e.statusCode;
           ctx.body = {

@@ -9,4 +9,4 @@ if (environment === "development") {
 }
 
 exports.init = app =>
-  mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/timekeeper");
+  mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/smmkeeper");

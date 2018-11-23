@@ -29,9 +29,9 @@ usersHandlers.forEach(handler =>
   require("./api/users/" + handler).init(router)
 );
 
-// *** Todo list API handlers ***
-const todoHandlers = fs.readdirSync(path.join(__dirname, "api/todo")).sort();
-todoHandlers.forEach(handler => require("./api/todo/" + handler).init(router));
+// *** Inst API handlers ***
+const instHandlers = fs.readdirSync(path.join(__dirname, "api/inst")).sort();
+instHandlers.forEach(handler => require("./api/inst/" + handler).init(router));
 
 const environment = process.env.NODE_ENV;
 

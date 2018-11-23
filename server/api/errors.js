@@ -33,7 +33,7 @@ class PaswordIsRequiredError extends Error {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, InvalidTodoIdError);
+      Error.captureStackTrace(this, PaswordIsRequiredError);
     }
 
     this.statusCode = 400;
@@ -47,12 +47,26 @@ class PaswordsDoNotMatchError extends Error {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, InvalidTodoIdError);
+      Error.captureStackTrace(this, PaswordsDoNotMatchError);
     }
 
     this.statusCode = 400;
     this.name = "PaswordsDoNotMatchError";
     this.message = "Passwords do not match";
+  }
+}
+
+class InvalidInstAccDataError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, InvalidInstAccDataError);
+    }
+
+    this.statusCode = 400;
+    this.name = "InvalidInstAccDataError";
+    this.message = "Accound data is invalid";
   }
 }
 
@@ -74,5 +88,6 @@ module.exports = {
   InvalidUserIdError,
   InvalidTodoIdError,
   PaswordIsRequiredError,
-  PaswordsDoNotMatchError
+  PaswordsDoNotMatchError,
+  InvalidInstAccDataError
 };

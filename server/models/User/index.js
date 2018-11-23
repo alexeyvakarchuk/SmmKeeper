@@ -35,37 +35,7 @@ const userSchema = new mongoose.Schema(
     ],
     passwordUpdateDate: {
       type: Number
-    },
-    todos: [
-      {
-        name: {
-          type: String,
-          required: "Task name is required"
-        },
-        description: {
-          type: String
-        },
-        createdAt: {
-          type: Date,
-          default: Date.now
-        },
-        updatedAt: {
-          type: Date,
-          default: Date.now
-        },
-        dueDate: {
-          type: Date
-        },
-        done: {
-          type: Boolean,
-          default: false
-        },
-        starred: {
-          type: Boolean,
-          default: false
-        }
-      }
-    ]
+    }
   },
   {
     timestamps: true

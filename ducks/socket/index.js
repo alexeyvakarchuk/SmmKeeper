@@ -10,11 +10,12 @@ import {
   SIGN_OUT_SUCCESS,
   signOut
 } from "ducks/auth";
-import {
-  TODO_ADD_SUCCESS,
-  TODO_COMPLETE_SUCCESS,
-  TODO_INCOMPLETE_SUCCESS
-} from "ducks/todolist";
+// import {
+//   TODO_ADD_SUCCESS,
+//   TODO_COMPLETE_SUCCESS,
+//   TODO_INCOMPLETE_SUCCESS
+// } from "ducks/todolist";
+import { CONN_ACC_SUCCESS } from "ducks/inst";
 import {
   UPDATE_PASSWORD_SOCKET_EVENT,
   SET_PASSWORD_SUCCESS
@@ -136,31 +137,47 @@ const initWebsocket = () =>
       emitter({ type: SOCKET_AUTH_SUCCESS });
     });
 
-    socket.on("newToDo", todo => {
-      emitter({
-        type: TODO_ADD_SUCCESS,
-        payload: {
-          todo
-        }
-      });
-    });
+    // socket.on("newToDo", todo => {
+    //   emitter({
+    //     type: TODO_ADD_SUCCESS,
+    //     payload: {
+    //       todo
+    //     }
+    //   });
+    // });
 
-    socket.on("completeToDo", id => {
-      emitter({
-        type: TODO_COMPLETE_SUCCESS,
-        payload: {
-          _id: id
-        }
-      });
-    });
+    // socket.on("completeToDo", id => {
+    //   emitter({
+    //     type: TODO_COMPLETE_SUCCESS,
+    //     payload: {
+    //       _id: id
+    //     }
+    //   });
+    // });
 
-    socket.on("incompleteToDo", id => {
-      // console.log(data);
-      // socket.emit("clientEvent", "This is from client!!!");
+    // socket.on("incompleteToDo", id => {
+    //   // console.log(data);
+    //   // socket.emit("clientEvent", "This is from client!!!");
+    //   emitter({
+    //     type: TODO_INCOMPLETE_SUCCESS,
+    //     payload: {
+    //       _id: id
+    //     }
+    //   });
+    // });
+
+    socket.on("connectInstAcc", acc => {
+      console.log("Inst acc connected");
+      // console.log({
+      //   type: CONN_ACC_SUCCESS,
+      //   payload: {
+      //     acc
+      //   }
+      // });
       emitter({
-        type: TODO_INCOMPLETE_SUCCESS,
+        type: CONN_ACC_SUCCESS,
         payload: {
-          _id: id
+          acc
         }
       });
     });
@@ -215,6 +232,8 @@ export function* socketConnectSaga(): Generator<any, any, any> {
 
     while (true) {
       const action = yield take(channel);
+      console.log(action);
+
       yield put(action);
     }
   } catch (err) {

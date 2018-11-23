@@ -1,6 +1,6 @@
 let socketIO = require("socket.io");
 const socketioJwt = require("socketio-jwt"); // JWT auth for socket.io
-const { redisConfig, jwtsecret } = require("server/config/default"); // Secret eky for JWT
+const { redisConfig, jwtsecret } = require("server/config/default"); // Secret key for JWT
 const socketEmitter = require("socket.io-emitter");
 let socketRedis = require("socket.io-redis");
 
