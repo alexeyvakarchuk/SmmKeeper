@@ -25,6 +25,7 @@
     border-radius: 15px
     padding: 25px
     display: flex
+    position: relative
     flex-direction: column
     align-items: center
     width: 100%
@@ -36,4 +37,24 @@
       margin-bottom: 12px
     button
       margin-top: 25px
+  &__close 
+    position: absolute
+    width: 20px
+    height: 20px
+    top: 10px
+    right: 10px
+    cursor: pointer
+    &:before, &:after
+      content: ''
+      width: 100%
+      height: 2px
+      background-color: #10cc8d
+      position: absolute
+      top: 50%
+      left: 0
+    &:before
+      transform: translateY(-50%) rotate(45deg)
+    &:after
+      transform: translateY(-50%) rotate(-45deg)
+
 

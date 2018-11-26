@@ -30,8 +30,25 @@ class ConnectAccPopup extends PureComponent<Props, State> {
     const popupClassName = popupVisible ? "popup popup_visible" : "popup";
 
     return ReactDOM.createPortal(
-      <div className={popupClassName}>
-        <div className="popup__content">
+      <div
+        className={popupClassName}
+        onClick={e => {
+          this.props.changePopupVisibility(false);
+        }}
+      >
+        <div
+          className="popup__content"
+          onClick={e => {
+            e.stopPropagation();
+          }}
+        >
+          <div
+            className="popup__close"
+            onClick={e => {
+              this.props.changePopupVisibility(false);
+              e.stopPropagation();
+            }}
+          />
           <h3>Enter username&password from your instagram account, please.</h3>
 
           <span className="popup__error-text">{this.props.error}</span>
