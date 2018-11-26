@@ -32,22 +32,12 @@ class ConnectAccPopup extends PureComponent<Props, State> {
     return ReactDOM.createPortal(
       <div
         className={popupClassName}
-        onClick={e => {
-          this.props.changePopupVisibility(false);
-        }}
+        onClick={() => this.props.changePopupVisibility(false)}
       >
-        <div
-          className="popup__content"
-          onClick={e => {
-            e.stopPropagation();
-          }}
-        >
+        <div className="popup__content" onClick={e => e.stopPropagation()}>
           <div
             className="popup__close"
-            onClick={e => {
-              this.props.changePopupVisibility(false);
-              e.stopPropagation();
-            }}
+            onClick={() => this.props.changePopupVisibility(false)}
           />
           <h3>Enter username&password from your instagram account, please.</h3>
 
