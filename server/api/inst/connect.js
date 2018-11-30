@@ -3,8 +3,10 @@ const { jwtsecret } = require("server/config/default"); // Secret key for JWT si
 const User = require("server/models/User");
 const InstAcc = require("server/models/InstAcc");
 const socket = require("server/libs/socket");
+const { watchStats } = require("server/tasks/watchStats");
 const Instagram = require("instagram-web-api");
 const axios = require("axios");
+const moment = require("moment");
 const {
   InvalidUserIdError,
   InvalidInstAccDataError
@@ -60,8 +62,15 @@ exports.init = router =>
       const profile = {
         bio: biography,
         externalUrl: external_url,
-        followers: edge_followed_by.count,
-        follows: edge_follow.count,
+        // followers: edge_followed_by.count,
+        // follows: edge_follow.count,
+        stats: [
+          {
+            followers: edge_followed_by.count,
+            follows: edge_follow.count,
+            date: moment()
+          }
+        ],
         fullName: full_name,
         profileId,
         isBusinessAccount: is_business_account,
@@ -90,6 +99,8 @@ exports.init = router =>
         ...profile
       });
 
+      watchStats(username);
+
       // console.log(acc);
 
       // const user = await User.findById(id);
@@ -98,7 +109,10 @@ exports.init = router =>
 
       // await user.save();
 
-      socket.emitter.to(id).emit("connectInstAcc", profile);
+      socket.emitter.to(id).emit("connectInstAcc", {
+        username,
+        ...profile
+      });
 
       ctx.status = 200;
     } else {

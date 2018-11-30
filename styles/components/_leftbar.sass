@@ -1,28 +1,29 @@
 .leftbar
   position: fixed
   width: 80px
-  top: 0
+  top: 80px
   left: 0
-  background-color: $green-accent
-  height: 100%
-  &__logo
-    display: flex
-    align-items: center
-    justify-content: center
-    color: #ffffff
-    background-color: #173e43
-    height: 80px
-    width: 100%
-    line-height: 60px
-    text-align: left
-    font-size: 30px
-    text-decoration: none
-    a
-      text-decoration: none
+  // background-color: $green-accent
+  height: calc(100% - 80px)
+  overflow-y: auto
+  // &__logo
+  //   display: flex
+  //   align-items: center
+  //   justify-content: center
+  //   color: #ffffff
+  //   background-color: #173e43
+  //   height: 80px
+  //   width: 100%
+  //   line-height: 60px
+  //   text-align: left
+  //   font-size: 30px
+  //   text-decoration: none
+  //   a
+  //     text-decoration: none
 
   &__menu
     width: 100%
-    height: calc(100% - 80px)
+    // height: calc(100% - 80px)
     display: flex
     flex-direction: column
     justify-content: flex-start
@@ -30,20 +31,44 @@
       display: flex
       width: 100%
       line-height: 40px
-      text-align: left
-      a
-        color: #eeeeee
-        text-decoration: none
-        font-size: 14px
+      color: #039be5
+      text-decoration: none
+      font-size: 14px
+      align-items: center
+      justify-content: flex-start
+      padding: 15px
+      svg
         display: block
-        align-items: center
-        justify-content: center
-        padding: 20px 5px
-        display: flex
-        width: 100%
-        svg
-          display: block
-          height: 25px
-          fill: #fff
-      &.active a
+        height: 25px
+        fill: #039be5
+      &.active
         background-color: rgba(#000, .1)
+  
+  .acclist
+    width: 100%
+    display: flex
+    flex-direction: column
+    justify-content: flex-start
+    // padding: 15px
+    &__item
+      overflow: hidden
+      display: flex
+      align-items: center
+      justify-content: flex-start
+      padding: 15px
+      text-decoration: none
+      img
+        border-radius: 50%
+        width: 50px
+      // span
+      //   font-size: 13px
+      //   color: #039be5
+      //   margin-left: 10px
+      &-active
+        background-color: #eeeeee
+    &__add
+      border: none
+      outline: none
+      cursor: pointer
+      color: #10cc8d
+      font-size: 42px

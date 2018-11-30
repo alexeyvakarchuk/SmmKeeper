@@ -2,10 +2,13 @@
 
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { NavLink, Route, Switch, Redirect } from "react-router-dom";
 import ToDoInput from "components/ToDoInput";
 import TaskCard from "components/TaskCard";
 import GradientButton from "components/GradientButton";
-import ConnectAccPopup from "components/ConnectAccPopup";
+import InstaProfilePage from "sections/InstaProfilePage";
+import { openPopup, closePopup } from "ducks/connectAccPopup";
+import store from "store";
 import type { Props, State } from "./types";
 
 class Dashboard extends Component<Props, State> {
@@ -13,67 +16,53 @@ class Dashboard extends Component<Props, State> {
     popupVisible: false
   };
 
-  changePopupVisibility = (popupVisible: boolean) =>
-    this.setState({ popupVisible });
-
   render() {
-    const { accList, progress } = this.props;
+    const { accList } = this.props;
 
     const connectedAccounts = [];
 
-    // const content = accList.length ? (
-    //   "aaa"
-    // ) : (
-    //   <div className="dashboard__empty">
-    //     <h3>User has no connected accounts</h3>
-    //     <GradientButton
-    //       handleClick={() => this.changePopupVisibility(true)}
-    //       value={"Connect account"}
-    //     />
-    //     <ConnectAccPopup
-    //       popupVisible={this.state.popupVisible}
-    //       changePopupVisibility={this.changePopupVisibility}
-    //     />
-    //   </div>
-    // );
+    const shouldRedirect =
+      // $FlowFixMe
+      this.props.match.url !== location.pathname ||
+      location.pathname === "/app";
 
     return (
       <section className="dashboard">
         {accList !== null &&
           (accList.length ? (
-            <div className="left-bar">
-              {accList.map(({ profilePic }) => (
-                <div>
-                  <img src={profilePic} alt="Profile picture" />
-                </div>
-              ))}
-              <button
-                className="dashboard__new-profile"
-                onClick={() => this.changePopupVisibility(true)}
-              >
-                +
-              </button>
+            <div className="profile">
+              <Switch>
+                {accList.map(({ username }) => {
+                  const render = username => () => (
+                    <InstaProfilePage username={username} />
+                  );
+
+                  return (
+                    <Route
+                      path={`/app/${username}`}
+                      render={render(username)}
+                    />
+                  );
+                })}
+                {shouldRedirect && (
+                  <Redirect to={`/app/${accList[0].username}`} />
+                )}
+              </Switch>
             </div>
           ) : (
             <div className="dashboard__empty">
               <h3>User has no connected accounts</h3>
               <GradientButton
-                handleClick={() => this.changePopupVisibility(true)}
+                handleClick={() => store.dispatch(openPopup())}
                 value={"Connect account"}
               />
-              
             </div>
           ))}
-          <ConnectAccPopup
-                popupVisible={this.state.popupVisible}
-                changePopupVisibility={this.changePopupVisibility}
-              />
       </section>
     );
   }
 }
 
-export default connect(({ inst: { accList, progress } }) => ({
-  accList,
-  progress
+export default connect(({ inst: { accList } }) => ({
+  accList
 }))(Dashboard);

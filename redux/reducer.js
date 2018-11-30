@@ -4,11 +4,15 @@ import instReducer, { moduleName as instModule } from "ducks/inst";
 import socketReducer, { moduleName as socketModule } from "ducks/socket";
 import routerReducer, { moduleName as routerModule } from "ducks/router";
 import passwordReducer, { moduleName as passwordModule } from "ducks/password";
+import connectAccPopupReducer, {
+  moduleName as connectAccPopupModule
+} from "ducks/connectAccPopup";
 
 export default combineReducers({
   [authModule]: authReducer,
   [instModule]: instReducer,
   [socketModule]: socketReducer,
   [routerModule]: routerReducer,
-  [passwordModule]: passwordReducer
+  [passwordModule]: passwordReducer,
+  [connectAccPopupModule]: connectAccPopupReducer
 });

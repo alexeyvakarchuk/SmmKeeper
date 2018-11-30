@@ -7,6 +7,7 @@ import InputField from "components/InputField";
 import GradientButton from "components/GradientButton";
 import type { Props, State } from "./types";
 import { connectAcc } from "ducks/inst";
+import { openPopup, closePopup } from "ducks/connectAccPopup";
 import store from "store";
 
 class ConnectAccPopup extends PureComponent<Props, State> {
@@ -20,9 +21,22 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 
   handleSubmit = () => {
     store.dispatch(connectAcc(this.state));
-
-    // this.props.changePopupVisibility(false);
   };
+
+  componentDidUpdate(prevProps) {
+    // Checks whether acc is connected
+    if (
+      this.props.accList &&
+      prevProps.accList &&
+      this.props.accList.length !== prevProps.accList.length
+    ) {
+      store.dispatch(closePopup());
+      this.setState({
+        username: "",
+        password: ""
+      });
+    }
+  }
 
   render() {
     const { popupVisible } = this.props;
@@ -32,12 +46,12 @@ class ConnectAccPopup extends PureComponent<Props, State> {
     return ReactDOM.createPortal(
       <div
         className={popupClassName}
-        onClick={() => this.props.changePopupVisibility(false)}
+        onClick={() => store.dispatch(closePopup())}
       >
         <div className="popup__content" onClick={e => e.stopPropagation()}>
           <div
             className="popup__close"
-            onClick={() => this.props.changePopupVisibility(false)}
+            onClick={() => store.dispatch(closePopup())}
           />
           <h3>Enter username&password from your instagram account, please.</h3>
 
@@ -65,4 +79,10 @@ class ConnectAccPopup extends PureComponent<Props, State> {
   }
 }
 
-export default connect(({ inst: { error } }) => ({ error }))(ConnectAccPopup);
+export default connect(
+  ({ inst: { accList, error }, connectAccPopup: { visible } }) => ({
+    accList,
+    error,
+    popupVisible: visible
+  })
+)(ConnectAccPopup);

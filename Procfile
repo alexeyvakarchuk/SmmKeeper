@@ -1,1 +1,1 @@
-web: yarn run prod-backend
+web: yarn run serverStart

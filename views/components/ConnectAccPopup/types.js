@@ -1,4 +1,5 @@
 // @flow
+import type { Acc } from "ducks/inst/types";
 
 export type State = {|
   username: string,
@@ -6,7 +7,7 @@ export type State = {|
 |};
 
 export type Props = {|
+  accList: null | Acc[],
   popupVisible: boolean,
-  changePopupVisibility: boolean => void,
   error: string
 |};

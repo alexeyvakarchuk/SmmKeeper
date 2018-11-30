@@ -11,6 +11,7 @@
 module.name_mapper='store' -> '<PROJECT_ROOT>/redux/store.js'
 module.name_mapper='ducks' -> '<PROJECT_ROOT>/ducks'
 module.name_mapper='components' -> '<PROJECT_ROOT>/views/components'
+module.name_mapper='sections' -> '<PROJECT_ROOT>/views/sections'
 module.name_mapper='pages' -> '<PROJECT_ROOT>/views/pages'
 module.name_mapper='icons' -> '<PROJECT_ROOT>/views/icons'
 module.name_mapper='config' -> '<PROJECT_ROOT>/config.js'

@@ -232,9 +232,12 @@ export function* socketConnectSaga(): Generator<any, any, any> {
 
     while (true) {
       const action = yield take(channel);
-      console.log(action);
 
       yield put(action);
+
+      if (action.type === CONN_ACC_SUCCESS) {
+        yield put(push(`/app/${action.payload.acc.username}`));
+      }
     }
   } catch (err) {
     yield put({

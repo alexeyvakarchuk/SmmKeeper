@@ -83,11 +83,25 @@ class InvalidInstAccDataError extends Error {
 //     this.message = "User with this email already exists";
 //   }
 // }
+class TaskAlreadyInProgressError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, TaskAlreadyInProgressError);
+    }
+
+    this.statusCode = 400;
+    this.name = "TaskAlreadyInProgressError";
+    this.message = "Task is already running";
+  }
+}
 
 module.exports = {
   InvalidUserIdError,
   InvalidTodoIdError,
   PaswordIsRequiredError,
   PaswordsDoNotMatchError,
-  InvalidInstAccDataError
+  InvalidInstAccDataError,
+  TaskAlreadyInProgressError
 };

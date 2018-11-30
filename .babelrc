@@ -9,6 +9,7 @@
           "store": "./redux/store",
           "utils": "./views/utils",
           "components": "./views/components",
+          "sections": "./views/sections",
           "pages": "./views/pages",
           "icons": "./views/icons"
         }

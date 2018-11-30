@@ -35,7 +35,10 @@ export default class App extends Component {
                 path="/auth/success"
                 render={() => <AuthSuccess />}
               />
-              <PrivateRoute path="/app" render={() => <Internal />} />
+              <PrivateRoute
+                path="/"
+                render={props => <Internal location={props.location} />}
+              />
               <Route component={NoMatch} />
             </Switch>
           </div>

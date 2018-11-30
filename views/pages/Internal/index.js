@@ -9,6 +9,7 @@ import Dashboard from "pages/Dashboard";
 import NoMatch from "pages/NoMatch";
 import Settings from "pages/Settings";
 import Metrics from "pages/Metrics";
+import ConnectAccPopup from "components/ConnectAccPopup";
 import { connect } from "react-redux";
 import store from "store";
 
@@ -23,14 +24,14 @@ class Internal extends Component {
     return (
       <section className="internal">
         <TopBar />
-        <LeftBar />
+        <LeftBar location={this.props.location} />
         {/* <Main /> */}
 
         <div className="main">
           <Switch>
-            <Route exact path="/app" component={Dashboard} />
-            <Route exact path="/app/metrics" component={Metrics} />
-            <Route exact path="/app/settings" component={Settings} />
+            <Route path="/app" component={Dashboard} />
+            <Route path="/metrics" component={Metrics} />
+            <Route path="/settings" component={Settings} />
             <Redirect to="/app" />
           </Switch>
         </div>
@@ -40,6 +41,7 @@ class Internal extends Component {
         >
           Sign out
         </button> */}
+        <ConnectAccPopup />
       </section>
     );
   }

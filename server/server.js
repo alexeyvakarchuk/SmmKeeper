@@ -10,6 +10,10 @@ const config = require("./config/default");
 const path = require("path");
 const fs = require("fs");
 
+// Restarts tasks for all the taskswiths status=1
+require("./tasks/startTasks");
+require("./tasks/watchStats");
+
 const handlers = fs.readdirSync(path.join(__dirname, "handlers")).sort();
 handlers.forEach(handler => require("./handlers/" + handler).init(app));
 

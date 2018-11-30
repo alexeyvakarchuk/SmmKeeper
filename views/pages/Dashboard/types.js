@@ -1,8 +1,10 @@
 // @flow
+import type { Acc } from "ducks/inst/types";
 
-import type { ToDo } from "ducks/todolist/types";
-
-export type Props = {};
+export type Props = {
+  accList: null | Acc[],
+  progress: boolean
+};
 
 export type State = {
   popupVisible: boolean

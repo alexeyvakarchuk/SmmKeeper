@@ -1,55 +1,78 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import ToDoList from "icons/ToDoList";
 import Settings from "icons/Settings";
 import PieChart from "icons/PieChart";
 import { connect } from "react-redux";
+import { openPopup } from "ducks/connectAccPopup";
+import store from "store";
 import type { State, Props } from "./types";
 
 class LeftBar extends PureComponent<Props, State> {
   render() {
-    const { pathname } = this.props;
-
-    const menuItems = [
-      {
-        icon: <ToDoList />,
-        route: "/app"
-      },
-      {
-        icon: <PieChart />,
-        route: "/app/metrics"
-      },
-      {
-        icon: <Settings />,
-        route: "/app/settings"
-      }
-    ];
+    const { pathname, accList } = this.props;
 
     return (
       <div className="leftbar">
-        <Link to="/app" className="leftbar__logo logo">
-          TK
-        </Link>
+        {/* <Link to="/app" className="leftbar__logo logo">
+          SM
+        </Link> */}
 
-        <ul className="leftbar__menu">
-          {menuItems.map(({ icon, route }) => (
-            <li
-              className={`leftbar__menu-item ${
-                pathname === route ? "active" : ""
-              }`}
-              key={route}
-            >
-              <Link to={route}>{icon}</Link>
-            </li>
-          ))}
-        </ul>
+        <div className="leftbar__menu">
+          {/* <NavLink
+            to="/app"
+            className="leftbar__menu-item"
+            activeClassName="active"
+          >
+            Account
+          </NavLink> */}
+          {accList !== null && accList.length ? (
+            <div className="acclist">
+              {accList.map(({ profilePic, username }) => (
+                <NavLink
+                  to={`/app/${username}`}
+                  className="acclist__item"
+                  activeClassName="acclist__item-active"
+                >
+                  <img src={profilePic} alt="Profile picture" />
+                  {/* <span>@{username}</span> */}
+                </NavLink>
+              ))}
+              <button
+                className="acclist__add"
+                onClick={() => store.dispatch(openPopup())}
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            false
+          )}
+          {/* <NavLink
+            to="/metrics"
+            className="leftbar__menu-item"
+            activeClassName="active"
+          >
+            <PieChart />
+          </NavLink>
+          <NavLink
+            to="/settings"
+            className="leftbar__menu-item"
+            activeClassName="active"
+          >
+            <Settings />
+          </NavLink> */}
+        </div>
       </div>
     );
   }
 }
 
-export default connect(({ router: { location } }) => ({
-  pathname: location.pathname
-}))(LeftBar);
+export default connect(
+  ({ inst: { accList, error }, router: { location } }) => ({
+    accList,
+    pathname: location.pathname
+  })
+)(LeftBar);

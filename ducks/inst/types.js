@@ -1,9 +1,17 @@
 export type Acc = {|
-  userName: string
+  username: string
+|};
+
+export type Task = {|
+  username: string
 |};
 
 export type State = {|
   +accList: null | Acc[],
-  +progress: false,
+  +tasksList: null | Task[],
+  +progressFetchAccs: boolean,
+  +progressFetchTasks: boolean,
+  +progressConnAcc: boolean,
+  +progressStartTask: boolean,
   +error: null
 |};

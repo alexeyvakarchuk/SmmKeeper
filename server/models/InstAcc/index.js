@@ -4,38 +4,77 @@ const validator = require("email-validator");
 const config = require("server/config/default");
 const uniqueValidator = require("mongoose-unique-validator");
 
-const instAccSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: "Connected user is required"
+const instAccSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: "Connected user is required"
+    },
+    username: {
+      type: String,
+      required: "Username is required",
+      unique: true,
+      uniqueCaseInsensitive: true,
+      index: true
+    },
+    password: {
+      type: String,
+      required: "Password is required"
+    },
+    bio: { type: String },
+    externalUrl: { type: String },
+    stats: [
+      {
+        date: {
+          type: Date,
+          default: Date.now,
+          timezone: "Europe/Kiev"
+        },
+        followers: { type: Number },
+        follows: { type: Number }
+      }
+    ],
+    // [String]: {
+    //   followers: { type: Number },
+    //   follows: { type: Number }
+    // }
+    fullName: { type: String },
+    profileId: { type: String },
+    isBusinessAccount: { type: Boolean },
+    businessCategoryName: { type: String },
+    businessEmail: { type: String },
+    businessPhoneNumber: { type: String },
+    isPrivate: { type: Boolean },
+    isVerified: { type: Boolean },
+    profilePic: { type: String },
+    countryCode: { type: String },
+    phoneNumber: { type: String },
+    gender: { type: Number },
+    interactions: [
+      {
+        username: {
+          type: String,
+          required: "Interaction username is required",
+          index: true
+        },
+        taskId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: "Task Id is required"
+        },
+        type: {
+          type: String,
+          required: "Interaction type is required"
+        },
+        date: {
+          type: Date,
+          required: "Interaction date is required",
+          default: Date.now
+        }
+      }
+    ]
   },
-  username: {
-    type: String,
-    required: "Username is required",
-    unique: true,
-    uniqueCaseInsensitive: true
-  },
-  password: {
-    type: String,
-    required: "Password is required"
-  },
-  bio: { type: String },
-  externalUrl: { type: String },
-  followers: { type: Number },
-  follows: { type: Number },
-  fullName: { type: String },
-  profileId: { type: String },
-  isBusinessAccount: { type: Boolean },
-  businessCategoryName: { type: String },
-  businessEmail: { type: String },
-  businessPhoneNumber: { type: String },
-  isPrivate: { type: Boolean },
-  isVerified: { type: Boolean },
-  profilePic: { type: String },
-  countryCode: { type: String },
-  phoneNumber: { type: String },
-  gender: { type: Number }
-});
+  { strict: false }
+);
 
 // Will show MongoError instead of ValidationError
 instAccSchema.plugin(uniqueValidator, {

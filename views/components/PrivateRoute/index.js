@@ -31,9 +31,9 @@ class PrivateRoute extends PureComponent<Props, State> {
 
     return !this.state.loading ? (
       <Route
-        render={() =>
+        render={props =>
           this.state.auth ? (
-            render()
+            render(props)
           ) : (
             <Redirect
               to={{
