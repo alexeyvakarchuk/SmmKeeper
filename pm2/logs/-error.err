@@ -1,0 +1,46 @@
+(node:35659) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+TypeError: Cannot read property 'replace' of undefined
+    at convertMonthName (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/month-names-conversion.js:10:31)
+    at interprete (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/month-names-conversion.js:16:23)
+    at interprete (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/index.js:54:22)
+    at validate (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/pattern-validation.js:76:29)
+    at new Task (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/task.js:40:3)
+    at Object.createTask [as schedule] (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/node-cron.js:43:16)
+    at watchStats (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:7:25)
+    at accs.forEach (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:51:5)
+    at Array.forEach (<anonymous>)
+    at setStatsWatch (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:50:8)
+    at process._tickCallback (internal/process/next_tick.js:68:7)
+(node:35659) [DEP0079] DeprecationWarning: Custom inspection function on Objects via .inspect() is deprecated
+(node:35850) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+TypeError: Cannot read property 'replace' of undefined
+    at convertMonthName (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/month-names-conversion.js:10:31)
+    at interprete (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/month-names-conversion.js:16:23)
+    at interprete (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/index.js:54:22)
+    at validate (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/pattern-validation.js:76:29)
+    at new Task (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/task.js:40:3)
+    at Object.createTask [as schedule] (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/node-cron.js:43:16)
+    at watchStats (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:7:25)
+    at accs.forEach (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:51:5)
+    at Array.forEach (<anonymous>)
+    at setStatsWatch (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:50:8)
+    at process._tickCallback (internal/process/next_tick.js:68:7)
+(node:35850) [DEP0079] DeprecationWarning: Custom inspection function on Objects via .inspect() is deprecated
+(node:36132) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+TypeError: Cannot read property 'replace' of undefined
+    at convertMonthName (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/month-names-conversion.js:10:31)
+    at interprete (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/month-names-conversion.js:16:23)
+    at interprete (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/convert-expression/index.js:54:22)
+    at validate (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/pattern-validation.js:76:29)
+    at new Task (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/task.js:40:3)
+    at Object.createTask [as schedule] (/Users/alex/Desktop/SmmKeeper/node_modules/node-cron/src/node-cron.js:43:16)
+    at watchStats (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:7:25)
+    at accs.forEach (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:51:5)
+    at Array.forEach (<anonymous>)
+    at setStatsWatch (/Users/alex/Desktop/SmmKeeper/server/tasks/watchStats.js:50:8)
+    at process._tickCallback (internal/process/next_tick.js:68:7)
+(node:36132) [DEP0079] DeprecationWarning: Custom inspection function on Objects via .inspect() is deprecated
+(node:25947) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+(node:25947) [DEP0079] DeprecationWarning: Custom inspection function on Objects via .inspect() is deprecated
+(node:26018) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
+(node:26018) [DEP0079] DeprecationWarning: Custom inspection function on Objects via .inspect() is deprecated

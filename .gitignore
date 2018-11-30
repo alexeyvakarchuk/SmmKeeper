@@ -44,4 +44,4 @@ yarn-error.log*
 /dist
 dump.rdb
 
-/pm2
+# /pm2

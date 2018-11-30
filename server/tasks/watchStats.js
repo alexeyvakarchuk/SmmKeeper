@@ -47,10 +47,7 @@ const watchStats = username => {
 const setStatsWatch = async () => {
   const accs = await InstAcc.find({}, "username");
 
-  console.log(accs);
-
   accs.forEach(({ username }) => {
-    console.log(username);
     watchStats(username);
   });
 };
