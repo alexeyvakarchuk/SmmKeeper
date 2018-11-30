@@ -24,7 +24,7 @@ module.exports = (username, client) => {
         });
 
         // Will search until will not find the source acc with user haven't interacted before
-        console.log(acc.username, source.data[0].username);
+        console.log(acc.username, source.data);
         while (
           !source.data.length ||
           acc.interactions.some(
