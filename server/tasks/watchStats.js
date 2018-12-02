@@ -31,13 +31,18 @@ const watchStats = username => {
 
       const {
         edge_followed_by,
-        edge_follow
+        edge_follow,
+        profile_pic_url_hd
       } = jsonInfo.entry_data.ProfilePage[0].graphql.user;
 
       acc.stats.unshift({
         followers: edge_followed_by.count,
         follows: edge_follow.count
       });
+
+      if (acc.profilePic !== profile_pic_url_hd) {
+        acc.profilePic = profile_pic_url_hd;
+      }
 
       await acc.save();
     }
