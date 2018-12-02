@@ -22,9 +22,24 @@ class InstaProfilePage extends PureComponent<Props, State> {
     const { username, tasksList } = this.props;
     return (
       <div className="instaprofile">
-        <h1 className="instaprofile__name">@{username}</h1>
+        {/* <h1 className="instaprofile__name">@{username}</h1> */}
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-lg-2 col-md-3">
+              <div className="panel panel-info">
+                <div className="panel-info__name">{username}</div>
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-3">
+              <div className="panel" />
+            </div>
+            <div className="col-lg-6 col-md-6">
+              <div className="panel" />
+            </div>
+          </div>
+        </div>
 
-        <GradientButton
+        {/* <GradientButton
           handleClick={() =>
             store.dispatch(startTask({ username, type: "mf" }))
           }
@@ -47,7 +62,7 @@ class InstaProfilePage extends PureComponent<Props, State> {
           </div>
         ) : (
           false
-        )}
+        )} */}
       </div>
     );
   }

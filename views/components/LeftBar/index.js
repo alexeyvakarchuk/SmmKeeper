@@ -20,6 +20,8 @@ class LeftBar extends PureComponent<Props, State> {
           SM
         </Link> */}
 
+        <div className="leftbar__name">Profiles</div>
+
         <div className="leftbar__menu">
           {/* <NavLink
             to="/app"
