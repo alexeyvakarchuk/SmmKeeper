@@ -103,6 +103,7 @@
     "koa-webpack-hot-middleware": "^1.0.3",
     "mini-css-extract-plugin": "^0.4.5",
     "mocha": "^5.2.0",
+    "next": "^7.0.2",
     "nodemon": "^1.18.3",
     "prettier": "^1.13.5",
     "react-hot-loader": "3.1.3",
