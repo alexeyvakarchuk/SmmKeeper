@@ -25,7 +25,7 @@
   //     text-decoration: none
 
   &__name
-    color: $leftbar-title
+    color: var(--leftbar-title)
     text-align: center
     font-size: 12px
     font-weight: bold
@@ -52,7 +52,7 @@
         height: 25px
         fill: #039be5
       &.active
-        background-color: rgba($blue, .05)
+        background-color: rgba(var(--blue), .05)
   
   .acclist
     width: 100%
@@ -75,12 +75,12 @@
       //   color: #039be5
       //   margin-left: 10px
       &-active
-        background-color: rgba($blue, .05)
+        background-color: rgba(var(--blue), .05)
     &__add
       border: none
       outline: none
       cursor: pointer
-      color: $blue
+      color: var(--blue)
       font-size: 42px
       width: 100%
       appearance: none

@@ -1,16 +1,80 @@
-$blue-default: #4e5f8c;
-$blue-light: #7cb8f0;
-$green-accent: #10cc8d;
-$violet-accent: #7540ee;
+:root {
+  //Colors main(blue color)
+  --main-one: #0870bf;
+  --main-two: #078cf2;
+  --main-three: #6db9f2;
+  --main-four: #a6d8ff;
+  --main-five: #edf8ff;
+  --main-six: #fafcff;
 
-// Basics
-$blue: #216fdf;
-$blue-light-1: #1c7bff;
-$body-background: #fafcff;
+  //Colors second(brown color)
+  --second-one: #00856a;
+  --second-two: #00b894;
+  --second-three: #56efc4;
+  --second-four: #a8ffe6;
+  --second-five: #e6fff8;
 
-// Leftbar text
-$grey-text: #4d4d4d;
-$leftbar-title: $grey-text;
+  //Colors third(gray color)
+  --third-one: #2c3436;
+  --third-two: #636e73;
+  --third-three: #b1bec3;
+  --third-four: #dfe6e9;
+  --third-five: #f5f7f7;
 
-// Dashboard
-$profile-name: $blue-light-1;
+  //Colors accent
+  --accent-one: #02b3b0;
+  --accent-two: #02e6e2;
+  --accent-three: #85f2f2;
+  --accent-four: #b3ffff;
+  --accent-five: #e6ffff;
+
+  //Alert colors (yellow)
+  --alert-yellow-one: #e3b662;
+  --alert-yellow-two: #fdcb6e;
+  --alert-yellow-three: #fcedd2;
+
+  //Alert colors (red)
+  --alert-red-one: #e66a6a;
+  --alert-red-two: #ff7675;
+  --alert-red-three: #ffd4d4;
+
+  --blue-default: #4e5f8c;
+  --blue-light: #7cb8f0;
+  --green-accent: #10cc8d;
+  --violet-accent: #7540ee;
+
+  // Top bar
+  --caption_color: #7f88b2;
+
+  // Basics
+  --blue: #216fdf;
+  --blue-light-1: #1c7bff;
+  --body-background: #fafcff;
+
+  // Leftbar text
+  --grey-text: #4d4d4d;
+  --leftbar-title: var(--grey-text);
+
+  // Dashboard
+  --profile-name: var(--blue-light-1);
+}
+
+// $blue-default: #4e5f8c;
+// $blue-light: #7cb8f0;
+// $green-accent: #10cc8d;
+// $violet-accent: #7540ee;
+
+// // Top bar
+// $caption_color: #7f88b2;
+
+// // Basics
+// $blue: #216fdf;
+// $blue-light-1: #1c7bff;
+// $body-background: #fafcff;
+
+// // Leftbar text
+// $grey-text: #4d4d4d;
+// $leftbar-title: $grey-text;
+
+// // Dashboard
+// $profile-name: $blue-light-1;

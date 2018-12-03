@@ -12,10 +12,17 @@
   box-shadow: 0 0 10px 0 rgba(#000, .05)
   align-items: center
   z-index: 10
+  &__leftside
+    display: flex
+    align-items: center
   &__logo
     display: block
     width: 153px
-
+  &__caption
+    margin-left: 30px
+    color: var(--caption_color)
+    font-size: 13px
+    font-weight: 300
   &__controls
     display: flex
     align-items: center
@@ -49,9 +56,9 @@
     &.active
       .topbar__timers-icon
         svg
-          fill: $green-accent
+          fill: var(--green-accent)
       .topbar__timers-counter
-        color: $green-accent
+        color: var(--green-accent)
 
   .timers-list
     .timer
@@ -92,7 +99,7 @@
       top: calc(100% + 10px)
       right: 0
       &:hover
-        color: $green-accent
+        color: var(--green-accent)
     &-icon
       padding-left: 6px
       display: inline-block
