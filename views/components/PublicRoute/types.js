@@ -9,5 +9,6 @@ export type State = {
 
 export type Props = {|
   render: function,
-  location?: string
+  location?: string,
+  store: Object
 |};

@@ -7,7 +7,7 @@ import { createAction, handleActions, combineActions } from "redux-actions";
 import { SOCKET_CONN_END } from "ducks/socket";
 import type { State, UserReq } from "./types";
 import { push } from "react-router-redux";
-import { live } from "ducks/socket";
+const live = process.env.BROWSER ? require("ducks/socket").live : false;
 import { eventChannel, END } from "redux-saga";
 
 /**
@@ -257,20 +257,24 @@ export function* signInWithGoogleSaga(): Generator<any, any, any> {
 
 const listenSignIn = () =>
   eventChannel(emitter => {
-    live.on("signIn", user => {
-      emitter({
-        type: SIGN_IN_SUCCESS,
-        payload: {
-          user
-        }
+    if (live && process.env.BROWSER) {
+      live.on("signIn", user => {
+        emitter({
+          type: SIGN_IN_SUCCESS,
+          payload: {
+            user
+          }
+        });
+
+        emitter(push("/app"));
       });
 
-      emitter(push("/app"));
-    });
-
-    return () => {
-      live.off("signIn");
-    };
+      return () => {
+        live.off("signIn");
+      };
+    } else {
+      return () => {};
+    }
   });
 
 function* listenSignInSaga() {

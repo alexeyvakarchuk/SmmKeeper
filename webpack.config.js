@@ -38,6 +38,9 @@ let config = {
       // both options are optional
       filename: "main.css",
       chunkFilename: "[id].css"
+    }),
+    new webpack.DefinePlugin({
+      "process.env.BROWSER": JSON.stringify(true)
     })
   ]
 };
@@ -59,6 +62,17 @@ if (environment === "development") {
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
 
   config.plugins.push(new webpack.NoEmitOnErrorsPlugin());
+
+  // config.plugins.push(
+  //   new webpack.DefinePlugin({
+  //     "process.env": {
+  //       BROWSER: true,
+  //       NODE_ENV: JSON.stringify("development"),
+  //       PORT: 3005
+  //     },
+  //     __DEV__: true
+  //   })
+  // );
 
   config.watch = true;
 } else if (environment === "production") {

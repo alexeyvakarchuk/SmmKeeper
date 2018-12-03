@@ -4,8 +4,10 @@ import store from "store";
 import { signInSuccess } from "ducks/auth";
 import { baseURL } from "config";
 
-export const fetchUserAuth = async () => {
+export const fetchUserAuth = async store => {
   const token = await localStorage.getItem("tktoken");
+
+  console.log(store, token);
 
   if (token) {
     try {

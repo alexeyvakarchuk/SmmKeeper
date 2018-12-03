@@ -9,7 +9,6 @@ import ArrowDown from "icons/ArrowDown";
 import { signOut } from "ducks/auth";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import store from "store";
 import type { State, Props } from "./types";
 
 class TopBar extends PureComponent<Props, State> {
@@ -81,7 +80,7 @@ class TopBar extends PureComponent<Props, State> {
             </span>
             <div
               className={settingsDropdownClassName}
-              onClick={() => store.dispatch(signOut())}
+              onClick={this.props.signOut}
             >
               Sign Out
             </div>
@@ -92,4 +91,9 @@ class TopBar extends PureComponent<Props, State> {
   }
 }
 
-export default connect(({ auth: { user } }) => ({ user }))(TopBar);
+export default connect(
+  ({ auth: { user } }) => ({ user }),
+  dispatch => ({
+    signOut: () => dispatch(signOut())
+  })
+)(TopBar);

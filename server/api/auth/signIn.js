@@ -24,6 +24,9 @@ exports.init = router =>
         const token = jwt.sign(payload, jwtsecret); // Token creation
 
         ctx.status = 200;
+
+        ctx.cookies.set("smmk-token", token);
+
         ctx.body = {
           user: {
             id: user._id,

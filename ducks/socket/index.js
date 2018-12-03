@@ -2,7 +2,9 @@
 
 import { takeEvery, take, put, call, select } from "redux-saga/effects";
 import { eventChannel, END } from "redux-saga";
-import tabex from "tabex";
+// console.log(process.env.BROWSER);
+const tabex = process.env.BROWSER && require("tabex");
+// import tabex from "tabex";
 import { createAction, handleActions } from "redux-actions";
 import {
   SIGN_OUT_REQUEST,
@@ -103,7 +105,9 @@ export const socketConnect = createAction(SOCKET_CONN_REQUEST);
  * Sagas
  * */
 
-export const live = tabex.client();
+export const live = tabex ? tabex.client() : false;
+
+console.log(live);
 
 const initWebsocket = () =>
   eventChannel(emitter => {
@@ -117,17 +121,19 @@ const initWebsocket = () =>
 
     socket.on("connect", () => emitter({ type: SOCKET_CONN_SUCCESS }));
 
-    live.on("SIGN_OUT_SUCCESS", triggerDispatch);
-    live.on("SOCKET_CONN_END", triggerDispatch);
-    live.on("UPDATE_PASSWORD_START", triggerDispatch);
-    live.on("UPDATE_PASSWORD_SUCCESS", triggerDispatch);
-    live.on("UPDATE_PASSWORD_FAIL", triggerDispatch);
+    if (live) {
+      live.on("SIGN_OUT_SUCCESS", triggerDispatch);
+      live.on("SOCKET_CONN_END", triggerDispatch);
+      live.on("UPDATE_PASSWORD_START", triggerDispatch);
+      live.on("UPDATE_PASSWORD_SUCCESS", triggerDispatch);
+      live.on("UPDATE_PASSWORD_FAIL", triggerDispatch);
 
-    live.on("signOut", () => {
-      socket.disconnect();
+      live.on("signOut", () => {
+        socket.disconnect();
 
-      emitter(push("/"));
-    });
+        emitter(push("/"));
+      });
+    }
 
     const token = localStorage.getItem("tktoken");
 

@@ -7,7 +7,6 @@ import Settings from "icons/Settings";
 import PieChart from "icons/PieChart";
 import { connect } from "react-redux";
 import { openPopup } from "ducks/connectAccPopup";
-import store from "store";
 import type { State, Props } from "./types";
 
 class LeftBar extends PureComponent<Props, State> {
@@ -42,10 +41,7 @@ class LeftBar extends PureComponent<Props, State> {
                   {/* <span>@{username}</span> */}
                 </NavLink>
               ))}
-              <button
-                className="acclist__add"
-                onClick={() => store.dispatch(openPopup())}
-              >
+              <button className="acclist__add" onClick={this.props.openPopup}>
                 +
               </button>
             </div>
@@ -76,5 +72,8 @@ export default connect(
   ({ inst: { accList, error }, router: { location } }) => ({
     accList,
     pathname: location.pathname
+  }),
+  dispatch => ({
+    openPopup: () => dispatch(openPopup())
   })
 )(LeftBar);

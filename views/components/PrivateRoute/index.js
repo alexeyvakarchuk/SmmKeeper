@@ -17,7 +17,7 @@ class PrivateRoute extends PureComponent<Props, State> {
       if (this.props.user) {
         this.setState({ loading: false, auth: true });
       } else {
-        const auth = await fetchUserAuth();
+        const auth = await fetchUserAuth(this.props.store);
 
         this.setState({ loading: false, auth });
       }

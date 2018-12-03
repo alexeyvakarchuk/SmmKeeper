@@ -11,5 +11,6 @@ export type Props = {|
   user: Object,
   // Component: Object,
   location?: string,
-  render: function
+  render: function,
+  store: Object
 |};

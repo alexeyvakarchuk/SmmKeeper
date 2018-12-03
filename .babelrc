@@ -1,5 +1,5 @@
 {
-  "presets": ["env", "react", "stage-0"],
+  "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow"],
   "plugins": [
     [
       "module-resolver",
@@ -9,15 +9,15 @@
           "store": "./redux/store",
           "utils": "./views/utils",
           "components": "./views/components",
+          "routes": "./views/routes",
           "sections": "./views/sections",
           "pages": "./views/pages",
           "icons": "./views/icons"
         }
       }
     ],
-    "transform-class-properties",
-    "transform-decorators",
-    "transform-react-constant-elements",
-    "transform-react-inline-elements"
+    ["@babel/plugin-proposal-class-properties", { "loose": false }],
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    "@babel/plugin-transform-react-inline-elements"
   ]
 }

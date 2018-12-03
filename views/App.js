@@ -1,47 +1,28 @@
 import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import Auth from "pages/Auth";
-import Internal from "pages/Internal";
-import NoMatch from "pages/NoMatch";
-import AuthSuccess from "pages/AuthSuccess";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "react-router-redux";
-import store, { history } from "store";
-import PrivateRoute from "components/PrivateRoute";
-import PublicRoute from "components/PublicRoute";
-import { fetchUserId } from "utils";
+import configureStore from "store";
+// import BaseRoutes from "routes/Base/client";
+
+import BaseApp from "./BaseApp";
+
+// the initial state configured on the server is sent through
+// the `window` object before the bundle to make sure it doesn't get blocked
+const initialState = window.INITIAL_STATE || {};
+// once this gets loaded in, garbage collect the old `window` state
+delete window.INITIAL_STATE;
+
+const { history, store } = configureStore(initialState);
+
+// console.log(initialState, history);
+// console.log(store);
 
 export default class App extends Component {
   render() {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <div>
-            <Switch>
-              <PublicRoute exact path="/" render={() => <HomePage />} />
-              <PublicRoute
-                exact
-                path="/sign-in"
-                render={() => <Auth formState="SignIn" />}
-              />
-              <PublicRoute
-                exact
-                path="/sign-up"
-                render={() => <Auth formState="SignUp" />}
-              />
-              <Route
-                exact
-                path="/auth/success"
-                render={() => <AuthSuccess />}
-              />
-              <PrivateRoute
-                path="/"
-                render={props => <Internal location={props.location} />}
-              />
-              <Route component={NoMatch} />
-            </Switch>
-          </div>
+          <BaseApp store={store} />
         </ConnectedRouter>
       </Provider>
     );

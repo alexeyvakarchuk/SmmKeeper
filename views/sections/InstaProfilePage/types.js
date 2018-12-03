@@ -5,5 +5,8 @@ export type State = {||};
 
 export type Props = {|
   username: string,
-  +tasksList: null | Task[]
+  +tasksList: null | Task[],
+
+  fetchTasks: (username: string) => void,
+  startTask: (username: string, type: string) => void
 |};

@@ -69,8 +69,9 @@ class PublicRoute extends PureComponent<Props, State> {
     //       });
     //   });
     // };
+
     try {
-      const auth = await fetchUserAuth();
+      const auth = await fetchUserAuth(this.props.store);
 
       this.setState({ loading: false, auth });
     } catch (e) {

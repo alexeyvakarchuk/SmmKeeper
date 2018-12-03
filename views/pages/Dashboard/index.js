@@ -3,12 +3,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { NavLink, Route, Switch, Redirect } from "react-router-dom";
-import ToDoInput from "components/ToDoInput";
-import TaskCard from "components/TaskCard";
 import GradientButton from "components/GradientButton";
 import InstaProfilePage from "sections/InstaProfilePage";
-import { openPopup, closePopup } from "ducks/connectAccPopup";
-import store from "store";
+import { openPopup } from "ducks/connectAccPopup";
 import type { Props, State } from "./types";
 
 class Dashboard extends Component<Props, State> {
@@ -53,7 +50,7 @@ class Dashboard extends Component<Props, State> {
             <div className="dashboard__empty">
               <h3>User has no connected accounts</h3>
               <GradientButton
-                handleClick={() => store.dispatch(openPopup())}
+                handleClick={this.props.openPopup}
                 value={"Connect account"}
               />
             </div>
@@ -63,6 +60,11 @@ class Dashboard extends Component<Props, State> {
   }
 }
 
-export default connect(({ inst: { accList } }) => ({
-  accList
-}))(Dashboard);
+export default connect(
+  ({ inst: { accList } }) => ({
+    accList
+  }),
+  dispatch => ({
+    openPopup: () => dispatch(openPopup())
+  })
+)(Dashboard);

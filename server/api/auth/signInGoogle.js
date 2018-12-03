@@ -74,6 +74,8 @@ exports.init = router => {
 
           ctx.status = 200;
 
+          ctx.cookies.set("smmk-token", token);
+
           ctx.redirect("/auth/success");
         }
       })(ctx, next);

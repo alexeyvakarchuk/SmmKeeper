@@ -1,6 +1,7 @@
 if (process.env.TRACE) {
   require("./libs/trace");
 }
+require("babel-polyfill");
 
 const Koa = require("koa");
 const app = new Koa();
@@ -14,7 +15,19 @@ const fs = require("fs");
 require("./tasks/startTasks");
 require("./tasks/watchStats");
 
-const handlers = fs.readdirSync(path.join(__dirname, "handlers")).sort();
+// const handlers = fs.readdirSync(path.join(__dirname, "handlers")).sort();
+const handlers = [
+  "mongoose",
+  "favicon",
+  "static",
+  "logger",
+  "templates",
+  "errors",
+  "session",
+  "bodyParser",
+  "multipartParser",
+  "passport"
+];
 handlers.forEach(handler => require("./handlers/" + handler).init(app));
 
 // can be split into files too
@@ -23,31 +36,45 @@ const Router = require("koa-router");
 const router = new Router();
 
 // *** Auth API handlers ***
-const authHandlers = fs.readdirSync(path.join(__dirname, "api/auth")).sort();
+const authHandlers = [
+  "checkPasswordExistence",
+  "checkToken",
+  "setPassword",
+  "signIn",
+  "signInGoogle",
+  "signUp",
+  "updatePassword"
+];
 
 authHandlers.forEach(handler => require("./api/auth/" + handler).init(router));
 
 // *** Users API handlers ***
-const usersHandlers = fs.readdirSync(path.join(__dirname, "api/users")).sort();
-usersHandlers.forEach(handler =>
-  require("./api/users/" + handler).init(router)
-);
+// const usersHandlers = fs.readdirSync(path.join(__dirname, "api/users")).sort();
+// usersHandlers.forEach(handler =>
+//   require("./api/users/" + handler).init(router)
+// );
 
 // *** Inst API handlers ***
-const instHandlers = fs.readdirSync(path.join(__dirname, "api/inst")).sort();
+// const instHandlers = fs.readdirSync(path.join(__dirname, "api/inst")).sort();
+const instHandlers = ["connect", "fetch", "fetchTasks", "taskStart"];
 instHandlers.forEach(handler => require("./api/inst/" + handler).init(router));
 
 const environment = process.env.NODE_ENV;
 
 if (environment === "development" || environment === "test") {
-  const devHandlers = fs
-    .readdirSync(path.join(__dirname, "devHandlers"))
-    .sort();
+  // const devHandlers = fs
+  //   .readdirSync(path.join(__dirname, "devHandlers"))
+  //   .sort();
+  const devHandlers = ["webpack"];
   devHandlers.forEach(handler => require("./devHandlers/" + handler).init(app));
 
-  router.get("*", async function(ctx) {
-    ctx.body = ctx.render(__dirname + "/templates/dev.pug");
-  });
+  // router.get("*", async function(ctx) {
+  //   ctx.body = ctx.render(__dirname + "/templates/dev.pug");
+  // });
+
+  const ssr = require("./ssrCompiled");
+
+  router.get("*", ssr.handleRender);
 } else {
   router.get("*", async function(ctx) {
     ctx.body = ctx.render(__dirname + "/templates/index.pug");
