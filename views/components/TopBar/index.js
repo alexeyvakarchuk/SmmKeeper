@@ -37,10 +37,14 @@ class TopBar extends PureComponent<Props, State> {
 
     return (
       <div className="topbar">
-        <Link to="/app" className="topbar__logo">
-          <Logo />
-        </Link>
-
+        <div className="topbar__leftside">
+          <Link to="/app" className="topbar__logo">
+            <Logo />
+          </Link>
+          <span className="topbar__caption">
+            “Your personal social media booster”
+          </span>
+        </div>
         <div className="topbar__controls">
           <div className="topbar__timers active">
             <span
