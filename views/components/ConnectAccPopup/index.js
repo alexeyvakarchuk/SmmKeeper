@@ -48,8 +48,13 @@ class ConnectAccPopup extends PureComponent<Props, State> {
         className={popupClassName}
         onClick={() => store.dispatch(closePopup())}
       >
-        <div className="popup__content" onClick={e => e.stopPropagation()}>
-          <div
+        <div
+          className="popup__content"
+          onClick={e => {
+            e.stopPropagation();
+          }}
+        >
+          <span
             className="popup__close"
             onClick={() => store.dispatch(closePopup())}
           />
