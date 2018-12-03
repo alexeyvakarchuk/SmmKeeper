@@ -20,7 +20,7 @@ class LeftBar extends PureComponent<Props, State> {
           SM
         </Link> */}
 
-        <div className="leftbar__name">Profiles</div>
+        <div className="leftbar__name">Profiles:</div>
 
         <div className="leftbar__menu">
           {/* <NavLink
@@ -45,9 +45,7 @@ class LeftBar extends PureComponent<Props, State> {
               <button
                 className="acclist__add"
                 onClick={() => store.dispatch(openPopup())}
-              >
-                +
-              </button>
+              />
             </div>
           ) : (
             false
