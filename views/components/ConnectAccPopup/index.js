@@ -8,7 +8,6 @@ import GradientButton from "components/GradientButton";
 import type { Props, State } from "./types";
 import { connectAcc } from "ducks/inst";
 import { openPopup, closePopup } from "ducks/connectAccPopup";
-import store from "store";
 
 class ConnectAccPopup extends PureComponent<Props, State> {
   state = {
@@ -20,7 +19,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
     this.setState({ [inputName]: value });
 
   handleSubmit = () => {
-    store.dispatch(connectAcc(this.state));
+    this.props.connectAcc(this.state);
   };
 
   componentDidUpdate(prevProps) {
@@ -30,7 +29,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
       prevProps.accList &&
       this.props.accList.length !== prevProps.accList.length
     ) {
-      store.dispatch(closePopup());
+      this.props.closePopup();
       this.setState({
         username: "",
         password: ""
@@ -39,42 +38,37 @@ class ConnectAccPopup extends PureComponent<Props, State> {
   }
 
   render() {
-    const { popupVisible } = this.props;
+    return (
+      this.props.popupVisible &&
+      ReactDOM.createPortal(
+        <div className="popup" onClick={this.props.closePopup}>
+          <div className="popup__content" onClick={e => e.stopPropagation()}>
+            <div className="popup__close" onClick={this.props.closePopup} />
+            <h3>
+              Enter username&password from your instagram account, please.
+            </h3>
 
-    const popupClassName = popupVisible ? "popup popup_visible" : "popup";
+            <span className="popup__error-text">{this.props.error}</span>
 
-    return ReactDOM.createPortal(
-      <div
-        className={popupClassName}
-        onClick={() => store.dispatch(closePopup())}
-      >
-        <div className="popup__content" onClick={e => e.stopPropagation()}>
-          <div
-            className="popup__close"
-            onClick={() => store.dispatch(closePopup())}
-          />
-          <h3>Enter username&password from your instagram account, please.</h3>
-
-          <span className="popup__error-text">{this.props.error}</span>
-
-          <InputField
-            inputName="username"
-            inputValue={this.state.username}
-            handleChange={this.handleInputChange("username")}
-            style="light"
-          />
-          <InputField
-            inputName="Password"
-            inputValue={this.state.password}
-            handleChange={this.handleInputChange("password")}
-            style="light"
-            type="password"
-          />
-          <GradientButton handleClick={this.handleSubmit} value={"Confirm"} />
-        </div>
-      </div>,
-      // $FlowFixMe
-      document.getElementById("modalRoot")
+            <InputField
+              inputName="username"
+              inputValue={this.state.username}
+              handleChange={this.handleInputChange("username")}
+              style="light"
+            />
+            <InputField
+              inputName="Password"
+              inputValue={this.state.password}
+              handleChange={this.handleInputChange("password")}
+              style="light"
+              type="password"
+            />
+            <GradientButton handleClick={this.handleSubmit} value={"Confirm"} />
+          </div>
+        </div>,
+        // $FlowFixMe
+        document.getElementById("modalRoot")
+      )
     );
   }
 }
@@ -84,5 +78,10 @@ export default connect(
     accList,
     error,
     popupVisible: visible
+  }),
+  dispatch => ({
+    openPopup: () => dispatch(openPopup()),
+    closePopup: () => dispatch(closePopup()),
+    connectAcc: state => dispatch(connectAcc(state))
   })
 )(ConnectAccPopup);

@@ -24,6 +24,13 @@
   //   a
   //     text-decoration: none
 
+  &__name
+    color: var(--leftbar-title)
+    text-align: center
+    font-size: 12px
+    font-weight: 700
+    padding: 20px 0
+
   &__menu
     width: 100%
     // height: calc(100% - 80px)
@@ -45,7 +52,7 @@
         height: 25px
         fill: #039be5
       &.active
-        background-color: rgba($blue, .05)
+        background-color: rgba(var(--blue), .05)
   
   .acclist
     width: 100%
@@ -54,6 +61,7 @@
     justify-content: flex-start
     // padding: 15px
     &__item
+      position: relative
       overflow: hidden
       display: flex
       align-items: center
@@ -68,14 +76,33 @@
       //   color: #039be5
       //   margin-left: 10px
       &-active
-        background-color: rgba($blue, .05)
+        background-color: rgba(var(--blue), .05)
+        &:before
+          content: ''
+          width: 2px
+          height: 50px
+          background-color: var(--main-two)
+          position: absolute
+          left: 0
     &__add
-      border: none
       outline: none
+      margin: 10px auto
       cursor: pointer
-      color: $blue
-      font-size: 42px
-      width: 100%
+      position: relative
+      width: 50px
+      height: 50px
+      border: 1px solid var(--main-two)
+      border-radius: 50%
       appearance: none
       background-color: transparent
-      padding: 0
+      &:before, &:after
+        content: ''
+        width: 25px
+        height: 1px
+        background-color: var(--main-two)
+        position: absolute
+        left: 50%
+        transform: translateX(-50%)
+      &:after
+        transform: translateX(-50%) rotate(90deg)
+

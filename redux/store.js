@@ -1,33 +1,55 @@
 import { createStore, compose, applyMiddleware } from "redux";
-import createSagaMiddleware from "redux-saga";
-import saga from "./saga";
+import createSagaMiddleware, { END } from "redux-saga";
+import rootSaga from "./saga";
 import reducer from "./reducer";
-import createHistory from "history/createBrowserHistory";
-import { routerMiddleware } from "react-router-redux";
 
-// Create a history of your choosing (we're using a browser history in this case)
-export const history = createHistory();
+export const sagaMiddleware = createSagaMiddleware();
 
-const sagaMiddleware = createSagaMiddleware();
+const middlewares = [applyMiddleware(sagaMiddleware)];
 
-const middlewares = [
-  applyMiddleware(sagaMiddleware),
-  applyMiddleware(routerMiddleware(history))
-];
-
-const store =
-  process.env.NODE_ENV === "development"
-    ? createStore(
-        reducer,
-        {},
-        compose(
-          ...middlewares,
-          window.__REDUX_DEVTOOLS_EXTENSION__ &&
-            window.__REDUX_DEVTOOLS_EXTENSION__()
+export const initStore = (initialState = {}) => {
+  const store =
+    typeof window !== "undefined" && process.env.NODE_ENV === "development"
+      ? createStore(
+          reducer,
+          initialState,
+          compose(
+            ...middlewares,
+            window.__REDUX_DEVTOOLS_EXTENSION__ &&
+              window.__REDUX_DEVTOOLS_EXTENSION__()
+          )
         )
-      )
-    : createStore(reducer, {}, compose(...middlewares));
+      : createStore(reducer, initialState, compose(...middlewares));
 
-sagaMiddleware.run(saga);
+  store.runSaga = () => {
+    // Avoid running twice
+    if (store.saga) return;
+    store.saga = sagaMiddleware.run(rootSaga);
+  };
 
-export default store;
+  store.stopSaga = async () => {
+    // Avoid running twice
+    if (!store.saga) return;
+    store.dispatch(END);
+    await store.saga.done;
+    store.saga = null;
+  };
+
+  store.execSagaTasks = async (isServer, tasks) => {
+    // run saga
+    store.runSaga();
+    // dispatch saga tasks
+    tasks(store.dispatch);
+    // Stop running and wait for the tasks to be done
+    await store.stopSaga();
+    // Re-run on client side
+    if (!isServer) {
+      store.runSaga();
+    }
+  };
+
+  // Initial run
+  store.runSaga();
+
+  return store;
+};

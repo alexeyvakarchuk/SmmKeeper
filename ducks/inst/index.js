@@ -6,11 +6,12 @@ import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
 import { SOCKET_CONN_END } from "ducks/socket";
 import type { State, UserReq } from "./types";
-import { push } from "react-router-redux";
 import { stateSelector as authStateSelector } from "ducks/auth";
 import { live } from "ducks/socket";
+import redirect from "server/redirect";
 import type { State as AccReq } from "components/connectAccPopup/types";
 import { eventChannel, END } from "redux-saga";
+import { setCookie, getCookie, removeCookie } from "server/libs/cookies";
 
 /**
  * Constants
@@ -166,7 +167,11 @@ export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
  * Sagas
  * */
 
-export function* fetchAccsSaga(): Generator<any, any, any> {
+export function* fetchAccsSaga({
+  payload: { token, queryUsername, ctx }
+}: {
+  payload: { token: string, queryUsername: string, ctx?: Object }
+}): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
   if (state.progressFetchAccs) return true;
@@ -183,7 +188,7 @@ export function* fetchAccsSaga(): Generator<any, any, any> {
         baseURL,
         data: {
           id: user.id,
-          token: localStorage.getItem("tktoken")
+          token: token
         },
         headers: {
           "Content-Type": "application/json"
@@ -198,6 +203,15 @@ export function* fetchAccsSaga(): Generator<any, any, any> {
         type: FETCH_ACCS_SUCCESS,
         payload: { accList }
       });
+
+      // Redirects if /app or /app/some-fake-username
+      if (
+        !queryUsername ||
+        !accList.find(el => el.username === queryUsername)
+      ) {
+        // console.log("redirect to ", `/app/${accList[0].username}`);
+        redirect(`/app/${accList[0].username}`, ctx);
+      }
     } else {
       throw "Can't find user id or email";
     }
@@ -263,10 +277,11 @@ export function* connectAccSaga({
 
 /* eslint-disable consistent-return */
 export function* fetchTasksSaga({
-  payload: { username }
+  payload: { username, token }
 }: {
   payload: {
-    username: string
+    username: string,
+    token: string
   }
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
@@ -285,7 +300,7 @@ export function* fetchTasksSaga({
         baseURL,
         data: {
           id: user.id,
-          token: localStorage.getItem("tktoken"),
+          token,
           username
         },
         headers: {

@@ -3,13 +3,14 @@
 import React, { PureComponent } from "react";
 import Logo from "icons/Logo";
 import Clock from "icons/Clock";
+import Bell from "icons/Bell";
+import BulletsMenu from "icons/BulletsMenu";
 import Pause from "icons/Pause";
 import Play from "icons/Play";
+import { Link } from "server/routes";
 import ArrowDown from "icons/ArrowDown";
 import { signOut } from "ducks/auth";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import store from "store";
 import type { State, Props } from "./types";
 
 class TopBar extends PureComponent<Props, State> {
@@ -37,24 +38,31 @@ class TopBar extends PureComponent<Props, State> {
 
     return (
       <div className="topbar">
-        <Link to="/app" className="topbar__logo">
-          <Logo />
-        </Link>
-
+        <div className="topbar__leftside">
+          <Link route="/app">
+            <a className="topbar__logo">
+              <Logo />
+            </a>
+          </Link>
+          <span className="topbar__caption">
+            “Your personal social media booster”
+          </span>
+        </div>
         <div className="topbar__controls">
           <div className="topbar__timers active">
             <span
               className="topbar__timers-icon"
               onClick={this.toggleDropdownVisibility("timersDropdownVisible")}
             >
-              <Clock />
+              <Bell counter={1} />
+              {/* <Clock /> */}
             </span>
-            <span
+            {/* <span
               className="topbar__timers-counter"
               onClick={this.toggleDropdownVisibility("timersDropdownVisible")}
             >
               2
-            </span>
+            </span> */}
             <div className={timersDropdownClassName}>
               <div className="timer">
                 <div className="timer__name">Task 1</div>
@@ -67,6 +75,11 @@ class TopBar extends PureComponent<Props, State> {
           </div>
 
           <div className="topbar__name">
+            <img
+              src="https://instagram.fdnk2-1.fna.fbcdn.net/vp/0ce58743f1cfa80bc494ecc7544224a9/5CB15748/t51.2885-19/s320x320/46060645_2167155603535731_8382210895320711168_n.jpg"
+              alt=""
+              className="topbar__photo"
+            />
             <span
               className="topbar__name-label"
               onClick={this.toggleDropdownVisibility("settingsDropdownVisible")}
@@ -77,11 +90,11 @@ class TopBar extends PureComponent<Props, State> {
               className="topbar__name-icon"
               onClick={this.toggleDropdownVisibility("settingsDropdownVisible")}
             >
-              <ArrowDown />
+              <BulletsMenu />
             </span>
             <div
               className={settingsDropdownClassName}
-              onClick={() => store.dispatch(signOut())}
+              onClick={this.props.signOut}
             >
               Sign Out
             </div>
@@ -92,4 +105,9 @@ class TopBar extends PureComponent<Props, State> {
   }
 }
 
-export default connect(({ auth: { user } }) => ({ user }))(TopBar);
+export default connect(
+  ({ auth: { user } }) => ({ user }),
+  dispatch => ({
+    signOut: () => dispatch(signOut())
+  })
+)(TopBar);

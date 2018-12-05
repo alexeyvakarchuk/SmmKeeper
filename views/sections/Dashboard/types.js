@@ -3,7 +3,10 @@ import type { Acc } from "ducks/inst/types";
 
 export type Props = {
   accList: null | Acc[],
-  progress: boolean
+  progress: boolean,
+  username: string,
+
+  openPopup: () => void
 };
 
 export type State = {

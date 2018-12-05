@@ -2,7 +2,6 @@
 
 import { takeEvery, take, put, call, select } from "redux-saga/effects";
 import { eventChannel, END } from "redux-saga";
-import tabex from "tabex";
 import { createAction, handleActions } from "redux-actions";
 import {
   SIGN_OUT_REQUEST,
@@ -20,7 +19,7 @@ import {
   UPDATE_PASSWORD_SOCKET_EVENT,
   SET_PASSWORD_SUCCESS
 } from "ducks/password";
-import { push } from "react-router-redux";
+import redirect from "server/redirect";
 import io from "socket.io-client";
 import type { State } from "./types";
 import { baseURL } from "config";
@@ -103,7 +102,13 @@ export const socketConnect = createAction(SOCKET_CONN_REQUEST);
  * Sagas
  * */
 
-export const live = tabex.client();
+export let tabex;
+export let live;
+
+if (typeof window !== "undefined") {
+  tabex = require("tabex");
+  live = tabex.client();
+}
 
 const initWebsocket = () =>
   eventChannel(emitter => {
@@ -117,17 +122,19 @@ const initWebsocket = () =>
 
     socket.on("connect", () => emitter({ type: SOCKET_CONN_SUCCESS }));
 
-    live.on("SIGN_OUT_SUCCESS", triggerDispatch);
-    live.on("SOCKET_CONN_END", triggerDispatch);
-    live.on("UPDATE_PASSWORD_START", triggerDispatch);
-    live.on("UPDATE_PASSWORD_SUCCESS", triggerDispatch);
-    live.on("UPDATE_PASSWORD_FAIL", triggerDispatch);
+    if (typeof window !== "undefined") {
+      live.on("SIGN_OUT_SUCCESS", triggerDispatch);
+      live.on("SOCKET_CONN_END", triggerDispatch);
+      live.on("UPDATE_PASSWORD_START", triggerDispatch);
+      live.on("UPDATE_PASSWORD_SUCCESS", triggerDispatch);
+      live.on("UPDATE_PASSWORD_FAIL", triggerDispatch);
 
-    live.on("signOut", () => {
-      socket.disconnect();
+      live.on("signOut", () => {
+        socket.disconnect();
 
-      emitter(push("/"));
-    });
+        redirect("/");
+      });
+    }
 
     const token = localStorage.getItem("tktoken");
 
@@ -236,7 +243,7 @@ export function* socketConnectSaga(): Generator<any, any, any> {
       yield put(action);
 
       if (action.type === CONN_ACC_SUCCESS) {
-        yield put(push(`/app/${action.payload.acc.username}`));
+        redirect(`/app/${action.payload.acc.username}`);
       }
     }
   } catch (err) {

@@ -5,6 +5,8 @@ const { jwtsecret } = require("server/config/default"); // Secret key for JWT si
 
 exports.init = router =>
   router.post("/api/sign-in", async (ctx, next) => {
+    // ctx.cookies.set("tktoken", "", { expires: 0 });
+    // console.log("removed cookie");
     await passport.authenticate("local", async (err, user) => {
       if (!user) {
         ctx.status = 400;
@@ -24,6 +26,7 @@ exports.init = router =>
         const token = jwt.sign(payload, jwtsecret); // Token creation
 
         ctx.status = 200;
+
         ctx.body = {
           user: {
             id: user._id,

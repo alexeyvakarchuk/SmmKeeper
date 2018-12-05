@@ -8,7 +8,6 @@ import type {
 import InputField from "components/InputField";
 import GradientButton from "components/GradientButton";
 import { updatePassword } from "ducks/password";
-import store from "store";
 import { connect } from "react-redux";
 
 class UpdatePasswordSection extends PureComponent<Props, State> {
@@ -65,7 +64,7 @@ class UpdatePasswordSection extends PureComponent<Props, State> {
             type="password"
           />
           <GradientButton
-            handleClick={() => store.dispatch(updatePassword(this.state))}
+            handleClick={() => this.props.updatePassword(this.state)}
             value={"Update password"}
           />
         </div>
@@ -74,7 +73,12 @@ class UpdatePasswordSection extends PureComponent<Props, State> {
   }
 }
 
-export default connect(state => ({
-  passwordError: state.password.error,
-  successMessage: state.password.successMessage
-}))(UpdatePasswordSection);
+export default connect(
+  state => ({
+    passwordError: state.password.error,
+    successMessage: state.password.successMessage
+  }),
+  dispatch => ({
+    updatePassword: state => dispatch(updatePassword(state))
+  })
+)(UpdatePasswordSection);

@@ -40,6 +40,8 @@ exports.init = router =>
 
       const token = jwt.sign(payload, jwtsecret); // Token creation
 
+      // ctx.cookies.set("tktoken", token);
+
       socket.emitter.to(id).emit("setPassword", token);
     } else {
       throw new InvalidUserIdError();

@@ -10,8 +10,9 @@ import type {
   UpdatePasswordSectionState as UpdatePasswordReq,
   SetPasswordSectionState as SetPasswordReq
 } from "pages/Settings/types";
-import { push } from "react-router-redux";
-import { live } from "ducks/socket";
+import redirect from "server/redirect";
+import { setCookie } from "server/libs/cookies";
+const live = typeof window !== "undefined" && require("ducks/socket").live;
 
 /**
  * Constants
@@ -163,7 +164,13 @@ export const checkPasswordExistence = createAction(
  * Sagas
  * */
 
-export function* checkPasswordExistenceSaga(): Generator<any, any, any> {
+export function* checkPasswordExistenceSaga({
+  payload: { token }
+}: {
+  payload: {
+    token: string
+  }
+}): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
   if (state.progress) return true;
@@ -180,7 +187,7 @@ export function* checkPasswordExistenceSaga(): Generator<any, any, any> {
         baseURL,
         data: {
           id: user.id,
-          token: localStorage.getItem("tktoken")
+          token
         },
         headers: {
           "Content-Type": "application/json"
@@ -287,7 +294,10 @@ export function* updatePasswordSaga({
 
   yield put({ type: UPDATE_PASSWORD_START });
 
-  live.emit("UPDATE_PASSWORD_START", { type: UPDATE_PASSWORD_START });
+  if (typeof window !== "undefined") {
+    // $FlowFixMe
+    live.emit("UPDATE_PASSWORD_START", { type: UPDATE_PASSWORD_START });
+  }
 
   try {
     const { user } = yield select(authStateSelector);
@@ -316,6 +326,7 @@ export function* updatePasswordSaga({
       console.log(token);
 
       localStorage.setItem("tktoken", token);
+      setCookie("tktoken", token);
 
       yield put({
         type: UPDATE_PASSWORD_SUCCESS_MESSAGE,
@@ -340,13 +351,15 @@ export function* updatePasswordSaga({
         error: res.response.data.error.message
       }
     });
-
-    live.emit("UPDATE_PASSWORD_FAIL", {
-      type: UPDATE_PASSWORD_FAIL,
-      payload: {
-        error: null
-      }
-    });
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("UPDATE_PASSWORD_FAIL", {
+        type: UPDATE_PASSWORD_FAIL,
+        payload: {
+          error: null
+        }
+      });
+    }
   }
 }
 
@@ -362,13 +375,16 @@ export function* updatePasswordSocketEventSaga({
       type: UPDATE_PASSWORD_SUCCESS
     });
 
-    live.emit({
-      type: UPDATE_PASSWORD_SUCCESS
-    });
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit({
+        type: UPDATE_PASSWORD_SUCCESS
+      });
+    }
   } else {
     socket.disconnect();
 
-    yield put(push("/"));
+    redirect("/");
   }
 }
 

@@ -8,5 +8,6 @@ export type State = {};
 export type Props = {|
   accList: null | Acc[],
   pathname: string,
-  location?: string
+  location?: string,
+  openPopup: () => void
 |};

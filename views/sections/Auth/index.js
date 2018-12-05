@@ -12,10 +12,9 @@ import {
 } from "ducks/auth";
 import OutlineButton from "components/OutlineButton";
 import GradientButton from "components/GradientButton";
-import store from "store";
 import type { Props, State } from "./types";
-import { push } from "react-router-redux";
 import { fetchUserAuth } from "utils";
+import Router from "next/router";
 
 class AuthPage extends Component<Props, State> {
   state = {
@@ -23,26 +22,13 @@ class AuthPage extends Component<Props, State> {
     password: ""
   };
 
-  componentWillMount() {
-    // $FlowFixMe
-    document.body.classList.add("body-dark");
-  }
-  componentWillUnmount() {
-    // $FlowFixMe
-    document.body.classList.remove("body-dark");
-  }
-
   handleInputChange = inputName => value =>
     this.setState({ [inputName]: value });
 
   handleSubmit = () => {
     this.props.formState === "SignUp"
-      ? store.dispatch(
-          signUp({ email: this.state.email, password: this.state.password })
-        )
-      : store.dispatch(
-          signIn({ email: this.state.email, password: this.state.password })
-        );
+      ? this.props.signUp(this.state.email, this.state.password)
+      : this.props.signIn(this.state.email, this.state.password);
   };
 
   openRegisterWindow = (url, wnidowName) => {
@@ -96,7 +82,7 @@ class AuthPage extends Component<Props, State> {
           <OutlineButton
             value="Google"
             handleClick={() => {
-              store.dispatch(checkGoogleAuth());
+              this.props.checkGoogleAuth();
               this.openRegisterWindow("/api/sign-in/google", "google_popup");
             }}
           />
@@ -111,12 +97,12 @@ class AuthPage extends Component<Props, State> {
           <span
             onClick={() => {
               if (this.props.error) {
-                store.dispatch(clearAuthError());
+                this.props.clearAuthError();
               }
 
               this.props.formState === "SignUp"
-                ? store.dispatch(push("/sign-in"))
-                : store.dispatch(push("/sign-up"));
+                ? Router.push("/signIn")
+                : Router.push("/signUp");
             }}
           >
             {this.props.formState === "SignUp" ? "Sign in" : "Sign up"}
@@ -127,7 +113,27 @@ class AuthPage extends Component<Props, State> {
   }
 }
 
-export default connect(({ auth: { progress, error } }) => ({
-  progress,
-  error
-}))(AuthPage);
+export default connect(
+  ({ auth: { progress, error } }) => ({
+    progress,
+    error
+  }),
+  dispatch => ({
+    signIn: (email, password) =>
+      dispatch(
+        signIn({
+          email,
+          password
+        })
+      ),
+    signUp: (email, password) =>
+      dispatch(
+        signUp({
+          email,
+          password
+        })
+      ),
+    clearAuthError: () => dispatch(clearAuthError()),
+    checkGoogleAuth: () => dispatch(checkGoogleAuth())
+  })
+)(AuthPage);

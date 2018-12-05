@@ -7,5 +7,7 @@ export type State = {
 };
 
 export type Props = {|
-  user: User
+  user: User,
+
+  signOut: () => void
 |};

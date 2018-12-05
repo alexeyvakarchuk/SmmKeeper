@@ -6,8 +6,9 @@ import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
 import { SOCKET_CONN_END } from "ducks/socket";
 import type { State, UserReq } from "./types";
-import { push } from "react-router-redux";
-import { live } from "ducks/socket";
+import redirect from "server/redirect";
+import { setCookie, removeCookie } from "server/libs/cookies";
+const live = typeof window !== "undefined" && require("ducks/socket").live;
 import { eventChannel, END } from "redux-saga";
 
 /**
@@ -158,9 +159,15 @@ export function* signInSaga({
 
     localStorage.setItem("tktoken", token);
 
-    live.emit("signIn", user);
+    setCookie("tktoken", token);
 
-    yield put(push("/app"));
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("signIn", user);
+    }
+
+    // yield put(push("/app"));Route
+    redirect("/app");
   } catch (res) {
     yield put({
       type: SIGN_IN_FAIL,
@@ -202,10 +209,16 @@ function* signUpSaga({ payload: { email, password } }) {
     });
 
     localStorage.setItem("tktoken", token);
+    setCookie("tktoken", token);
 
-    live.emit("signIn", user);
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("signIn", user);
+    }
 
-    yield put(push("/app"));
+    // yield put(push("/app"));
+
+    redirect("/app");
   } catch (res) {
     yield put({
       type: SIGN_UP_FAIL,
@@ -243,8 +256,12 @@ export function* signInWithGoogleSaga(): Generator<any, any, any> {
     // });
 
     localStorage.setItem("tktoken", token);
+    setCookie("tktoken", token);
 
-    live.emit("signIn", user);
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("signIn", user);
+    }
   } catch (err) {
     yield put({
       type: GOOGLE_SIGN_IN_FAIL,
@@ -256,7 +273,9 @@ export function* signInWithGoogleSaga(): Generator<any, any, any> {
 }
 
 const listenSignIn = () =>
+  typeof window !== "undefined" &&
   eventChannel(emitter => {
+    // $FlowFixMe
     live.on("signIn", user => {
       emitter({
         type: SIGN_IN_SUCCESS,
@@ -265,10 +284,13 @@ const listenSignIn = () =>
         }
       });
 
-      emitter(push("/app"));
+      // emitter(push("/app"));
+
+      redirect("/app");
     });
 
     return () => {
+      // $FlowFixMe
       live.off("signIn");
     };
   });
@@ -292,14 +314,20 @@ function* signOutSaga() {
   try {
     localStorage.removeItem("tktoken");
 
+    removeCookie("tktoken");
+
     yield put({ type: SIGN_OUT_SUCCESS });
 
     yield put({ type: SOCKET_CONN_END });
 
-    live.emit("SIGN_OUT_SUCCESS", { type: SIGN_OUT_SUCCESS });
-    live.emit("SOCKET_CONN_END", { type: SOCKET_CONN_END });
-
-    live.emit("signOut", null, true);
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("SIGN_OUT_SUCCESS", { type: SIGN_OUT_SUCCESS });
+      // $FlowFixMe
+      live.emit("SOCKET_CONN_END", { type: SOCKET_CONN_END });
+      // $FlowFixMe
+      live.emit("signOut", null, true);
+    }
   } catch (error) {
     yield put({
       type: SIGN_OUT_FAIL,
@@ -313,5 +341,7 @@ export function* watchAuth(): mixed {
   yield takeEvery(SIGN_UP_REQUEST, signUpSaga);
   yield takeEvery(SIGN_OUT_REQUEST, signOutSaga);
   yield takeEvery(GOOGLE_SIGN_IN_REQUEST, signInWithGoogleSaga);
-  yield all([listenSignInSaga()]);
+  if (typeof window !== "undefined") {
+    yield all([listenSignInSaga()]);
+  }
 }
