@@ -23,6 +23,27 @@ class InstaProfilePage extends PureComponent<Props, State> {
 
     const acc = this.props.accList.find(el => el.username === username);
 
+    function accMark(stats, mark) {
+      if (stats.length > 1) {
+        let x = stats[0][mark] - stats[1][mark];
+        if (x >= 0) {
+          return (
+            <span className="profile-info__text profile-info__text_mark-green">
+              {x}
+            </span>
+          );
+        } else {
+          return (
+            <span className="profile-info__text profile-info__text_mark-red">
+              {x}
+            </span>
+          );
+        }
+      } else {
+        return "";
+      }
+    }
+
     return (
       <div className="instaprofile">
         {/* <h1 className="instaprofile__name">@{username}</h1> */}
@@ -41,22 +62,14 @@ class InstaProfilePage extends PureComponent<Props, State> {
                   <span className="profile-info__text">
                     {acc.stats[0].followers}
                   </span>
-                  <span className="profile-info__text profile-info__text_mark">
-                    {acc.stats.length > 1
-                      ? acc.stats[0].followers - acc.stats[1].followers
-                      : ""}
-                  </span>
+                  {accMark(acc.stats, "followers")}
                   <span className="profile-info__caption">Followers</span>
                 </div>
                 <div className="profile-info__block">
                   <span className="profile-info__text">
                     {acc.stats[0].follows}
                   </span>
-                  <span className="profile-info__text profile-info__text_mark">
-                    {acc.stats.length > 1
-                      ? acc.stats[0].follows - acc.stats[1].follows
-                      : ""}
-                  </span>
+                  {accMark(acc.stats, "follows")}
                   <span className="profile-info__caption">Following</span>
                 </div>
                 <div className="profile-info__block">

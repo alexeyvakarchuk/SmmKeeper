@@ -30,10 +30,13 @@
     font-weight: 600
     line-height: 15px
     display: inline-block
-    &_mark
-      color: var(--account-mark)
+    &_mark-green, &_mark-red
       font-size: 12px
       margin-left: 6px
+    &_mark-green
+      color: var(--account-mark)
+    &_mark-red
+      color: var(--alert-red-two)
   &__profile
     display: flex
     justify-content: space-between
