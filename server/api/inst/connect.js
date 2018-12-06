@@ -26,6 +26,7 @@ exports.init = router =>
 
         clientData = await client.getProfile();
       } catch (e) {
+        console.log("Inst login error ::: ", e);
         throw new InvalidInstAccDataError();
       }
 
