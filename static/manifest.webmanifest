@@ -1,7 +1,7 @@
 {
   "name": "SmmKeeper",
   "short_name": "SmmKeeper",
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "lang": "en-US",
