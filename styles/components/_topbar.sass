@@ -23,6 +23,8 @@
     color: var(--caption_color)
     font-size: 13px
     font-weight: 300
+    +max-screen(768px)
+      display: none
   &__controls
     display: flex
     align-items: center
@@ -31,13 +33,17 @@
     display: inline-flex
     align-items: center
     justify-content: center
-    margin-right: 20px
+    margin-right: 18px
     position: relative
+    +max-screen(350px)
+      margin-right: 10px
     .dropdown
       top: calc(100% + 10px)
       right: 0
       width: 320px
       padding: 8px 15px
+      +max-screen(620px)
+        width: 200px
     &-icon
       display: inline-block
       padding-right: 8px
@@ -45,9 +51,11 @@
       user-select: none
       svg
         display: block
-        width: 25px
+        width: 22px
         fill: #787993
         box-sizing: content-box
+        
+
     &-counter
       font-size: 14px
       color: #787993
@@ -101,6 +109,8 @@
       font-weight: 600
       margin-left: 10px
       margin-right: 20px
+      +max-screen(620px)
+        display: none
     .dropdown
       top: calc(100% + 10px)
       right: 0
@@ -121,3 +131,8 @@
   &__photo
     width: 30px
     border-radius: 50%
+    margin-right: 15px
+    +max-screen(620px)
+      margin-right: 18px
+    +max-screen(350px)
+      display: none
