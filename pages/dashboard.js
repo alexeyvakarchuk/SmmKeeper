@@ -5,7 +5,7 @@ import TopBar from "components/TopBar";
 import Layout from "hoc/layout";
 import LeftBar from "components/LeftBar";
 import { socketConnect } from "ducks/socket";
-import { fetchAccs, fetchTasks } from "ducks/inst";
+import { fetchAccs, fetchTasks, redirectIfInvalidUsername } from "ducks/inst";
 import { checkPasswordExistence } from "ducks/password";
 import Dashboard from "sections/Dashboard";
 import { fetchUserAuth } from "utils";
@@ -62,6 +62,8 @@ class Internal extends Component<Props, State> {
           // store.dispatch(fetchTasks({ username: query.username, token }));
 
           store.dispatch(checkPasswordExistence({ token }));
+        } else {
+          redirectIfInvalidUsername(accList, query.username);
         }
       } else {
         const auth = await fetchUserAuth(store, token);

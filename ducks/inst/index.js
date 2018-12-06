@@ -5,7 +5,7 @@ import { baseURL } from "config";
 import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
 import { SOCKET_CONN_END } from "ducks/socket";
-import type { State, UserReq } from "./types";
+import type { State, UserReq, Acc } from "./types";
 import { stateSelector as authStateSelector } from "ducks/auth";
 import { live } from "ducks/socket";
 import redirect from "server/redirect";
@@ -167,6 +167,18 @@ export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
  * Sagas
  * */
 
+export const redirectIfInvalidUsername = (
+  accList: Acc[],
+  queryUsername: string,
+  ctx?: Object
+) => {
+  // Redirects if /app or /app/some-fake-username
+  if (!queryUsername || !accList.find(el => el.username === queryUsername)) {
+    // console.log("redirect to ", `/app/${accList[0].username}`);
+    redirect(`/app/${accList[0].username}`, ctx);
+  }
+};
+
 export function* fetchAccsSaga({
   payload: { token, queryUsername, ctx }
 }: {
@@ -204,14 +216,7 @@ export function* fetchAccsSaga({
         payload: { accList }
       });
 
-      // Redirects if /app or /app/some-fake-username
-      if (
-        !queryUsername ||
-        !accList.find(el => el.username === queryUsername)
-      ) {
-        // console.log("redirect to ", `/app/${accList[0].username}`);
-        redirect(`/app/${accList[0].username}`, ctx);
-      }
+      redirectIfInvalidUsername(accList, queryUsername, ctx);
     } else {
       throw "Can't find user id or email";
     }

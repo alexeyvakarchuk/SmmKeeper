@@ -50,6 +50,7 @@ const instAccSchema = new mongoose.Schema(
     countryCode: { type: String },
     phoneNumber: { type: String },
     gender: { type: Number },
+    postsCount: { type: Number },
     interactions: [
       {
         username: {
