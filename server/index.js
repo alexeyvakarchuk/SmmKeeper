@@ -66,16 +66,16 @@ n.prepare().then(() => {
     ctx.respond = false;
   });
 
-  router.get("/manifest.webmanifest", async ctx => {
-    const filePath = path.join(__dirname, "../manifest.webmanifest");
-    // console.log(filePath);
-    // ctx.status = 200;
-    ctx.type = "application/manifest+json";
-    // const filePath = path.join(__dirname, "../manifest.webmanifest");
-    // n.serveStatic(ctx.req, ctx.res, filePath);
-    ctx.status = 200;
-    ctx.body = fs.createReadStream(filePath);
-  });
+  // router.get("/manifest.webmanifest", async ctx => {
+  //   const filePath = path.join(__dirname, "../manifest.webmanifest");
+  //   // console.log(filePath);
+  //   // ctx.status = 200;
+  //   // ctx.type = "application/manifest+json";
+  //   // const filePath = path.join(__dirname, "../manifest.webmanifest");
+  //   n.serveStatic(ctx.req, ctx.res, filePath);
+  //   ctx.status = 200;
+  //   // ctx.body = fs.createReadStream(filePath);
+  // });
 
   router.get("*", async ctx => {
     await handler(ctx.req, ctx.res);
