@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from "react";
+import Layout from "hoc/layout";
 import Auth from "sections/Auth";
 import { redirectIfAuthentificated } from "utils";
 
@@ -12,6 +13,10 @@ export default class SignUpPage extends Component<{}, {}> {
   }
 
   render() {
-    return <Auth formState="SignUp" />;
+    return (
+      <Layout title="Create account">
+        <Auth formState="SignUp" />
+      </Layout>
+    );
   }
 }

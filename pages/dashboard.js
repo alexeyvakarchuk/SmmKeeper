@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import TopBar from "components/TopBar";
+import Layout from "hoc/layout";
 import LeftBar from "components/LeftBar";
 import { socketConnect } from "ducks/socket";
 import { fetchAccs, fetchTasks } from "ducks/inst";
@@ -25,6 +26,14 @@ class Internal extends Component<Props, State> {
   static async getInitialProps(ctx) {
     const { store, req, isServer, query } = ctx;
 
+    const storeState = store.getState();
+    const {
+      inst: { accList, taskList },
+      password: { passwordExists }
+    } = storeState;
+
+    console.log(accList, taskList, passwordExists);
+
     const token =
       typeof window !== "undefined"
         ? localStorage.getItem("tktoken")
@@ -46,19 +55,21 @@ class Internal extends Component<Props, State> {
         redirect("/signIn", ctx);
       }
     } else {
-      if (store.getState().auth.user) {
-        store.dispatch(fetchAccs({ token, queryUsername: query.username }));
+      if (storeState.auth.user) {
+        if (!accList || passwordExists === null) {
+          store.dispatch(fetchAccs({ token, queryUsername: query.username }));
 
-        store.dispatch(fetchTasks({ username: query.username, token }));
+          // store.dispatch(fetchTasks({ username: query.username, token }));
 
-        store.dispatch(checkPasswordExistence({ token }));
+          store.dispatch(checkPasswordExistence({ token }));
+        }
       } else {
         const auth = await fetchUserAuth(store, token);
 
         if (auth) {
           store.dispatch(fetchAccs({ token, queryUsername: query.username }));
 
-          store.dispatch(fetchTasks({ username: query.username, token }));
+          // store.dispatch(fetchTasks({ username: query.username, token }));
 
           store.dispatch(checkPasswordExistence({ token }));
         } else {
@@ -76,16 +87,18 @@ class Internal extends Component<Props, State> {
 
   render() {
     return (
-      <section className="internal">
-        <TopBar />
-        <LeftBar />
+      <Layout title="Dashboard">
+        <section className="internal">
+          <TopBar />
+          <LeftBar />
 
-        <div className="main">
-          <Dashboard username={this.props.username} />
-        </div>
+          <div className="main">
+            <Dashboard username={this.props.username} />
+          </div>
 
-        <ConnectAccPopup />
-      </section>
+          <ConnectAccPopup />
+        </section>
+      </Layout>
     );
   }
 }

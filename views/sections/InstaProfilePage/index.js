@@ -14,6 +14,7 @@ class InstaProfilePage extends PureComponent<Props, State> {
   componentDidUpdate(prevProps) {
     const token =
       typeof window !== "undefined" && localStorage.getItem("tktoken");
+    // console.log("need to update", this.props.username, prevProps.username);
 
     if (
       this.props.username !== prevProps.username &&

@@ -77,3 +77,5 @@ n.prepare().then(() => {
 
   socket(server);
 });
+
+module.exports = app;
