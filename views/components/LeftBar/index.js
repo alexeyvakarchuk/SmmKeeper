@@ -7,6 +7,7 @@ import Settings from "icons/Settings";
 import PieChart from "icons/PieChart";
 import { connect } from "react-redux";
 import { openPopup } from "ducks/connectAccPopup";
+import { withRouter } from "next/router";
 import type { State, Props } from "./types";
 
 class LeftBar extends Component<Props, State> {
@@ -66,11 +67,13 @@ class LeftBar extends Component<Props, State> {
   }
 }
 
-export default connect(
-  ({ inst: { accList, error } }) => ({
-    accList
-  }),
-  dispatch => ({
-    openPopup: () => dispatch(openPopup())
-  })
-)(LeftBar);
+export default withRouter(
+  connect(
+    ({ inst: { accList, error } }) => ({
+      accList
+    }),
+    dispatch => ({
+      openPopup: () => dispatch(openPopup())
+    })
+  )(LeftBar)
+);
