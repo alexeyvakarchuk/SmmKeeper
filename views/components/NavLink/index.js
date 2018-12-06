@@ -16,6 +16,12 @@ class NavLink extends Component {
       ...props
     } = this.props;
 
+    console.log(
+      "props.route ::: ",
+      routes.findAndGetUrls(props.route, props.params).urls.as,
+      router.asPath
+    );
+
     const isActiveRoute =
       props.route === undefined
         ? false

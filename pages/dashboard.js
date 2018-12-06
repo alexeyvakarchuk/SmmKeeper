@@ -32,7 +32,7 @@ class Internal extends Component<Props, State> {
       password: { passwordExists }
     } = storeState;
 
-    console.log(accList, taskList, passwordExists);
+    // console.log(accList, taskList, passwordExists);
 
     const token =
       typeof window !== "undefined"
