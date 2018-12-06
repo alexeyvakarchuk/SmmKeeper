@@ -12,6 +12,7 @@ export default ({ children, title = "SmmKeeper" }: Props) => (
     <Head>
       <title>{title}</title>
       <meta charSet="utf-8" />
+      <link rel="manifest" href="/manifest.webmanifest" />
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
 
