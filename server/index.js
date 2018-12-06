@@ -58,6 +58,14 @@ n.prepare().then(() => {
   //   ctx.respond = false;
   // });
 
+  router.get("/service-worker.js", async ctx => {
+    const filePath = path.join(__dirname, "../.next", "/service-worker.js");
+    console.log(filePath);
+    n.serveStatic(ctx.req, ctx.res, filePath);
+    ctx.status = 200;
+    ctx.respond = false;
+  });
+
   router.get("*", async ctx => {
     await handler(ctx.req, ctx.res);
     ctx.status = 200;
