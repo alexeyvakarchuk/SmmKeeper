@@ -4,7 +4,26 @@ import { all, take, takeEvery, put, call, select } from "redux-saga/effects";
 import { baseURL } from "config";
 import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
-import { SOCKET_CONN_END } from "ducks/socket";
+import {
+  SIGN_IN_REQUEST,
+  SIGN_IN_START,
+  SIGN_IN_SUCCESS,
+  SIGN_IN_FAIL,
+  SIGN_UP_REQUEST,
+  SIGN_UP_START,
+  SIGN_UP_SUCCESS,
+  SIGN_UP_FAIL,
+  SIGN_OUT_REQUEST,
+  SIGN_OUT_START,
+  SIGN_OUT_SUCCESS,
+  SIGN_OUT_FAIL,
+  CLEAR_AUTH_ERROR,
+  GOOGLE_SIGN_IN_REQUEST,
+  GOOGLE_SIGN_IN_START,
+  GOOGLE_SIGN_IN_SUCCESS,
+  GOOGLE_SIGN_IN_FAIL
+} from "./const";
+import { SOCKET_CONN_END } from "ducks/socket/const";
 import type { State, UserReq } from "./types";
 import redirect from "server/redirect";
 import { setCookie, removeCookie } from "server/libs/cookies";
@@ -16,37 +35,6 @@ import { eventChannel, END } from "redux-saga";
  * */
 
 export const moduleName: string = "auth";
-
-export const SIGN_IN_REQUEST: "AUTH/SIGN_IN_REQUEST" = "AUTH/SIGN_IN_REQUEST";
-export const SIGN_IN_START: "AUTH/SIGN_IN_START" = "AUTH/SIGN_IN_START";
-export const SIGN_IN_SUCCESS: "AUTH/SIGN_IN_SUCCESS" = "AUTH/SIGN_IN_SUCCESS";
-export const SIGN_IN_FAIL: "AUTH/SIGN_IN_FAIL" = "AUTH/SIGN_IN_FAIL";
-
-export const SIGN_UP_REQUEST: "AUTH/SIGN_UP_REQUEST" = "AUTH/SIGN_UP_REQUEST";
-export const SIGN_UP_START: "AUTH/SIGN_UP_START" = "AUTH/SIGN_UP_START";
-export const SIGN_UP_SUCCESS: "AUTH/SIGN_UP_SUCCESS" = "AUTH/SIGN_UP_SUCCESS";
-export const SIGN_UP_FAIL: "AUTH/SIGN_UP_FAIL" = "AUTH/SIGN_UP_FAIL";
-
-export const SIGN_OUT_REQUEST: "AUTH/SIGN_OUT_REQUEST" =
-  "AUTH/SIGN_OUT_REQUEST";
-export const SIGN_OUT_START: "AUTH/SIGN_OUT_START" = "AUTH/SIGN_OUT_START";
-export const SIGN_OUT_SUCCESS: "AUTH/SIGN_OUT_SUCCESS" =
-  "AUTH/SIGN_OUT_SUCCESS";
-export const SIGN_OUT_FAIL: "AUTH/SIGN_OUT_FAIL" = "AUTH/SIGN_OUT_FAIL";
-
-export const CLEAR_AUTH_ERROR: "AUTH/CLEAR_AUTH_ERROR" =
-  "AUTH/CLEAR_AUTH_ERROR";
-
-// Socials Auth
-
-export const GOOGLE_SIGN_IN_REQUEST: "AUTH/GOOGLE_SIGN_IN_REQUEST" =
-  "AUTH/GOOGLE_SIGN_IN_REQUEST";
-export const GOOGLE_SIGN_IN_START: "AUTH/GOOGLE_SIGN_IN_START" =
-  "AUTH/GOOGLE_SIGN_IN_START";
-export const GOOGLE_SIGN_IN_SUCCESS: "AUTH/GOOGLE_SIGN_IN_SUCCESS" =
-  "AUTH/GOOGLE_SIGN_IN_SUCCESS";
-export const GOOGLE_SIGN_IN_FAIL: "AUTH/GOOGLE_SIGN_IN_FAIL" =
-  "AUTH/GOOGLE_SIGN_IN_FAIL";
 
 /**
  * Reducer
@@ -78,11 +66,6 @@ const authReducer = handleActions(
         email: action.payload.user.email
       }
     }),
-    [SIGN_OUT_SUCCESS]: (state: State) => ({
-      user: null,
-      progress: false,
-      error: null
-    }),
     [combineActions(SIGN_IN_FAIL, SIGN_UP_FAIL, SIGN_OUT_FAIL)]: (
       state: State,
       action
@@ -91,6 +74,8 @@ const authReducer = handleActions(
       progress: false,
       error: action.payload.error
     }),
+
+    [SIGN_OUT_SUCCESS]: () => initialState,
     [CLEAR_AUTH_ERROR]: (state: State, action) => ({
       ...state,
       error: null

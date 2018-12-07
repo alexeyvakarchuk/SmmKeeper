@@ -3,13 +3,7 @@
 import React, { Component } from "react";
 import InputField from "components/InputField";
 import { connect } from "react-redux";
-import {
-  signIn,
-  signUp,
-  checkGoogleAuth,
-  clearAuthError,
-  SIGN_IN_SUCCESS
-} from "ducks/auth";
+import { signIn, signUp, checkGoogleAuth, clearAuthError } from "ducks/auth";
 import OutlineButton from "components/OutlineButton";
 import GradientButton from "components/GradientButton";
 import type { Props, State } from "./types";

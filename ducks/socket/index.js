@@ -3,22 +3,25 @@
 import { takeEvery, take, put, call, select } from "redux-saga/effects";
 import { eventChannel, END } from "redux-saga";
 import { createAction, handleActions } from "redux-actions";
+import { signOut } from "ducks/auth";
 import {
   SIGN_OUT_REQUEST,
   SIGN_IN_SUCCESS,
-  SIGN_OUT_SUCCESS,
-  signOut
-} from "ducks/auth";
-// import {
-//   TODO_ADD_SUCCESS,
-//   TODO_COMPLETE_SUCCESS,
-//   TODO_INCOMPLETE_SUCCESS
-// } from "ducks/todolist";
-import { CONN_ACC_SUCCESS } from "ducks/inst";
+  SIGN_OUT_SUCCESS
+} from "ducks/auth/const";
+import {
+  SOCKET_CONN_REQUEST,
+  SOCKET_CONN_START,
+  SOCKET_CONN_SUCCESS,
+  SOCKET_CONN_END,
+  SOCKET_CONN_FAIL,
+  SOCKET_AUTH_SUCCESS
+} from "./const";
+import { CONN_ACC_SUCCESS } from "ducks/inst/const";
 import {
   UPDATE_PASSWORD_SOCKET_EVENT,
   SET_PASSWORD_SUCCESS
-} from "ducks/password";
+} from "ducks/password/const";
 import redirect from "server/redirect";
 import io from "socket.io-client";
 import type { State } from "./types";
@@ -29,20 +32,6 @@ import { baseURL } from "config";
  * */
 
 export const moduleName: string = "socket";
-
-export const SOCKET_CONN_REQUEST: "SOCKET/SOCKET_CONN_REQUEST" =
-  "SOCKET/SOCKET_CONN_REQUEST";
-export const SOCKET_CONN_START: "SOCKET/SOCKET_CONN_START" =
-  "SOCKET/SOCKET_CONN_START";
-export const SOCKET_CONN_SUCCESS: "SOCKET/SOCKET_CONN_SUCCESS" =
-  "SOCKET/SOCKET_CONN_SUCCESS";
-export const SOCKET_CONN_END: "SOCKET/SOCKET_CONN_END" =
-  "SOCKET/SOCKET_CONN_END";
-export const SOCKET_CONN_FAIL: "SOCKET/SOCKET_CONN_FAIL" =
-  "SOCKET/SOCKET_CONN_FAIL";
-
-export const SOCKET_AUTH_SUCCESS: "SOCKET/SOCKET_AUTH_SUCCESS" =
-  "SOCKET/SOCKET_AUTH_SUCCESS";
 
 /**
  * Reducer
@@ -75,6 +64,7 @@ const socketReducer = handleActions(
       auth: true,
       error: null
     }),
+
     [SOCKET_CONN_END]: () => initialState,
     [SOCKET_CONN_FAIL]: (state: State, action) => ({
       progress: false,

@@ -1,6 +1,10 @@
 // @flow
 
 import { createAction, handleActions } from "redux-actions";
+// import { SIGN_OUT_SUCCESS } from "ducks/auth";
+// console.log(SIGN_OUT_SUCCESS);
+import { POPUP_OPEN, POPUP_CLOSE } from "./const";
+import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
 import type { State } from "./types";
 
 /**
@@ -8,12 +12,6 @@ import type { State } from "./types";
  * */
 
 export const moduleName: string = "connectAccPopup";
-
-export const POPUP_OPEN: "CONNECT-ACC-POPUP/POPUP_OPEN" =
-  "CONNECT-ACC-POPUP/POPUP_OPEN";
-
-export const POPUP_CLOSE: "CONNECT-ACC-POPUP/POPUP_CLOSE" =
-  "CONNECT-ACC-POPUP/POPUP_CLOSE";
 
 /**
  * Reducer
@@ -30,7 +28,9 @@ const connectAccPopupReducer = handleActions(
     }),
     [POPUP_CLOSE]: () => ({
       visible: false
-    })
+    }),
+
+    [SIGN_OUT_SUCCESS]: () => initialState
   },
   initialState
 );

@@ -13,7 +13,7 @@ import {
   SIGN_OUT_START,
   SIGN_OUT_SUCCESS,
   SIGN_OUT_FAIL
-} from "./index";
+} from "./const";
 
 export type UserReq = {|
   email: string,

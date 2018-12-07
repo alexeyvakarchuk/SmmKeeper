@@ -4,9 +4,29 @@ import { all, take, takeEvery, put, call, select } from "redux-saga/effects";
 import { baseURL } from "config";
 import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
-import { SOCKET_CONN_END } from "ducks/socket";
+import { SOCKET_CONN_END } from "ducks/socket/const";
 import type { State, UserReq, Acc } from "./types";
 import { stateSelector as authStateSelector } from "ducks/auth";
+import {
+  CONN_ACC_REQUEST,
+  CONN_ACC_START,
+  CONN_ACC_SUCCESS,
+  CONN_ACC_FAIL,
+  FETCH_ACCS_REQUEST,
+  FETCH_ACCS_START,
+  FETCH_ACCS_SUCCESS,
+  FETCH_ACCS_FAIL,
+  CLEAR_CONN_ERROR,
+  FETCH_TASKS_REQUEST,
+  FETCH_TASKS_START,
+  FETCH_TASKS_SUCCESS,
+  FETCH_TASKS_FAIL,
+  TASK_START_REQUEST,
+  TASK_START_START,
+  TASK_START_SUCCESS,
+  TASK_START_FAIL
+} from "./const";
+import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
 import { live } from "ducks/socket";
 import redirect from "server/redirect";
 import type { State as AccReq } from "components/connectAccPopup/types";
@@ -18,43 +38,6 @@ import { setCookie, getCookie, removeCookie } from "server/libs/cookies";
  * */
 
 export const moduleName: string = "inst";
-
-export const CONN_ACC_REQUEST: "INST/CONN_ACC_REQUEST" =
-  "INST/CONN_ACC_REQUEST";
-export const CONN_ACC_START: "INST/CONN_ACC_START" = "INST/CONN_ACC_START";
-export const CONN_ACC_SUCCESS: "INST/CONN_ACC_SUCCESS" =
-  "INST/CONN_ACC_SUCCESS";
-export const CONN_ACC_FAIL: "INST/CONN_ACC_FAIL" = "INST/CONN_ACC_FAIL";
-
-export const FETCH_ACCS_REQUEST: "INST/FETCH_ACCS_REQUEST" =
-  "INST/FETCH_ACCS_REQUEST";
-export const FETCH_ACCS_START: "INST/FETCH_ACCS_START" =
-  "INST/FETCH_ACCS_START";
-export const FETCH_ACCS_SUCCESS: "INST/FETCH_ACCS_SUCCESS" =
-  "INST/FETCH_ACCS_SUCCESS";
-export const FETCH_ACCS_FAIL: "INST/FETCH_ACCS_FAIL" = "INST/FETCH_ACCS_FAIL";
-
-export const CLEAR_CONN_ERROR: "INST/CLEAR_CONN_ERROR" =
-  "INST/CLEAR_CONN_ERROR";
-
-// *** Tasks ***
-
-export const FETCH_TASKS_REQUEST: "INST/FETCH_TASKS_REQUEST" =
-  "INST/FETCH_TASKS_REQUEST";
-export const FETCH_TASKS_START: "INST/FETCH_TASKS_START" =
-  "INST/FETCH_TASKS_START";
-export const FETCH_TASKS_SUCCESS: "INST/FETCH_TASKS_SUCCESS" =
-  "INST/FETCH_TASKS_SUCCESS";
-export const FETCH_TASKS_FAIL: "INST/FETCH_TASKS_FAIL" =
-  "INST/FETCH_TASKS_FAIL";
-
-export const TASK_START_REQUEST: "INST/TASK_START_REQUEST" =
-  "INST/TASK_START_REQUEST";
-export const TASK_START_START: "INST/TASK_START_START" =
-  "INST/TASK_START_START";
-export const TASK_START_SUCCESS: "INST/TASK_START_SUCCESS" =
-  "INST/TASK_START_SUCCESS";
-export const TASK_START_FAIL: "INST/TASK_START_FAIL" = "INST/TASK_START_FAIL";
 
 /**
  * Reducer
@@ -137,6 +120,8 @@ const instReducer = handleActions(
       progressStartTask: false,
       error: action.payload.error
     }),
+
+    [SIGN_OUT_SUCCESS]: () => initialState,
 
     [CLEAR_CONN_ERROR]: (state: State, action) => ({
       ...state,

@@ -8,41 +8,14 @@ import { openPopup } from "ducks/connectAccPopup";
 import type { Props, State } from "./types";
 
 class Dashboard extends Component<Props, State> {
-  state = {
-    popupVisible: false
-  };
-
   render() {
     const { accList } = this.props;
-
-    const connectedAccounts = [];
-
-    // const shouldRedirect =
-    //   // $FlowFixMe
-    //   this.props.match.url !== location.pathname ||
-    //   location.pathname === "/app";
 
     return (
       <section className="dashboard">
         {accList !== null &&
           (accList.length ? (
             <div className="profile">
-              {
-                //accList.map(({ username }) => {
-                // const render = username => () => (
-                //   <InstaProfilePage username={username} />
-                // );
-                // return (
-                //   <Route
-                //     path={`/app/${username}`}
-                //     render={render(username)}
-                //   />
-                // );
-                //})
-              }
-              {/* {shouldRedirect && (
-                  <Redirect to={`/app/${accList[0].username}`} />
-                )} */}
               <InstaProfilePage username={this.props.username} />
             </div>
           ) : (
