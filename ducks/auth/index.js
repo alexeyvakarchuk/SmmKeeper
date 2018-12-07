@@ -301,6 +301,8 @@ function* signOutSaga() {
 
     removeCookie("tktoken");
 
+    redirect("/");
+
     yield put({ type: SIGN_OUT_SUCCESS });
 
     yield put({ type: SOCKET_CONN_END });
