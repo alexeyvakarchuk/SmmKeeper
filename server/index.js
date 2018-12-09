@@ -66,6 +66,16 @@ n.prepare().then(() => {
     ctx.respond = false;
   });
 
+  router.get("/auth/success", async ctx => {
+    const filePath = path.join(__dirname, "./templates/googleAuthSuccess.html");
+    console.log(filePath);
+    // n.serveStatic(ctx.req, ctx.res, filePath);
+    ctx.status = 200;
+    ctx.type = "html";
+    ctx.body = fs.createReadStream(filePath);
+    // ctx.respond = false;
+  });
+
   // router.get("/manifest.webmanifest", async ctx => {
   //   const filePath = path.join(__dirname, "../manifest.webmanifest");
   //   // console.log(filePath);
