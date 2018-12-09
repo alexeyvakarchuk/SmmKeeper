@@ -32,6 +32,7 @@ class BarChart extends PureComponent<Props, State> {
         ]
       },
       options: {
+        animation: false,
         scales: {
           yAxes: [
             {
@@ -117,6 +118,7 @@ class BarChart extends PureComponent<Props, State> {
       this.lineChart.data.datasets[0].data = this.props.data
         .map(el => el.followers)
         .reverse();
+
       this.lineChart.update();
     }
   }

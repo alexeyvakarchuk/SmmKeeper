@@ -97,7 +97,19 @@ class InstaProfilePage extends PureComponent<Props, State> {
             {/* </div> */}
             {/* <div className="col-stats"> */}
             <div className="panel stats">
-              <BarChart data={acc && acc.stats ? acc.stats : []} />
+              <div className="stats__top">
+                <div className="stats__top-nav">
+                  <span className="stats__top-text">Metrics</span>
+                </div>
+                <div className="stats__top-growth">
+                  <span className="stats__top-text stats__top-text_grey">
+                    Average growth: X followers / day
+                  </span>
+                </div>
+              </div>
+              <div className="stats__chart">
+                <BarChart data={acc && acc.stats ? acc.stats : []} />
+              </div>
             </div>
             {/* </div> */}
           </div>

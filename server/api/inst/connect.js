@@ -69,8 +69,6 @@ exports.init = router =>
         bio: biography,
         externalUrl: external_url,
         postsCount: edge_owner_to_timeline_media.count,
-        // followers: edge_followed_by.count,
-        // follows: edge_follow.count,
         stats: [
           {
             followers: edge_followed_by.count,
