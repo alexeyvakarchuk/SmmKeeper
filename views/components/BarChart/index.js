@@ -21,10 +21,10 @@ class BarChart extends PureComponent<Props, State> {
     this.lineChart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: data.map(el => moment(el.date).format("D")),
+        labels: data.map(el => moment(el.date).format("D")).reverse(),
         datasets: [
           {
-            data: data.map(el => el.followers),
+            data: data.map(el => el.followers).reverse(),
             backgroundColor: "#0870BF",
             hoverBackgroundColor: "#078CF2",
             borderWidth: 0
@@ -111,12 +111,12 @@ class BarChart extends PureComponent<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     if (this.props.data !== prevProps.data) {
-      this.lineChart.data.labels = this.props.data.map(el =>
-        moment(el.date).format("D")
-      );
-      this.lineChart.data.datasets[0].data = this.props.data.map(
-        el => el.followers
-      );
+      this.lineChart.data.labels = this.props.data
+        .map(el => moment(el.date).format("D"))
+        .reverse();
+      this.lineChart.data.datasets[0].data = this.props.data
+        .map(el => el.followers)
+        .reverse();
       this.lineChart.update();
     }
   }
