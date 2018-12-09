@@ -4,6 +4,7 @@ import React, { PureComponent } from "react";
 import type { Props, State } from "./types";
 import GradientButton from "components/GradientButton";
 import { startTask, fetchTasks } from "ducks/inst";
+import BarChart from "components/BarChart";
 import { connect } from "react-redux";
 
 class InstaProfilePage extends PureComponent<Props, State> {
@@ -95,7 +96,9 @@ class InstaProfilePage extends PureComponent<Props, State> {
             <div className="panel limits" />
             {/* </div> */}
             {/* <div className="col-stats"> */}
-            <div className="panel stats" />
+            <div className="panel stats">
+              <BarChart data={acc && acc.stats ? acc.stats : []} />
+            </div>
             {/* </div> */}
           </div>
         </div>
