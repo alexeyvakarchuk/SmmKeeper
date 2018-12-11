@@ -69,9 +69,52 @@ class BarChart extends PureComponent<Props, State> {
         maintainAspectRatio: false,
         legend: {
           display: false
+        },
+        tooltips: {
+          backgroundColor: "#fff",
+          bodyFontColor: "#2C3436",
+          title: false,
+          displayColors: false,
+          borderColor: "#DFE6E9",
+          borderWidth: 1,
+          callbacks: {
+            title: () => null,
+            label: (tooltipItem, data) => {
+              let label = data.datasets[tooltipItem.datasetIndex].label || "";
+              const prevLabel =
+                data.datasets[tooltipItem.datasetIndex].data[
+                  tooltipItem.index - 1
+                ];
+
+              if (label) {
+                label += ": ";
+              }
+              label += Math.round(tooltipItem.yLabel * 100) / 100;
+
+              // console.log(
+              //   label,
+              //   tooltipItem,
+              //   data.datasets[tooltipItem.datasetIndex],
+              //   prevLabel
+              // );
+
+              if (prevLabel) {
+                if (label - prevLabel > 0) {
+                  label += ` (+${label - prevLabel})`;
+                } else if (label - prevLabel < 0) {
+                  label += ` (${label - prevLabel})`;
+                }
+              }
+
+              return label;
+            }
+          },
+          bodyFontSize: 13,
+          bodyFontFamily: "'Open Sans', sans-serif",
+          bodyFontStyle: 600,
+          xPadding: 8,
+          yPadding: 8
         }
-        // barPercentage: 0.5,
-        // categoryPercentage: 0.3
       }
     });
   }
