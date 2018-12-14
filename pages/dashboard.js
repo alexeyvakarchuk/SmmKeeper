@@ -27,6 +27,7 @@ class Internal extends Component<Props, State> {
     const { store, req, isServer, query } = ctx;
 
     const storeState = store.getState();
+
     const {
       inst: { accList, taskList },
       password: { passwordExists }

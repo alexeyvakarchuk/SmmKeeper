@@ -5,6 +5,7 @@ import type { Props, State } from "./types";
 import GradientButton from "components/GradientButton";
 import { startTask, fetchTasks } from "ducks/inst";
 import BarChart from "components/BarChart";
+import RangeGradient from "components/RangeGradient";
 import { connect } from "react-redux";
 
 class InstaProfilePage extends PureComponent<Props, State> {
@@ -93,7 +94,9 @@ class InstaProfilePage extends PureComponent<Props, State> {
               )}
             {/* </div> */}
             {/* <div className="col-limits"> */}
-            <div className="panel limits" />
+            <div className="panel limits">
+              <RangeGradient minValue={20} maxValue={150} currentValue={70} />
+            </div>
             {/* </div> */}
             {/* <div className="col-stats"> */}
             <div className="panel stats">
