@@ -23,6 +23,18 @@ const instAccSchema = new mongoose.Schema(
     },
     bio: { type: String },
     externalUrl: { type: String },
+    limits: {
+      mf: {
+        min: { type: Number, default: 0 },
+        max: { type: Number, default: 45 },
+        current: { type: Number, default: 20 }
+      },
+      ml: {
+        min: { type: Number, default: 0 },
+        max: { type: Number, default: 45 },
+        current: { type: Number, default: 20 }
+      }
+    },
     stats: [
       {
         date: {

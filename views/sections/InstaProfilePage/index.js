@@ -94,9 +94,26 @@ class InstaProfilePage extends PureComponent<Props, State> {
               )}
             {/* </div> */}
             {/* <div className="col-limits"> */}
-            <div className="panel limits">
-              <RangeGradient minValue={1} maxValue={60} currentValue={20} />
-            </div>
+            {acc &&
+              acc.limits &&
+              acc.limits.mf &&
+              acc.limits.ml && (
+                <div className="panel limits">
+                  Likes/hr.
+                  <RangeGradient
+                    minValue={acc.limits.ml.min}
+                    maxValue={acc.limits.ml.max}
+                    currentValue={acc.limits.ml.current}
+                  />
+                  Follows and Unfollows/hr.
+                  <RangeGradient
+                    minValue={acc.limits.mf.min}
+                    maxValue={acc.limits.mf.max}
+                    currentValue={acc.limits.mf.current}
+                  />
+                </div>
+              )}
+
             {/* </div> */}
             {/* <div className="col-stats"> */}
             <div className="panel stats">
