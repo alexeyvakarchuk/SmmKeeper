@@ -19,17 +19,24 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
     const { slider, button, innerTrack } = this;
 
     if (slider && button && innerTrack) {
-      if (
-        this.props.currentValue &&
-        this.props.currentValue < this.state.maxValue &&
-        this.props.currentValue > this.state.minValue
-      ) {
-      }
-
       innerTrack.style.width = `${slider.clientWidth}px`;
 
       // Disable hthml5 drag and drop
       button.addEventListener("dragstart", () => false);
+
+      // Displaying the initial value on the range slider
+      const { currentValue } = this.props;
+      const { minValue, maxValue } = this.state;
+
+      if (currentValue && currentValue > minValue && currentValue < maxValue) {
+        const right = slider.offsetWidth - button.offsetWidth;
+
+        const initialLeft =
+          (currentValue - minValue) * (right / (maxValue - minValue));
+
+        button.style.left = `${initialLeft}px`;
+        innerTrack.style.left = `-${initialLeft}px`;
+      }
 
       const getCoords = (elem: HTMLDivElement) => {
         const { top, left } = elem.getBoundingClientRect();
