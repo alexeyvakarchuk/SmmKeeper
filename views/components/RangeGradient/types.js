@@ -8,5 +8,7 @@ export type State = {|
 export type Props = {|
   minValue: number,
   maxValue: number,
-  currentValue?: number
+  currentValue?: number,
+
+  handleDragEnd: (value: number) => void
 |};

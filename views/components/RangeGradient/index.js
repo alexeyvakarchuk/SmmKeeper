@@ -66,7 +66,10 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
 
             button.style.left = `${leftPersent}%`;
             innerTrack.style.left = `-${left}px`;
-            this.setState({ value: this.state.minValue });
+
+            if (this.state.value !== this.state.minValue) {
+              this.setState({ value: this.state.minValue });
+            }
 
             return false;
           }
@@ -78,7 +81,10 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
 
             button.style.left = `${leftPersent - 1.8}%`;
             innerTrack.style.left = `-${left}px`;
-            this.setState({ value: this.state.maxValue });
+
+            if (this.state.value !== this.state.maxValue) {
+              this.setState({ value: this.state.maxValue });
+            }
 
             return false;
           }
@@ -104,6 +110,7 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
           document.removeEventListener("mousemove", mouseMoveHandler);
           document.removeEventListener("mouseup", mouseUpHandler);
           console.log("Drag finished");
+          this.props.handleDragEnd(this.state.value);
         };
 
         if (document) {

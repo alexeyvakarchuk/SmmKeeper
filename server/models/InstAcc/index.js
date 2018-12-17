@@ -25,12 +25,12 @@ const instAccSchema = new mongoose.Schema(
     externalUrl: { type: String },
     limits: {
       mf: {
-        min: { type: Number, default: 0 },
+        min: { type: Number, default: 1 },
         max: { type: Number, default: 45 },
         current: { type: Number, default: 20 }
       },
       ml: {
-        min: { type: Number, default: 0 },
+        min: { type: Number, default: 1 },
         max: { type: Number, default: 45 },
         current: { type: Number, default: 20 }
       }

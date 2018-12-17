@@ -10,5 +10,6 @@ export type Props = {|
   accList: Acc[],
 
   fetchTasks: (username: string, token: string) => void,
-  startTask: (username: string, type: string) => void
+  startTask: (username: string, type: string) => void,
+  updateLimit: (username: string, type: string, limitValue: number) => void
 |};

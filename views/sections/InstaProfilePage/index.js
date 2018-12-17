@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 import type { Props, State } from "./types";
 import GradientButton from "components/GradientButton";
-import { startTask, fetchTasks } from "ducks/inst";
+import { startTask, fetchTasks, updateLimit } from "ducks/inst";
 import BarChart from "components/BarChart";
 import RangeGradient from "components/RangeGradient";
 import { connect } from "react-redux";
@@ -104,12 +104,18 @@ class InstaProfilePage extends PureComponent<Props, State> {
                     minValue={acc.limits.ml.min}
                     maxValue={acc.limits.ml.max}
                     currentValue={acc.limits.ml.current}
+                    handleDragEnd={value =>
+                      this.props.updateLimit(username, "ml", value)
+                    }
                   />
                   Follows and Unfollows/hr.
                   <RangeGradient
                     minValue={acc.limits.mf.min}
                     maxValue={acc.limits.mf.max}
                     currentValue={acc.limits.mf.current}
+                    handleDragEnd={value =>
+                      this.props.updateLimit(username, "mf", value)
+                    }
                   />
                 </div>
               )}
@@ -172,6 +178,8 @@ export default connect(
   }),
   dispatch => ({
     fetchTasks: (username, token) => dispatch(fetchTasks({ username, token })),
-    startTask: (username, type) => dispatch(startTask({ username, type }))
+    startTask: (username, type) => dispatch(startTask({ username, type })),
+    updateLimit: (username, type, limitValue) =>
+      dispatch(updateLimit({ username, type, limitValue }))
   })
 )(InstaProfilePage);
