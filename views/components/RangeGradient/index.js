@@ -31,10 +31,11 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
       if (currentValue && currentValue > minValue && currentValue < maxValue) {
         const right = slider.offsetWidth - button.offsetWidth;
 
+        const initialLeftPersent =
+          (currentValue - minValue) * (100 / (maxValue - minValue));
         const initialLeft =
           (currentValue - minValue) * (right / (maxValue - minValue));
-
-        button.style.left = `${initialLeft}px`;
+        button.style.left = `${initialLeftPersent}%`;
         innerTrack.style.left = `-${initialLeft}px`;
       }
 
@@ -56,13 +57,14 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
 
         const mouseMoveHandler = (e: Object) => {
           let left = e.pageX - shiftX - sliderCoords.left;
-
+          var leftPersent = (left * 100) / slider.clientWidth;
           // console.log(e.pageX, sliderCoords.left);
 
-          if (left < 0) {
+          if (leftPersent < 0) {
+            leftPersent = 0;
             left = 0;
 
-            button.style.left = `${left}px`;
+            button.style.left = `${leftPersent}%`;
             innerTrack.style.left = `-${left}px`;
             this.setState({ value: this.state.minValue });
 
@@ -70,11 +72,11 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
           }
 
           let right = slider.offsetWidth - button.offsetWidth;
-
           if (left > right) {
+            leftPersent = 100;
             left = right;
 
-            button.style.left = `${left}px`;
+            button.style.left = `${leftPersent - 1.8}%`;
             innerTrack.style.left = `-${left}px`;
             this.setState({ value: this.state.maxValue });
 
@@ -94,7 +96,7 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
             this.setState({ value: currentValue });
           }
 
-          button.style.left = `${left}px`;
+          button.style.left = `${leftPersent}%`;
           innerTrack.style.left = `-${left}px`;
         };
 
