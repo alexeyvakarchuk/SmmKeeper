@@ -120,9 +120,14 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
         {/* <div class="track_2">
           <div class="range__text">0</div>
         </div> */}
-        <div>{this.state.value}</div>
+
         <div className="range__button" ref={el => (this.button = el)}>
-          <div className="track" ref={el => (this.innerTrack = el)} />
+          <div className="range__text">
+            <span>{this.state.value}</span>
+          </div>
+          <div className="range__dot">
+            <div className="range__track" ref={el => (this.innerTrack = el)} />
+          </div>
         </div>
       </div>
     );

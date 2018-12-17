@@ -95,7 +95,7 @@ class InstaProfilePage extends PureComponent<Props, State> {
             {/* </div> */}
             {/* <div className="col-limits"> */}
             <div className="panel limits">
-              <RangeGradient minValue={0} maxValue={60} currentValue={20} />
+              <RangeGradient minValue={1} maxValue={60} currentValue={20} />
             </div>
             {/* </div> */}
             {/* <div className="col-stats"> */}
