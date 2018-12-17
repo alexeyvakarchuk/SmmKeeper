@@ -8,7 +8,9 @@
 [lints]
 
 [options]
+module.name_mapper='server' -> '<PROJECT_ROOT>/server'
 module.name_mapper='store' -> '<PROJECT_ROOT>/redux/store.js'
+module.name_mapper='hoc' -> '<PROJECT_ROOT>/views/hoc'
 module.name_mapper='ducks' -> '<PROJECT_ROOT>/ducks'
 module.name_mapper='components' -> '<PROJECT_ROOT>/views/components'
 module.name_mapper='sections' -> '<PROJECT_ROOT>/views/sections'

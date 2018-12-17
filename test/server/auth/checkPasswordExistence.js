@@ -6,7 +6,7 @@ const port = require("test/config.js").port;
 
 const baseURL = `http://localhost:${port}`;
 
-const app = require("server/server.js");
+const { app } = require("server/server.js");
 
 const User = require("server/models/User");
 
@@ -25,6 +25,8 @@ describe("POST /api/check-password-existence", () => {
 
   before(async () => {
     server = app.listen(port);
+
+    console.log(port);
 
     await User.create(reqData);
 

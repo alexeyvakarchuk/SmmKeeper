@@ -1,5 +1,11 @@
+export type StatItem = {|
+  followers: number,
+  follows: number
+|};
+
 export type Acc = {|
-  username: string
+  username: string,
+  stats: StatItem[]
 |};
 
 export type Task = {|

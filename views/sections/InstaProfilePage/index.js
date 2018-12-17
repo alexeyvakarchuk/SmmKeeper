@@ -3,18 +3,27 @@
 import React, { PureComponent } from "react";
 import type { Props, State } from "./types";
 import GradientButton from "components/GradientButton";
-import { startTask, fetchTasks } from "ducks/inst";
+import { startTask, fetchTasks, updateLimit } from "ducks/inst";
+import BarChart from "components/BarChart";
+import RangeGradient from "components/RangeGradient";
 import { connect } from "react-redux";
-import store from "store";
 
 class InstaProfilePage extends PureComponent<Props, State> {
-  componentDidMount() {
-    store.dispatch(fetchTasks({ username: this.props.username }));
-  }
+  // componentDidMount() {
+  //   this.props.fetchTasks(this.props.username);
+  // }
 
   componentDidUpdate(prevProps) {
-    if (this.props.username !== prevProps.username) {
-      store.dispatch(fetchTasks({ username: this.props.username }));
+    const token =
+      typeof window !== "undefined" && localStorage.getItem("tktoken");
+    // console.log("need to update", this.props.username, prevProps.username);
+
+    if (
+      this.props.username !== prevProps.username &&
+      !this.props.progressFetchTasks
+    ) {
+      // $FlowFixMe
+      this.props.fetchTasks(this.props.username, token);
     }
   }
 
@@ -29,7 +38,7 @@ class InstaProfilePage extends PureComponent<Props, State> {
         if (x >= 0) {
           return (
             <span className="profile-info__text profile-info__text_mark-green">
-              {x}
+              +{x}
             </span>
           );
         } else {
@@ -49,41 +58,86 @@ class InstaProfilePage extends PureComponent<Props, State> {
         {/* <h1 className="instaprofile__name">@{username}</h1> */}
         <div className="container-fluid">
           <div className="row">
-            <div className="col-lg-2 col-md-3">
-              <div className="panel profile-info">
-                <div className="profile-info__profile">
-                  <span className="profile-info__profile-text">Profile</span>
-                  <span className="profile-info__profile-text profile-info__profile-text_grey">
-                    Paid till {`27.10.2019`}
-                  </span>
+            {/* <div className="col-profile-info"> */}
+            {acc &&
+              acc.stats &&
+              acc.stats.length > 0 && (
+                <div className="panel profile-info">
+                  <div className="profile-info__profile">
+                    <span className="profile-info__profile-text">Profile</span>
+                    <span className="profile-info__profile-text profile-info__profile-text_grey">
+                      Paid till {`27.10.2019`}
+                    </span>
+                  </div>
+                  <span className="profile-info__name">{username}</span>
+                  <div className="profile-info__block">
+                    <span className="profile-info__text">
+                      {acc.stats[0].followers}
+                    </span>
+                    {accMark(acc.stats, "followers")}
+                    <span className="profile-info__caption">Followers</span>
+                  </div>
+                  <div className="profile-info__block">
+                    <span className="profile-info__text">
+                      {acc.stats[0].follows}
+                    </span>
+                    {accMark(acc.stats, "follows")}
+                    <span className="profile-info__caption">Following</span>
+                  </div>
+                  <div className="profile-info__block">
+                    <span className="profile-info__text">
+                      {acc.postsCount || 0}
+                    </span>
+                    <span className="profile-info__caption">Posts</span>
+                  </div>
                 </div>
-                <span className="profile-info__name">{username}</span>
-                <div className="profile-info__block">
-                  <span className="profile-info__text">
-                    {acc.stats[0].followers}
-                  </span>
-                  {accMark(acc.stats, "followers")}
-                  <span className="profile-info__caption">Followers</span>
+              )}
+            {/* </div> */}
+            {/* <div className="col-limits"> */}
+            {acc &&
+              acc.limits &&
+              acc.limits.mf &&
+              acc.limits.ml && (
+                <div className="panel limits">
+                  Likes/hr.
+                  <RangeGradient
+                    minValue={acc.limits.ml.min}
+                    maxValue={acc.limits.ml.max}
+                    currentValue={acc.limits.ml.current}
+                    handleDragEnd={value =>
+                      this.props.updateLimit(username, "ml", value)
+                    }
+                  />
+                  Follows and Unfollows/hr.
+                  <RangeGradient
+                    minValue={acc.limits.mf.min}
+                    maxValue={acc.limits.mf.max}
+                    currentValue={acc.limits.mf.current}
+                    handleDragEnd={value =>
+                      this.props.updateLimit(username, "mf", value)
+                    }
+                  />
                 </div>
-                <div className="profile-info__block">
-                  <span className="profile-info__text">
-                    {acc.stats[0].follows}
-                  </span>
-                  {accMark(acc.stats, "follows")}
-                  <span className="profile-info__caption">Following</span>
+              )}
+
+            {/* </div> */}
+            {/* <div className="col-stats"> */}
+            <div className="panel stats">
+              <div className="stats__top">
+                <div className="stats__top-nav">
+                  <span className="stats__top-text">Metrics</span>
                 </div>
-                <div className="profile-info__block">
-                  <span className="profile-info__text">{65}</span>
-                  <span className="profile-info__caption">Posts</span>
+                <div className="stats__top-growth">
+                  <span className="stats__top-text stats__top-text_grey">
+                    Average growth: X followers / day
+                  </span>
                 </div>
               </div>
+              <div className="stats__chart">
+                <BarChart data={acc && acc.stats ? acc.stats : []} />
+              </div>
             </div>
-            <div className="col-lg-4 col-md-3">
-              <div className="panel" />
-            </div>
-            <div className="col-lg-6 col-md-6">
-              <div className="panel" />
-            </div>
+            {/* </div> */}
           </div>
         </div>
 
@@ -116,7 +170,16 @@ class InstaProfilePage extends PureComponent<Props, State> {
   }
 }
 
-export default connect(({ inst: { accList, tasksList } }) => ({
-  accList,
-  tasksList
-}))(InstaProfilePage);
+export default connect(
+  ({ inst: { accList, tasksList, progressFetchTasks } }) => ({
+    accList,
+    tasksList,
+    progressFetchTasks
+  }),
+  dispatch => ({
+    fetchTasks: (username, token) => dispatch(fetchTasks({ username, token })),
+    startTask: (username, type) => dispatch(startTask({ username, type })),
+    updateLimit: (username, type, limitValue) =>
+      dispatch(updateLimit({ username, type, limitValue }))
+  })
+)(InstaProfilePage);

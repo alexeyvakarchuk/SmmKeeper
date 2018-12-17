@@ -7,11 +7,10 @@ import Bell from "icons/Bell";
 import BulletsMenu from "icons/BulletsMenu";
 import Pause from "icons/Pause";
 import Play from "icons/Play";
+import { Link } from "server/routes";
 import ArrowDown from "icons/ArrowDown";
 import { signOut } from "ducks/auth";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
-import store from "store";
 import type { State, Props } from "./types";
 
 class TopBar extends PureComponent<Props, State> {
@@ -40,8 +39,10 @@ class TopBar extends PureComponent<Props, State> {
     return (
       <div className="topbar">
         <div className="topbar__leftside">
-          <Link to="/app" className="topbar__logo">
-            <Logo />
+          <Link route="/app">
+            <a className="topbar__logo">
+              <Logo />
+            </a>
           </Link>
           <span className="topbar__caption">
             “Your personal social media booster”
@@ -93,7 +94,7 @@ class TopBar extends PureComponent<Props, State> {
             </span>
             <div
               className={settingsDropdownClassName}
-              onClick={() => store.dispatch(signOut())}
+              onClick={this.props.signOut}
             >
               Sign Out
             </div>
@@ -104,4 +105,9 @@ class TopBar extends PureComponent<Props, State> {
   }
 }
 
-export default connect(({ auth: { user } }) => ({ user }))(TopBar);
+export default connect(
+  ({ auth: { user } }) => ({ user }),
+  dispatch => ({
+    signOut: () => dispatch(signOut())
+  })
+)(TopBar);

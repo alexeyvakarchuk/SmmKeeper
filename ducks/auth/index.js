@@ -4,10 +4,30 @@ import { all, take, takeEvery, put, call, select } from "redux-saga/effects";
 import { baseURL } from "config";
 import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
-import { SOCKET_CONN_END } from "ducks/socket";
+import {
+  SIGN_IN_REQUEST,
+  SIGN_IN_START,
+  SIGN_IN_SUCCESS,
+  SIGN_IN_FAIL,
+  SIGN_UP_REQUEST,
+  SIGN_UP_START,
+  SIGN_UP_SUCCESS,
+  SIGN_UP_FAIL,
+  SIGN_OUT_REQUEST,
+  SIGN_OUT_START,
+  SIGN_OUT_SUCCESS,
+  SIGN_OUT_FAIL,
+  CLEAR_AUTH_ERROR,
+  GOOGLE_SIGN_IN_REQUEST,
+  GOOGLE_SIGN_IN_START,
+  GOOGLE_SIGN_IN_SUCCESS,
+  GOOGLE_SIGN_IN_FAIL
+} from "./const";
+import { SOCKET_CONN_END } from "ducks/socket/const";
 import type { State, UserReq } from "./types";
-import { push } from "react-router-redux";
-import { live } from "ducks/socket";
+import redirect from "server/redirect";
+import { setCookie, removeCookie } from "server/libs/cookies";
+const live = typeof window !== "undefined" && require("ducks/socket").live;
 import { eventChannel, END } from "redux-saga";
 
 /**
@@ -15,37 +35,6 @@ import { eventChannel, END } from "redux-saga";
  * */
 
 export const moduleName: string = "auth";
-
-export const SIGN_IN_REQUEST: "AUTH/SIGN_IN_REQUEST" = "AUTH/SIGN_IN_REQUEST";
-export const SIGN_IN_START: "AUTH/SIGN_IN_START" = "AUTH/SIGN_IN_START";
-export const SIGN_IN_SUCCESS: "AUTH/SIGN_IN_SUCCESS" = "AUTH/SIGN_IN_SUCCESS";
-export const SIGN_IN_FAIL: "AUTH/SIGN_IN_FAIL" = "AUTH/SIGN_IN_FAIL";
-
-export const SIGN_UP_REQUEST: "AUTH/SIGN_UP_REQUEST" = "AUTH/SIGN_UP_REQUEST";
-export const SIGN_UP_START: "AUTH/SIGN_UP_START" = "AUTH/SIGN_UP_START";
-export const SIGN_UP_SUCCESS: "AUTH/SIGN_UP_SUCCESS" = "AUTH/SIGN_UP_SUCCESS";
-export const SIGN_UP_FAIL: "AUTH/SIGN_UP_FAIL" = "AUTH/SIGN_UP_FAIL";
-
-export const SIGN_OUT_REQUEST: "AUTH/SIGN_OUT_REQUEST" =
-  "AUTH/SIGN_OUT_REQUEST";
-export const SIGN_OUT_START: "AUTH/SIGN_OUT_START" = "AUTH/SIGN_OUT_START";
-export const SIGN_OUT_SUCCESS: "AUTH/SIGN_OUT_SUCCESS" =
-  "AUTH/SIGN_OUT_SUCCESS";
-export const SIGN_OUT_FAIL: "AUTH/SIGN_OUT_FAIL" = "AUTH/SIGN_OUT_FAIL";
-
-export const CLEAR_AUTH_ERROR: "AUTH/CLEAR_AUTH_ERROR" =
-  "AUTH/CLEAR_AUTH_ERROR";
-
-// Socials Auth
-
-export const GOOGLE_SIGN_IN_REQUEST: "AUTH/GOOGLE_SIGN_IN_REQUEST" =
-  "AUTH/GOOGLE_SIGN_IN_REQUEST";
-export const GOOGLE_SIGN_IN_START: "AUTH/GOOGLE_SIGN_IN_START" =
-  "AUTH/GOOGLE_SIGN_IN_START";
-export const GOOGLE_SIGN_IN_SUCCESS: "AUTH/GOOGLE_SIGN_IN_SUCCESS" =
-  "AUTH/GOOGLE_SIGN_IN_SUCCESS";
-export const GOOGLE_SIGN_IN_FAIL: "AUTH/GOOGLE_SIGN_IN_FAIL" =
-  "AUTH/GOOGLE_SIGN_IN_FAIL";
 
 /**
  * Reducer
@@ -77,11 +66,6 @@ const authReducer = handleActions(
         email: action.payload.user.email
       }
     }),
-    [SIGN_OUT_SUCCESS]: (state: State) => ({
-      user: null,
-      progress: false,
-      error: null
-    }),
     [combineActions(SIGN_IN_FAIL, SIGN_UP_FAIL, SIGN_OUT_FAIL)]: (
       state: State,
       action
@@ -90,6 +74,8 @@ const authReducer = handleActions(
       progress: false,
       error: action.payload.error
     }),
+
+    [SIGN_OUT_SUCCESS]: () => initialState,
     [CLEAR_AUTH_ERROR]: (state: State, action) => ({
       ...state,
       error: null
@@ -158,9 +144,15 @@ export function* signInSaga({
 
     localStorage.setItem("tktoken", token);
 
-    live.emit("signIn", user);
+    setCookie("tktoken", token);
 
-    yield put(push("/app"));
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("signIn", user);
+    }
+
+    // yield put(push("/app"));Route
+    redirect("/app");
   } catch (res) {
     yield put({
       type: SIGN_IN_FAIL,
@@ -202,10 +194,16 @@ function* signUpSaga({ payload: { email, password } }) {
     });
 
     localStorage.setItem("tktoken", token);
+    setCookie("tktoken", token);
 
-    live.emit("signIn", user);
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("signIn", user);
+    }
 
-    yield put(push("/app"));
+    // yield put(push("/app"));
+
+    redirect("/app");
   } catch (res) {
     yield put({
       type: SIGN_UP_FAIL,
@@ -243,8 +241,12 @@ export function* signInWithGoogleSaga(): Generator<any, any, any> {
     // });
 
     localStorage.setItem("tktoken", token);
+    setCookie("tktoken", token);
 
-    live.emit("signIn", user);
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("signIn", user);
+    }
   } catch (err) {
     yield put({
       type: GOOGLE_SIGN_IN_FAIL,
@@ -256,7 +258,9 @@ export function* signInWithGoogleSaga(): Generator<any, any, any> {
 }
 
 const listenSignIn = () =>
+  typeof window !== "undefined" &&
   eventChannel(emitter => {
+    // $FlowFixMe
     live.on("signIn", user => {
       emitter({
         type: SIGN_IN_SUCCESS,
@@ -265,10 +269,13 @@ const listenSignIn = () =>
         }
       });
 
-      emitter(push("/app"));
+      // emitter(push("/app"));
+
+      redirect("/app");
     });
 
     return () => {
+      // $FlowFixMe
       live.off("signIn");
     };
   });
@@ -292,14 +299,22 @@ function* signOutSaga() {
   try {
     localStorage.removeItem("tktoken");
 
+    removeCookie("tktoken");
+
+    redirect("/");
+
     yield put({ type: SIGN_OUT_SUCCESS });
 
     yield put({ type: SOCKET_CONN_END });
 
-    live.emit("SIGN_OUT_SUCCESS", { type: SIGN_OUT_SUCCESS });
-    live.emit("SOCKET_CONN_END", { type: SOCKET_CONN_END });
-
-    live.emit("signOut", null, true);
+    if (typeof window !== "undefined") {
+      // $FlowFixMe
+      live.emit("SIGN_OUT_SUCCESS", { type: SIGN_OUT_SUCCESS });
+      // $FlowFixMe
+      live.emit("SOCKET_CONN_END", { type: SOCKET_CONN_END });
+      // $FlowFixMe
+      live.emit("signOut", null, true);
+    }
   } catch (error) {
     yield put({
       type: SIGN_OUT_FAIL,
@@ -313,5 +328,7 @@ export function* watchAuth(): mixed {
   yield takeEvery(SIGN_UP_REQUEST, signUpSaga);
   yield takeEvery(SIGN_OUT_REQUEST, signOutSaga);
   yield takeEvery(GOOGLE_SIGN_IN_REQUEST, signInWithGoogleSaga);
-  yield all([listenSignInSaga()]);
+  if (typeof window !== "undefined") {
+    yield all([listenSignInSaga()]);
+  }
 }

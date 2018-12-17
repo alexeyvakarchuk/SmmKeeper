@@ -1,26 +1,15 @@
-if (process.env.TRACE) {
-  require("./libs/trace");
-}
-
-const Koa = require("koa");
-const app = new Koa();
-
-const config = require("./config/default");
-
+const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
 
-// Restarts tasks for all the taskswiths status=1
-require("./tasks/startTasks");
-require("./tasks/watchStats");
+// Koa
+const Koa = require("koa");
+const Router = require("koa-router");
+const app = new Koa();
+const router = new Router();
 
 const handlers = fs.readdirSync(path.join(__dirname, "handlers")).sort();
 handlers.forEach(handler => require("./handlers/" + handler).init(app));
-
-// can be split into files too
-const Router = require("koa-router");
-
-const router = new Router();
 
 // *** Auth API handlers ***
 const authHandlers = fs.readdirSync(path.join(__dirname, "api/auth")).sort();
@@ -37,23 +26,14 @@ usersHandlers.forEach(handler =>
 const instHandlers = fs.readdirSync(path.join(__dirname, "api/inst")).sort();
 instHandlers.forEach(handler => require("./api/inst/" + handler).init(router));
 
-const environment = process.env.NODE_ENV;
+router.get("/auth/success", async ctx => {
+  const filePath = path.join(__dirname, "./templates/googleAuthSuccess.html");
 
-if (environment === "development" || environment === "test") {
-  const devHandlers = fs
-    .readdirSync(path.join(__dirname, "devHandlers"))
-    .sort();
-  devHandlers.forEach(handler => require("./devHandlers/" + handler).init(app));
-
-  router.get("*", async function(ctx) {
-    ctx.body = ctx.render(__dirname + "/templates/dev.pug");
-  });
-} else {
-  router.get("*", async function(ctx) {
-    ctx.body = ctx.render(__dirname + "/templates/index.pug");
-  });
-}
+  ctx.status = 200;
+  ctx.type = "html";
+  ctx.body = fs.createReadStream(filePath);
+});
 
 app.use(router.routes());
 
-module.exports = app;
+module.exports = { app, router };

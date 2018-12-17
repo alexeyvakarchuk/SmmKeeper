@@ -9,5 +9,9 @@ export type State = {|
 export type Props = {|
   accList: null | Acc[],
   popupVisible: boolean,
-  error: string
+  error: string,
+
+  openPopup: () => void,
+  closePopup: () => void,
+  connectAcc: State => void
 |};

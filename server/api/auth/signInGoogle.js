@@ -64,6 +64,8 @@ exports.init = router => {
 
           const token = jwt.sign(payload, jwtsecret); // Token creation
 
+          // ctx.cookies.set("tktoken", token);
+
           authResolve({
             user: {
               email: user.email,

@@ -2,25 +2,27 @@
 
 import { takeEvery, take, put, call, select } from "redux-saga/effects";
 import { eventChannel, END } from "redux-saga";
-import tabex from "tabex";
 import { createAction, handleActions } from "redux-actions";
+import { signOut } from "ducks/auth";
 import {
   SIGN_OUT_REQUEST,
   SIGN_IN_SUCCESS,
-  SIGN_OUT_SUCCESS,
-  signOut
-} from "ducks/auth";
-// import {
-//   TODO_ADD_SUCCESS,
-//   TODO_COMPLETE_SUCCESS,
-//   TODO_INCOMPLETE_SUCCESS
-// } from "ducks/todolist";
-import { CONN_ACC_SUCCESS } from "ducks/inst";
+  SIGN_OUT_SUCCESS
+} from "ducks/auth/const";
+import {
+  SOCKET_CONN_REQUEST,
+  SOCKET_CONN_START,
+  SOCKET_CONN_SUCCESS,
+  SOCKET_CONN_END,
+  SOCKET_CONN_FAIL,
+  SOCKET_AUTH_SUCCESS
+} from "./const";
+import { CONN_ACC_SUCCESS } from "ducks/inst/const";
 import {
   UPDATE_PASSWORD_SOCKET_EVENT,
   SET_PASSWORD_SUCCESS
-} from "ducks/password";
-import { push } from "react-router-redux";
+} from "ducks/password/const";
+import redirect from "server/redirect";
 import io from "socket.io-client";
 import type { State } from "./types";
 import { baseURL } from "config";
@@ -30,20 +32,6 @@ import { baseURL } from "config";
  * */
 
 export const moduleName: string = "socket";
-
-export const SOCKET_CONN_REQUEST: "SOCKET/SOCKET_CONN_REQUEST" =
-  "SOCKET/SOCKET_CONN_REQUEST";
-export const SOCKET_CONN_START: "SOCKET/SOCKET_CONN_START" =
-  "SOCKET/SOCKET_CONN_START";
-export const SOCKET_CONN_SUCCESS: "SOCKET/SOCKET_CONN_SUCCESS" =
-  "SOCKET/SOCKET_CONN_SUCCESS";
-export const SOCKET_CONN_END: "SOCKET/SOCKET_CONN_END" =
-  "SOCKET/SOCKET_CONN_END";
-export const SOCKET_CONN_FAIL: "SOCKET/SOCKET_CONN_FAIL" =
-  "SOCKET/SOCKET_CONN_FAIL";
-
-export const SOCKET_AUTH_SUCCESS: "SOCKET/SOCKET_AUTH_SUCCESS" =
-  "SOCKET/SOCKET_AUTH_SUCCESS";
 
 /**
  * Reducer
@@ -76,6 +64,7 @@ const socketReducer = handleActions(
       auth: true,
       error: null
     }),
+
     [SOCKET_CONN_END]: () => initialState,
     [SOCKET_CONN_FAIL]: (state: State, action) => ({
       progress: false,
@@ -103,7 +92,13 @@ export const socketConnect = createAction(SOCKET_CONN_REQUEST);
  * Sagas
  * */
 
-export const live = tabex.client();
+export let tabex;
+export let live;
+
+if (typeof window !== "undefined") {
+  tabex = require("tabex");
+  live = tabex.client();
+}
 
 const initWebsocket = () =>
   eventChannel(emitter => {
@@ -117,17 +112,19 @@ const initWebsocket = () =>
 
     socket.on("connect", () => emitter({ type: SOCKET_CONN_SUCCESS }));
 
-    live.on("SIGN_OUT_SUCCESS", triggerDispatch);
-    live.on("SOCKET_CONN_END", triggerDispatch);
-    live.on("UPDATE_PASSWORD_START", triggerDispatch);
-    live.on("UPDATE_PASSWORD_SUCCESS", triggerDispatch);
-    live.on("UPDATE_PASSWORD_FAIL", triggerDispatch);
+    if (typeof window !== "undefined") {
+      live.on("SIGN_OUT_SUCCESS", triggerDispatch);
+      live.on("SOCKET_CONN_END", triggerDispatch);
+      live.on("UPDATE_PASSWORD_START", triggerDispatch);
+      live.on("UPDATE_PASSWORD_SUCCESS", triggerDispatch);
+      live.on("UPDATE_PASSWORD_FAIL", triggerDispatch);
 
-    live.on("signOut", () => {
-      socket.disconnect();
+      live.on("signOut", () => {
+        socket.disconnect();
 
-      emitter(push("/"));
-    });
+        redirect("/");
+      });
+    }
 
     const token = localStorage.getItem("tktoken");
 
@@ -236,7 +233,7 @@ export function* socketConnectSaga(): Generator<any, any, any> {
       yield put(action);
 
       if (action.type === CONN_ACC_SUCCESS) {
-        yield put(push(`/app/${action.payload.acc.username}`));
+        redirect(`/app/${action.payload.acc.username}`);
       }
     }
   } catch (err) {

@@ -25,7 +25,10 @@ exports.init = router =>
         await client.login();
 
         clientData = await client.getProfile();
+
+        console.log("clientData", clientData);
       } catch (e) {
+        console.log("Inst login error ::: ", e);
         throw new InvalidInstAccDataError();
       }
 
@@ -43,6 +46,8 @@ exports.init = router =>
           .slice(0, -1)
       );
 
+      console.log(jsonInfo.entry_data.ProfilePage[0].graphql.user);
+
       const {
         biography,
         external_url,
@@ -54,6 +59,7 @@ exports.init = router =>
         business_category_name,
         business_email,
         business_phone_number,
+        edge_owner_to_timeline_media,
         is_private,
         is_verified,
         profile_pic_url_hd
@@ -62,8 +68,7 @@ exports.init = router =>
       const profile = {
         bio: biography,
         externalUrl: external_url,
-        // followers: edge_followed_by.count,
-        // follows: edge_follow.count,
+        postsCount: edge_owner_to_timeline_media.count,
         stats: [
           {
             followers: edge_followed_by.count,

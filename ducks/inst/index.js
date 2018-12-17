@@ -4,56 +4,44 @@ import { all, take, takeEvery, put, call, select } from "redux-saga/effects";
 import { baseURL } from "config";
 import axios from "axios";
 import { createAction, handleActions, combineActions } from "redux-actions";
-import { SOCKET_CONN_END } from "ducks/socket";
-import type { State, UserReq } from "./types";
-import { push } from "react-router-redux";
+import { SOCKET_CONN_END } from "ducks/socket/const";
+import type { State, UserReq, Acc } from "./types";
 import { stateSelector as authStateSelector } from "ducks/auth";
+import {
+  CONN_ACC_REQUEST,
+  CONN_ACC_START,
+  CONN_ACC_SUCCESS,
+  CONN_ACC_FAIL,
+  FETCH_ACCS_REQUEST,
+  FETCH_ACCS_START,
+  FETCH_ACCS_SUCCESS,
+  FETCH_ACCS_FAIL,
+  CLEAR_CONN_ERROR,
+  FETCH_TASKS_REQUEST,
+  FETCH_TASKS_START,
+  FETCH_TASKS_SUCCESS,
+  FETCH_TASKS_FAIL,
+  TASK_START_REQUEST,
+  TASK_START_START,
+  TASK_START_SUCCESS,
+  TASK_START_FAIL,
+  LIMIT_UPDATE_REQUEST,
+  LIMIT_UPDATE_START,
+  LIMIT_UPDATE_SUCCESS,
+  LIMIT_UPDATE_FAIL
+} from "./const";
+import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
 import { live } from "ducks/socket";
+import redirect from "server/redirect";
 import type { State as AccReq } from "components/connectAccPopup/types";
 import { eventChannel, END } from "redux-saga";
+import { setCookie, getCookie, removeCookie } from "server/libs/cookies";
 
 /**
  * Constants
  * */
 
 export const moduleName: string = "inst";
-
-export const CONN_ACC_REQUEST: "INST/CONN_ACC_REQUEST" =
-  "INST/CONN_ACC_REQUEST";
-export const CONN_ACC_START: "INST/CONN_ACC_START" = "INST/CONN_ACC_START";
-export const CONN_ACC_SUCCESS: "INST/CONN_ACC_SUCCESS" =
-  "INST/CONN_ACC_SUCCESS";
-export const CONN_ACC_FAIL: "INST/CONN_ACC_FAIL" = "INST/CONN_ACC_FAIL";
-
-export const FETCH_ACCS_REQUEST: "INST/FETCH_ACCS_REQUEST" =
-  "INST/FETCH_ACCS_REQUEST";
-export const FETCH_ACCS_START: "INST/FETCH_ACCS_START" =
-  "INST/FETCH_ACCS_START";
-export const FETCH_ACCS_SUCCESS: "INST/FETCH_ACCS_SUCCESS" =
-  "INST/FETCH_ACCS_SUCCESS";
-export const FETCH_ACCS_FAIL: "INST/FETCH_ACCS_FAIL" = "INST/FETCH_ACCS_FAIL";
-
-export const CLEAR_CONN_ERROR: "INST/CLEAR_CONN_ERROR" =
-  "INST/CLEAR_CONN_ERROR";
-
-// *** Tasks ***
-
-export const FETCH_TASKS_REQUEST: "INST/FETCH_TASKS_REQUEST" =
-  "INST/FETCH_TASKS_REQUEST";
-export const FETCH_TASKS_START: "INST/FETCH_TASKS_START" =
-  "INST/FETCH_TASKS_START";
-export const FETCH_TASKS_SUCCESS: "INST/FETCH_TASKS_SUCCESS" =
-  "INST/FETCH_TASKS_SUCCESS";
-export const FETCH_TASKS_FAIL: "INST/FETCH_TASKS_FAIL" =
-  "INST/FETCH_TASKS_FAIL";
-
-export const TASK_START_REQUEST: "INST/TASK_START_REQUEST" =
-  "INST/TASK_START_REQUEST";
-export const TASK_START_START: "INST/TASK_START_START" =
-  "INST/TASK_START_START";
-export const TASK_START_SUCCESS: "INST/TASK_START_SUCCESS" =
-  "INST/TASK_START_SUCCESS";
-export const TASK_START_FAIL: "INST/TASK_START_FAIL" = "INST/TASK_START_FAIL";
 
 /**
  * Reducer
@@ -66,6 +54,7 @@ export const initialState: State = {
   progressFetchTasks: false,
   progressConnAcc: false,
   progressStartTask: false,
+  progressLimitUpdate: false,
   error: null
 };
 
@@ -89,6 +78,11 @@ const instReducer = handleActions(
     [TASK_START_START]: (state: State) => ({
       ...state,
       progressStartTask: true,
+      error: null
+    }),
+    [LIMIT_UPDATE_START]: (state: State, action) => ({
+      ...state,
+      progressLimitUpdate: true,
       error: null
     }),
 
@@ -115,6 +109,26 @@ const instReducer = handleActions(
       progressStartTask: false,
       error: null
     }),
+    [LIMIT_UPDATE_SUCCESS]: (state: State, action) => ({
+      ...state,
+      progressLimitUpdate: false,
+      error: null,
+      accList: state.accList.map(
+        acc =>
+          acc.username === action.username
+            ? {
+                ...acc,
+                limits: {
+                  ...acc.limits,
+                  [action.type]: {
+                    ...acc.limits[action.type],
+                    current: action.current
+                  }
+                }
+              }
+            : acc
+      )
+    }),
 
     [FETCH_ACCS_FAIL]: (state: State, action) => ({
       ...state,
@@ -136,6 +150,13 @@ const instReducer = handleActions(
       progressStartTask: false,
       error: action.payload.error
     }),
+    [LIMIT_UPDATE_FAIL]: (state: State, action) => ({
+      ...state,
+      progressLimitUpdate: false,
+      error: action.payload.error
+    }),
+
+    [SIGN_OUT_SUCCESS]: () => initialState,
 
     [CLEAR_CONN_ERROR]: (state: State, action) => ({
       ...state,
@@ -161,12 +182,29 @@ export const connectAcc = createAction(CONN_ACC_REQUEST);
 export const fetchAccs = createAction(FETCH_ACCS_REQUEST);
 export const startTask = createAction(TASK_START_REQUEST);
 export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
+export const updateLimit = createAction(LIMIT_UPDATE_REQUEST);
 
 /**
  * Sagas
  * */
 
-export function* fetchAccsSaga(): Generator<any, any, any> {
+export const redirectIfInvalidUsername = (
+  accList: Acc[],
+  queryUsername: string,
+  ctx?: Object
+) => {
+  // Redirects if /app or /app/some-fake-username
+  if (!queryUsername || !accList.find(el => el.username === queryUsername)) {
+    // console.log("redirect to ", `/app/${accList[0].username}`);
+    redirect(`/app/${accList[0].username}`, ctx);
+  }
+};
+
+export function* fetchAccsSaga({
+  payload: { token, queryUsername, ctx }
+}: {
+  payload: { token: string, queryUsername: string, ctx?: Object }
+}): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
   if (state.progressFetchAccs) return true;
@@ -183,7 +221,7 @@ export function* fetchAccsSaga(): Generator<any, any, any> {
         baseURL,
         data: {
           id: user.id,
-          token: localStorage.getItem("tktoken")
+          token: token
         },
         headers: {
           "Content-Type": "application/json"
@@ -198,6 +236,8 @@ export function* fetchAccsSaga(): Generator<any, any, any> {
         type: FETCH_ACCS_SUCCESS,
         payload: { accList }
       });
+
+      redirectIfInvalidUsername(accList, queryUsername, ctx);
     } else {
       throw "Can't find user id or email";
     }
@@ -263,10 +303,11 @@ export function* connectAccSaga({
 
 /* eslint-disable consistent-return */
 export function* fetchTasksSaga({
-  payload: { username }
+  payload: { username, token }
 }: {
   payload: {
-    username: string
+    username: string,
+    token: string
   }
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
@@ -285,7 +326,7 @@ export function* fetchTasksSaga({
         baseURL,
         data: {
           id: user.id,
-          token: localStorage.getItem("tktoken"),
+          token,
           username
         },
         headers: {
@@ -368,9 +409,66 @@ export function* startTaskSaga({
   }
 }
 
+/* eslint-disable consistent-return */
+export function* updateLimitSaga({
+  payload: { username, type, limitValue }
+}: {
+  payload: {
+    username: string,
+    type: "mf" | "ml",
+    limitValue: string
+  }
+}): Generator<any, any, any> {
+  const state = yield select(stateSelector);
+
+  if (state.progressStartTask) return true;
+
+  yield put({ type: LIMIT_UPDATE_START });
+
+  try {
+    const { user } = yield select(authStateSelector);
+
+    if (user.id) {
+      // const connAccRef = {
+      //   method: "post",
+      //   url: "/api/inst/update-limit",
+      //   baseURL,
+      //   data: {
+      //     id: user.id,
+      //     token: localStorage.getItem("tktoken"),
+      //     username,
+      //     type,
+      //     limitValue
+      //   },
+      //   headers: {
+      //     "Content-Type": "application/json"
+      //   }
+      // };
+
+      // yield call(axios, connAccRef);
+      console.log("Limit should update");
+    } else {
+      yield put({
+        type: LIMIT_UPDATE_FAIL,
+        payload: {
+          error: "Can't find user id or email"
+        }
+      });
+    }
+  } catch (res) {
+    yield put({
+      type: LIMIT_UPDATE_FAIL,
+      payload: {
+        error: res.response.data.error.message
+      }
+    });
+  }
+}
+
 export function* watchInst(): mixed {
   yield takeEvery(CONN_ACC_REQUEST, connectAccSaga);
   yield takeEvery(FETCH_ACCS_REQUEST, fetchAccsSaga);
   yield takeEvery(TASK_START_REQUEST, startTaskSaga);
   yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
+  yield takeEvery(LIMIT_UPDATE_REQUEST, updateLimitSaga);
 }

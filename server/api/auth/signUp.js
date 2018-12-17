@@ -46,6 +46,8 @@ exports.init = router =>
 
       const token = jwt.sign(payload, jwtsecret); // Token creation
 
+      // ctx.cookies.set("tktoken", token);
+
       ctx.status = 200;
       ctx.body = {
         user: {

@@ -32,13 +32,18 @@ const watchStats = username => {
       const {
         edge_followed_by,
         edge_follow,
-        profile_pic_url_hd
+        profile_pic_url_hd,
+        edge_owner_to_timeline_media
       } = jsonInfo.entry_data.ProfilePage[0].graphql.user;
 
       acc.stats.unshift({
         followers: edge_followed_by.count,
         follows: edge_follow.count
       });
+
+      if (acc.postsCount !== edge_owner_to_timeline_media.count) {
+        acc.postsCount = edge_owner_to_timeline_media.count;
+      }
 
       if (acc.profilePic !== profile_pic_url_hd) {
         acc.profilePic = profile_pic_url_hd;

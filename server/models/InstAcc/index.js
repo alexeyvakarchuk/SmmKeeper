@@ -23,6 +23,18 @@ const instAccSchema = new mongoose.Schema(
     },
     bio: { type: String },
     externalUrl: { type: String },
+    limits: {
+      mf: {
+        min: { type: Number, default: 1 },
+        max: { type: Number, default: 45 },
+        current: { type: Number, default: 20 }
+      },
+      ml: {
+        min: { type: Number, default: 1 },
+        max: { type: Number, default: 45 },
+        current: { type: Number, default: 20 }
+      }
+    },
     stats: [
       {
         date: {
@@ -50,6 +62,7 @@ const instAccSchema = new mongoose.Schema(
     countryCode: { type: String },
     phoneNumber: { type: String },
     gender: { type: Number },
+    postsCount: { type: Number },
     interactions: [
       {
         username: {

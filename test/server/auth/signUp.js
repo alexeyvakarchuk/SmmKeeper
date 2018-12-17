@@ -6,7 +6,7 @@ const port = require("test/config.js").port;
 
 const baseURL = `http://localhost:${port}`;
 
-const app = require("server/server.js");
+const { app } = require("server/server");
 
 const User = require("server/models/User");
 
