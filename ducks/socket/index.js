@@ -17,7 +17,7 @@ import {
   SOCKET_CONN_FAIL,
   SOCKET_AUTH_SUCCESS
 } from "./const";
-import { CONN_ACC_SUCCESS } from "ducks/inst/const";
+import { CONN_ACC_SUCCESS, LIMIT_UPDATE_SUCCESS } from "ducks/inst/const";
 import {
   UPDATE_PASSWORD_SOCKET_EVENT,
   SET_PASSWORD_SUCCESS
@@ -194,6 +194,13 @@ const initWebsocket = () =>
       }
 
       emitter({ type: SET_PASSWORD_SUCCESS });
+    });
+
+    socket.on("updateLimit", ({ username, type, limitValue }) => {
+      emitter({
+        type: LIMIT_UPDATE_SUCCESS,
+        payload: { username, type, limitValue }
+      });
     });
 
     // socket.on("toAllRoom", () => {

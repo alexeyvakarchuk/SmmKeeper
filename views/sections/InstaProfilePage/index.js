@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import type { Props, State } from "./types";
 import GradientButton from "components/GradientButton";
 import { startTask, fetchTasks, updateLimit } from "ducks/inst";
@@ -8,7 +8,7 @@ import BarChart from "components/BarChart";
 import RangeGradient from "components/RangeGradient";
 import { connect } from "react-redux";
 
-class InstaProfilePage extends PureComponent<Props, State> {
+class InstaProfilePage extends Component<Props, State> {
   // componentDidMount() {
   //   this.props.fetchTasks(this.props.username);
   // }

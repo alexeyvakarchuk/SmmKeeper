@@ -115,14 +115,14 @@ const instReducer = handleActions(
       error: null,
       accList: state.accList.map(
         acc =>
-          acc.username === action.username
+          acc.username === action.payload.username
             ? {
                 ...acc,
                 limits: {
                   ...acc.limits,
-                  [action.type]: {
-                    ...acc.limits[action.type],
-                    current: action.current
+                  [action.payload.type]: {
+                    ...acc.limits[action.payload.type],
+                    current: action.payload.limitValue
                   }
                 }
               }
@@ -421,7 +421,7 @@ export function* updateLimitSaga({
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
-  if (state.progressStartTask) return true;
+  if (state.progressLimitUpdate) return true;
 
   yield put({ type: LIMIT_UPDATE_START });
 
@@ -429,23 +429,23 @@ export function* updateLimitSaga({
     const { user } = yield select(authStateSelector);
 
     if (user.id) {
-      // const connAccRef = {
-      //   method: "post",
-      //   url: "/api/inst/update-limit",
-      //   baseURL,
-      //   data: {
-      //     id: user.id,
-      //     token: localStorage.getItem("tktoken"),
-      //     username,
-      //     type,
-      //     limitValue
-      //   },
-      //   headers: {
-      //     "Content-Type": "application/json"
-      //   }
-      // };
+      const connAccRef = {
+        method: "post",
+        url: "/api/inst/update-limit",
+        baseURL,
+        data: {
+          id: user.id,
+          token: localStorage.getItem("tktoken"),
+          username,
+          type,
+          limitValue
+        },
+        headers: {
+          "Content-Type": "application/json"
+        }
+      };
 
-      // yield call(axios, connAccRef);
+      yield call(axios, connAccRef);
       console.log("Limit should update");
     } else {
       yield put({
