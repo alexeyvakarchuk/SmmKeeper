@@ -1,7 +1,15 @@
 // @flow
 import type { Task, Acc } from "ducks/inst/types";
 
-export type State = {||};
+export type Tab = {|
+  id: number,
+  value: string
+|};
+
+export type State = {|
+  tabs: Tab[],
+  activeTab: number
+|};
 
 export type Props = {|
   username: string,

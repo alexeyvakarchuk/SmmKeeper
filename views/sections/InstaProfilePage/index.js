@@ -6,12 +6,27 @@ import GradientButton from "components/GradientButton";
 import { startTask, fetchTasks, updateLimit } from "ducks/inst";
 import BarChart from "components/BarChart";
 import RangeGradient from "components/RangeGradient";
+import Tabs from "components/Tabs";
 import { connect } from "react-redux";
 
 class InstaProfilePage extends PureComponent<Props, State> {
   // componentDidMount() {
   //   this.props.fetchTasks(this.props.username);
   // }
+
+  state = {
+    tabs: [
+      {
+        id: 1,
+        value: "All profiles"
+      },
+      {
+        id: 2,
+        value: "Current"
+      }
+    ],
+    activeTab: 1
+  };
 
   componentDidUpdate(prevProps) {
     const token =
@@ -26,6 +41,8 @@ class InstaProfilePage extends PureComponent<Props, State> {
       this.props.fetchTasks(this.props.username, token);
     }
   }
+
+  handleChangeTab = activeTab => this.setState({ activeTab });
 
   render() {
     const { username, tasksList, accList } = this.props;
@@ -122,10 +139,14 @@ class InstaProfilePage extends PureComponent<Props, State> {
                     }
                   />
                   <div className="limits__btns">
-                    <div className="limits__split-btn">
-                      <button className="limits__btn">all profiles</button>
-                      <button className="limits__btn">current</button>
-                    </div>
+                    <Tabs
+                      tabs={this.state.tabs}
+                      activeTab={this.state.activeTab}
+                      handleChangeTab={this.handleChangeTab}
+                    />
+                    <button className="limits__btn limits__btn_apply ">
+                      Apply
+                    </button>
                   </div>
                 </div>
               )}
