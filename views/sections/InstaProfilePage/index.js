@@ -99,7 +99,8 @@ class InstaProfilePage extends PureComponent<Props, State> {
               acc.limits.mf &&
               acc.limits.ml && (
                 <div className="panel limits">
-                  Likes/hr.
+                  <h4 className="limits__caption">Limits for actions</h4>
+                  <span className="limits__text">Likes/hr. </span>
                   <RangeGradient
                     minValue={acc.limits.ml.min}
                     maxValue={acc.limits.ml.max}
@@ -108,7 +109,10 @@ class InstaProfilePage extends PureComponent<Props, State> {
                       this.props.updateLimit(username, "ml", value)
                     }
                   />
-                  Follows and Unfollows/hr.
+                  <span className="limits__text">
+                    Follows and Unfollows/hr.
+                  </span>
+
                   <RangeGradient
                     minValue={acc.limits.mf.min}
                     maxValue={acc.limits.mf.max}
@@ -117,6 +121,12 @@ class InstaProfilePage extends PureComponent<Props, State> {
                       this.props.updateLimit(username, "mf", value)
                     }
                   />
+                  <div className="limits__btns">
+                    <div className="limits__split-btn">
+                      <button className="limits__btn">all profiles</button>
+                      <button className="limits__btn">current</button>
+                    </div>
+                  </div>
                 </div>
               )}
 

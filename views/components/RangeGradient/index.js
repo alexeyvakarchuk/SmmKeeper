@@ -49,16 +49,17 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
       };
 
       button.onmousedown = (e: Object) => {
+        if (innerTrack.style.width != `${slider.clientWidth}px`) {
+          innerTrack.style.width = `${slider.clientWidth}px`;
+        }
         const buttonCoords = getCoords(button);
 
         const shiftX = e.pageX - buttonCoords.left;
         const sliderCoords = getCoords(slider);
-        console.log("Drag started");
 
         const mouseMoveHandler = (e: Object) => {
           let left = e.pageX - shiftX - sliderCoords.left;
           var leftPersent = (left * 100) / slider.clientWidth;
-          // console.log(e.pageX, sliderCoords.left);
 
           if (leftPersent < 0) {
             leftPersent = 0;
@@ -79,7 +80,9 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
             leftPersent = 100;
             left = right;
 
-            button.style.left = `${leftPersent - 1.8}%`;
+            button.style.left = `calc(${leftPersent}% - ${
+              button.offsetWidth
+            }px)`;
             innerTrack.style.left = `-${left}px`;
 
             if (this.state.value !== this.state.maxValue) {
@@ -91,8 +94,6 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
 
           // if (e.pageX > sliderCoords.left) {
           const { maxValue, minValue } = this.state;
-
-          console.log(left, right);
 
           const currentValue = Math.round(
             minValue + (left * (maxValue - minValue)) / right
@@ -109,7 +110,6 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
         const mouseUpHandler = () => {
           document.removeEventListener("mousemove", mouseMoveHandler);
           document.removeEventListener("mouseup", mouseUpHandler);
-          console.log("Drag finished");
           this.props.handleDragEnd(this.state.value);
         };
 

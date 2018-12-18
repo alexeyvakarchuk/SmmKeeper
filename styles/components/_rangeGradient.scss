@@ -4,8 +4,8 @@
   position: relative;
   border-radius: 4px;
   background: linear-gradient(to right, #00d1a7 0%, #fdcb6e 65%, #ff7675 100%);
-  margin: 20px 0;
-
+  margin: 30px 0 25px;
+  box-sizing: border-box;
   &__button {
     width: 15px;
     height: 15px;
@@ -40,12 +40,16 @@
   &__track {
     position: absolute;
     height: 100%;
+    min-width: 50px;
     background: linear-gradient(
       to right,
       #00d1a7 0%,
       #fdcb6e 65%,
       #ff7675 100%
     );
+  }
+  &_last {
+    margin-bottom: 40px;
   }
 }
 // .track_2 {
