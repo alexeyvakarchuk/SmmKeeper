@@ -28,14 +28,25 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
       const { currentValue } = this.props;
       const { minValue, maxValue } = this.state;
 
-      if (currentValue && currentValue > minValue && currentValue < maxValue) {
+      // console.log("Updated via user", this.props.currentValue);
+
+      if (
+        currentValue &&
+        currentValue >= minValue &&
+        currentValue <= maxValue
+      ) {
         const right = slider.offsetWidth - button.offsetWidth;
 
         const initialLeftPersent =
           (currentValue - minValue) * (100 / (maxValue - minValue));
         const initialLeft =
           (currentValue - minValue) * (right / (maxValue - minValue));
-        button.style.left = `${initialLeftPersent}%`;
+
+        button.style.left =
+          currentValue === maxValue
+            ? `calc(${initialLeftPersent}% - ${button.offsetWidth}px)`
+            : `${initialLeftPersent}%`;
+
         innerTrack.style.left = `-${initialLeft}px`;
       }
 
@@ -122,6 +133,52 @@ export default class RangeGradient extends React.PureComponent<Props, State> {
       };
     }
   }
+
+  componentDidUpdate(prevProps: Props) {
+    const { currentValue } = this.props;
+
+    if (currentValue !== prevProps.currentValue) {
+      const { slider, button, innerTrack } = this;
+
+      if (slider && button && innerTrack) {
+        // Displaying the initial value on the range slider
+        const { minValue, maxValue } = this.state;
+
+        // console.log("Updated via socket", this.props.currentValue);
+
+        if (
+          currentValue &&
+          currentValue >= minValue &&
+          currentValue <= maxValue
+        ) {
+          const right = slider.offsetWidth - button.offsetWidth;
+
+          const initialLeftPersent =
+            (currentValue - minValue) * (100 / (maxValue - minValue));
+          const initialLeft =
+            (currentValue - minValue) * (right / (maxValue - minValue));
+
+          button.style.left =
+            currentValue === maxValue
+              ? `calc(${initialLeftPersent}% - ${button.offsetWidth}px)`
+              : `${initialLeftPersent}%`;
+
+          innerTrack.style.left = `-${initialLeft}px`;
+
+          this.setState({ value: currentValue });
+        }
+      }
+    }
+  }
+
+  // shouldComponentUpdate(nextProps: Props, nextState: State) {
+  //   if (this.props.currentValue !== nextProps.currentValue) {
+  //     console.log("aaa", this.props.currentValue, nextProps.currentValue);
+  //     return true;
+  //   }
+
+  //   return false;
+  // }
 
   render() {
     return (
