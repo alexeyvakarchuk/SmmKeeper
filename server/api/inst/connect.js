@@ -44,7 +44,7 @@ exports.init = router =>
         throw new NoProxyError();
       }
 
-      fs.writeFileSync(resolve("server", `cookieStore/${username}.json`), "");
+      fs.writeFileSync(`server/cookieStore/${username}.json`, "");
     } else {
       proxy = ctx.request.body.proxy;
     }
@@ -54,7 +54,7 @@ exports.init = router =>
     // console.log(resolve("server", `cookieStore/${username}.json`));
 
     const cookieStore = new FileCookieStore(
-      resolve("server", `cookieStore/${username}.json`)
+      `server/cookieStore/${username}.json`
     );
 
     const client = new Instagram(
