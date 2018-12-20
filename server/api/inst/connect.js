@@ -9,18 +9,80 @@ const axios = require("axios");
 const moment = require("moment");
 const {
   InvalidUserIdError,
-  InvalidInstAccDataError
+  InvalidInstAccDataError,
+  NoProxyError,
+  CheckpointRequiredError,
+  InvalidVerificationCodeError
 } = require("server/api/errors");
+const Proxy = require("server/models/Proxy");
+const fs = require("fs");
+const FileCookieStore = require("tough-cookie-filestore2");
+
+const { resolve, join, extname } = require("path");
 
 exports.init = router =>
   router.post("/api/inst/connect", async function(ctx) {
-    const { id, token, username, password } = ctx.request.body;
+    const {
+      id,
+      token,
+      username,
+      password,
+      challengeUrl,
+      securityCode
+    } = ctx.request.body;
+
+    let proxy;
+
+    // Check whether user just loginned or he is sending security key
+    if (!ctx.request.body.proxy) {
+      proxy = await Proxy.findOne(
+        { connectedAccounts: { $lte: 2 } },
+        "-_id -__v "
+      );
+
+      if (!proxy) {
+        throw new NoProxyError();
+      }
+
+      fs.writeFileSync(resolve("server", `cookieStore/${username}.json`), "");
+    } else {
+      proxy = ctx.request.body.proxy;
+    }
 
     let clientData;
 
+    // console.log(resolve("server", `cookieStore/${username}.json`));
+
+    const cookieStore = new FileCookieStore(
+      resolve("server", `cookieStore/${username}.json`)
+    );
+
+    const client = new Instagram(
+      { username, password, cookieStore },
+      { proxy: `http://${proxy.host}:${proxy.port}` }
+    );
+
+    console.log(client);
+
+    console.log(
+      "challengeUrl && securityCode ::: ",
+      challengeUrl,
+      securityCode
+    );
+
+    if (challengeUrl && securityCode) {
+      try {
+        await client.updateChallenge({ challengeUrl, securityCode });
+      } catch (e) {
+        // console.log("CHALLENGE error");
+        // fs.writeFileSync(resolve("server", `cookieStore/${username}.json`), "");
+        throw new InvalidVerificationCodeError();
+      }
+    }
+
     if (jwt.verify(token, jwtsecret).id === id) {
       try {
-        const client = new Instagram({ username, password });
+        console.log(`http://${proxy.host}:${proxy.port}`);
 
         await client.login();
 
@@ -29,8 +91,34 @@ exports.init = router =>
         console.log("clientData", clientData);
       } catch (e) {
         console.log("Inst login error ::: ", e);
-        throw new InvalidInstAccDataError();
+
+        // console.log({
+        //   checkpointUrl: e.error.checkpoint_url,
+        //   proxy
+        // });
+
+        if (e.error.message === "checkpoint_required") {
+          await client.updateChallenge({
+            challengeUrl: e.error.checkpoint_url,
+            choice: 0
+          });
+
+          throw new CheckpointRequiredError({
+            checkpointUrl: e.error.checkpoint_url,
+            proxy
+          });
+        } else {
+          throw new InvalidInstAccDataError();
+        }
       }
+
+      const proxyDb = await Proxy.findOne({
+        host: proxy.host,
+        port: proxy.port
+      });
+      proxyDb.connectedAccounts += 1;
+
+      await proxyDb.save();
 
       const instdata = await axios({
         method: "get",
@@ -87,7 +175,8 @@ exports.init = router =>
         profilePic: profile_pic_url_hd,
         countryCode: jsonInfo.country_code,
         phoneNumber: clientData.phone_number,
-        gender: clientData.gender
+        gender: clientData.gender,
+        proxy: proxyDb._id
       };
 
       console.log({

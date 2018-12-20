@@ -22,6 +22,12 @@ usersHandlers.forEach(handler =>
   require("./api/users/" + handler).init(router)
 );
 
+// *** Proxy API handlers ***
+const proxyHandlers = fs.readdirSync(path.join(__dirname, "api/proxy")).sort();
+proxyHandlers.forEach(handler =>
+  require("./api/proxy/" + handler).init(router)
+);
+
 // *** Inst API handlers ***
 const instHandlers = fs.readdirSync(path.join(__dirname, "api/inst")).sort();
 instHandlers.forEach(handler => require("./api/inst/" + handler).init(router));

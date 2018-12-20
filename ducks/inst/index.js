@@ -12,6 +12,7 @@ import {
   CONN_ACC_START,
   CONN_ACC_SUCCESS,
   CONN_ACC_FAIL,
+  CONN_ACC_FAIL_CHECKPOINT,
   FETCH_ACCS_REQUEST,
   FETCH_ACCS_START,
   FETCH_ACCS_SUCCESS,
@@ -50,6 +51,8 @@ export const moduleName: string = "inst";
 export const initialState: State = {
   accList: null,
   tasksList: null,
+  proxy: null,
+  checkpointUrl: null,
   progressFetchAccs: false,
   progressFetchTasks: false,
   progressConnAcc: false,
@@ -102,6 +105,8 @@ const instReducer = handleActions(
       ...state,
       progressConnAcc: false,
       error: null,
+      proxy: null,
+      checkpointUrl: null,
       accList: [...state.accList, action.payload.acc]
     }),
     [TASK_START_SUCCESS]: (state: State, action) => ({
@@ -145,6 +150,14 @@ const instReducer = handleActions(
       progressConnAcc: false,
       error: action.payload.error
     }),
+    [CONN_ACC_FAIL_CHECKPOINT]: (state: State, action) => ({
+      ...state,
+      progressConnAcc: false,
+      error: action.payload.error,
+      proxy: action.payload.proxy,
+      checkpointUrl: action.payload.checkpointUrl
+    }),
+
     [TASK_START_FAIL]: (state: State, action) => ({
       ...state,
       progressStartTask: false,
@@ -253,9 +266,9 @@ export function* fetchAccsSaga({
 
 /* eslint-disable consistent-return */
 export function* connectAccSaga({
-  payload: { username, password }
+  payload: { username, password, securityCode }
 }: {
-  payload: AccReq
+  payload: { ...AccReq, securityCode: string }
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
@@ -275,7 +288,11 @@ export function* connectAccSaga({
           id: user.id,
           token: localStorage.getItem("tktoken"),
           username,
-          password
+          password,
+          proxy: state.proxy !== null ? state.proxy : undefined,
+          challengeUrl:
+            state.checkpointUrl !== null ? state.checkpointUrl : undefined,
+          securityCode: securityCode.length ? securityCode : undefined
         },
         headers: {
           "Content-Type": "application/json"
@@ -292,12 +309,26 @@ export function* connectAccSaga({
       });
     }
   } catch (res) {
-    yield put({
-      type: CONN_ACC_FAIL,
-      payload: {
-        error: res.response.data.error.message
-      }
-    });
+    if (
+      res.response.data.error.name &&
+      res.response.data.error.name === "CheckpointRequiredError"
+    ) {
+      yield put({
+        type: CONN_ACC_FAIL_CHECKPOINT,
+        payload: {
+          error: "You need to approve your log in",
+          proxy: res.response.data.error.data.proxy,
+          checkpointUrl: res.response.data.error.data.checkpointUrl
+        }
+      });
+    } else {
+      yield put({
+        type: CONN_ACC_FAIL,
+        payload: {
+          error: res.response.data.error.message
+        }
+      });
+    }
   }
 }
 

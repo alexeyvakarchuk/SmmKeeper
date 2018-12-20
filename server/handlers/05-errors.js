@@ -58,12 +58,27 @@ exports.init = app =>
           name === "PaswordIsRequiredError" ||
           name === "PaswordsDoNotMatchError" ||
           name === "InvalidInstAccDataError" ||
-          name === "TaskAlreadyInProgressError"
+          name === "TaskAlreadyInProgressError" ||
+          name === "NoProxyError" ||
+          name === "InvalidVerificationCodeError"
         ) {
           ctx.status = e.statusCode;
           ctx.body = {
             error: {
               message
+            }
+          };
+
+          return true;
+        }
+
+        if (name === "CheckpointRequiredError") {
+          ctx.status = e.statusCode;
+
+          ctx.body = {
+            error: {
+              name,
+              data: e.data
             }
           };
 

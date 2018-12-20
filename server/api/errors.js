@@ -97,11 +97,58 @@ class TaskAlreadyInProgressError extends Error {
   }
 }
 
+class NoProxyError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoProxyError);
+    }
+
+    this.statusCode = 400;
+    this.name = "NoProxyError";
+    this.message = "All proxies are in use now. Contact support, please.";
+  }
+}
+
+class CheckpointRequiredError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoProxyError);
+    }
+
+    const { checkpointUrl, proxy } = params[0];
+
+    this.statusCode = 400;
+    this.name = "CheckpointRequiredError";
+    this.data = { checkpointUrl, proxy };
+  }
+}
+
+class InvalidVerificationCodeError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoProxyError);
+    }
+
+    this.statusCode = 400;
+    this.name = "InvalidVerificationCodeError";
+    this.message = "Invalid verification code";
+  }
+}
+
 module.exports = {
   InvalidUserIdError,
   InvalidTodoIdError,
   PaswordIsRequiredError,
   PaswordsDoNotMatchError,
   InvalidInstAccDataError,
-  TaskAlreadyInProgressError
+  TaskAlreadyInProgressError,
+  NoProxyError,
+  CheckpointRequiredError,
+  InvalidVerificationCodeError
 };

@@ -12,7 +12,8 @@ import { openPopup, closePopup } from "ducks/connectAccPopup";
 class ConnectAccPopup extends PureComponent<Props, State> {
   state = {
     username: "",
-    password: ""
+    password: "",
+    securityCode: ""
   };
 
   handleInputChange = (inputName: string) => (value: string) =>
@@ -50,6 +51,15 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 
             <span className="popup__error-text">{this.props.error}</span>
 
+            {this.props.checkpointUrl !== null && (
+              <InputField
+                inputName="securityCode"
+                inputValue={this.state.securityCode}
+                handleChange={this.handleInputChange("securityCode")}
+                style="light"
+              />
+            )}
+
             <InputField
               inputName="username"
               inputValue={this.state.username}
@@ -74,8 +84,12 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 }
 
 export default connect(
-  ({ inst: { accList, error }, connectAccPopup: { visible } }) => ({
+  ({
+    inst: { accList, checkpointUrl, error },
+    connectAccPopup: { visible }
+  }) => ({
     accList,
+    checkpointUrl,
     error,
     popupVisible: visible
   }),

@@ -1,4 +1,3 @@
-const Instagram = require("instagram-web-api");
 const cron = require("node-cron");
 const InstAcc = require("server/models/InstAcc");
 const InstTask = require("server/models/InstTask");
