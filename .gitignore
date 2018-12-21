@@ -48,3 +48,4 @@ dump.rdb
 .next
 
 audits
+server/cookieStore
