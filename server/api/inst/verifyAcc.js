@@ -9,10 +9,9 @@ const axios = require("axios");
 const moment = require("moment");
 const {
   InvalidUserIdError,
-  InvalidInstAccDataError,
-  NoProxyError,
-  CheckpointRequiredError,
-  InvalidVerificationCodeError
+  AccIsAlreadyInUse,
+  InvalidVerificationCodeError,
+  InvalidInstAccDataError
 } = require("server/api/errors");
 const Proxy = require("server/models/Proxy");
 const fs = require("fs");
@@ -20,73 +19,55 @@ const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
 
 exports.init = router =>
-  router.post("/api/inst/connect", async function(ctx) {
+  router.post("/api/inst/verify-acc", async function(ctx) {
     const {
       id,
       token,
+      proxy,
       username,
       password,
-      challengeUrl,
+      checkpointUrl,
       securityCode
     } = ctx.request.body;
 
-    let proxy;
+    if (jwt.verify(token, jwtsecret).id === id) {
+      const connectedProfile = await InstAcc.findOne({ username });
 
-    // Check whether user just loginned or he is sending security key
-    if (!ctx.request.body.proxy) {
-      proxy = await Proxy.findOne(
-        { connectedAccounts: { $lte: 2 } },
-        "-_id -__v "
+      // Check whether user with this username already exists
+      if (connectedProfile) {
+        throw new AccIsAlreadyInUse();
+      }
+
+      const cookieStore = new FileCookieStore(
+        resolve("server", `cookieStore/${username}.json`)
       );
 
-      if (!proxy) {
-        throw new NoProxyError();
+      const client = new Instagram(
+        { username, password, cookieStore },
+        { proxy: `http://${proxy.host}:${proxy.port}` }
+      );
+
+      if (checkpointUrl && securityCode) {
+        try {
+          console.log(client);
+          console.log({
+            challengeUrl: checkpointUrl,
+            securityCode
+          });
+
+          await client.updateChallenge({
+            challengeUrl: checkpointUrl,
+            securityCode
+          });
+        } catch (e) {
+          console.log(e);
+          // console.log("CHALLENGE error");
+          // fs.writeFileSync(resolve("server", `cookieStore/${username}.json`), "");
+          throw new InvalidVerificationCodeError();
+        }
       }
 
-      if (!fs.existsSync(resolve("server/cookieStore"))) {
-        fs.mkdirSync(resolve("server/cookieStore"));
-      }
-
-      fs.writeFileSync(resolve("server", `cookieStore/${username}.json`), "");
-    } else {
-      proxy = ctx.request.body.proxy;
-    }
-
-    let clientData;
-
-    // console.log(resolve("server", `cookieStore/${username}.json`));
-
-    const cookieStore = new FileCookieStore(
-      resolve("server", `cookieStore/${username}.json`)
-    );
-
-    const client = new Instagram(
-      { username, password, cookieStore },
-      { proxy: `http://${proxy.host}:${proxy.port}` }
-    );
-
-    console.log(client);
-
-    console.log(
-      "challengeUrl && securityCode ::: ",
-      challengeUrl,
-      securityCode
-    );
-
-    if (challengeUrl && securityCode) {
       try {
-        await client.updateChallenge({ challengeUrl, securityCode });
-      } catch (e) {
-        // console.log("CHALLENGE error");
-        // fs.writeFileSync(resolve("server", `cookieStore/${username}.json`), "");
-        throw new InvalidVerificationCodeError();
-      }
-    }
-
-    if (jwt.verify(token, jwtsecret).id === id) {
-      try {
-        console.log(`http://${proxy.host}:${proxy.port}`);
-
         await client.login();
 
         clientData = await client.getProfile();
@@ -95,24 +76,7 @@ exports.init = router =>
       } catch (e) {
         console.log("Inst login error ::: ", e);
 
-        // console.log({
-        //   checkpointUrl: e.error.checkpoint_url,
-        //   proxy
-        // });
-
-        if (e.error.message === "checkpoint_required") {
-          await client.updateChallenge({
-            challengeUrl: e.error.checkpoint_url,
-            choice: 0
-          });
-
-          throw new CheckpointRequiredError({
-            checkpointUrl: e.error.checkpoint_url,
-            proxy
-          });
-        } else {
-          throw new InvalidInstAccDataError();
-        }
+        throw new InvalidInstAccDataError();
       }
 
       const proxyDb = await Proxy.findOne({
@@ -198,18 +162,7 @@ exports.init = router =>
 
       watchStats(username);
 
-      // console.log(acc);
-
-      // const user = await User.findById(id);
-
-      // user.instAccounts.unshift(acc._id);
-
-      // await user.save();
-
-      socket.emitter.to(id).emit("connectInstAcc", {
-        username,
-        ...profile
-      });
+      socket.emitter.to(id).emit("connectInstAcc", acc);
 
       ctx.status = 200;
     } else {

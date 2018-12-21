@@ -17,6 +17,7 @@ export type State = {|
   +tasksList: null | Task[],
   +proxy: null | Object,
   +checkpointUrl: null | string,
+  +verificationType: null | string,
   +progressFetchAccs: boolean,
   +progressFetchTasks: boolean,
   +progressConnAcc: boolean,

@@ -8,11 +8,21 @@ import { SOCKET_CONN_END } from "ducks/socket/const";
 import type { State, UserReq, Acc } from "./types";
 import { stateSelector as authStateSelector } from "ducks/auth";
 import {
-  CONN_ACC_REQUEST,
-  CONN_ACC_START,
+  // Acc connecting const
+  REQUEST_VERIFICATION_REQUEST,
+  REQUEST_VERIFICATION_START,
+  REQUEST_VERIFICATION_SUCCESS,
+  REQUEST_VERIFICATION_FAIL,
+  SET_VERIFICATION_TYPE_REQUEST,
+  SET_VERIFICATION_TYPE_START,
+  SET_VERIFICATION_TYPE_SUCCESS,
+  SET_VERIFICATION_TYPE_FAIL,
+  VERIFY_ACC_REQUEST,
+  VERIFY_ACC_START,
+  VERIFY_ACC_SUCCESS,
+  VERIFY_ACC_FAIL,
   CONN_ACC_SUCCESS,
-  CONN_ACC_FAIL,
-  CONN_ACC_FAIL_CHECKPOINT,
+  // Rest
   FETCH_ACCS_REQUEST,
   FETCH_ACCS_START,
   FETCH_ACCS_SUCCESS,
@@ -53,6 +63,7 @@ export const initialState: State = {
   tasksList: null,
   proxy: null,
   checkpointUrl: null,
+  verificationType: null,
   progressFetchAccs: false,
   progressFetchTasks: false,
   progressConnAcc: false,
@@ -63,37 +74,88 @@ export const initialState: State = {
 
 const instReducer = handleActions(
   {
+    [REQUEST_VERIFICATION_START]: (state: State) => ({
+      ...state,
+      progressConnAcc: true,
+      error: null
+    }),
+    [REQUEST_VERIFICATION_SUCCESS]: (state: State, action) => ({
+      ...state,
+      progressConnAcc: false,
+      error: null,
+      proxy: action.payload.proxy,
+      checkpointUrl: action.payload.checkpointUrl
+    }),
+    [REQUEST_VERIFICATION_FAIL]: (state: State, action) => ({
+      ...state,
+      progressConnAcc: false,
+      error: action.payload.error
+    }),
+
+    [SET_VERIFICATION_TYPE_START]: (state: State) => ({
+      ...state,
+      progressConnAcc: true,
+      error: null
+    }),
+    [SET_VERIFICATION_TYPE_SUCCESS]: (state: State, action) => ({
+      ...state,
+      error: null,
+      progressConnAcc: false,
+      verificationType: action.payload.verificationType
+    }),
+    [SET_VERIFICATION_TYPE_FAIL]: (state: State, action) => ({
+      ...state,
+      progressConnAcc: false,
+      error: action.payload.error
+    }),
+
+    [VERIFY_ACC_START]: (state: State) => ({
+      ...state,
+      progressConnAcc: true,
+      error: null
+    }),
+    [VERIFY_ACC_SUCCESS]: (state: State, action) => ({
+      ...state,
+      error: null,
+      progressConnAcc: false
+    }),
+    [VERIFY_ACC_FAIL]: (state: State, action) => ({
+      ...state,
+      progressConnAcc: false,
+      error: action.payload.error
+    }),
+
+    [CONN_ACC_SUCCESS]: (state: State, action) => ({
+      ...state,
+      progressConnAcc: false,
+      error: null,
+      proxy: null,
+      checkpointUrl: null,
+      verificationType: null,
+      accList: [...state.accList, action.payload.acc]
+    }),
+
     [FETCH_ACCS_START]: (state: State) => ({
       ...state,
       progressFetchAccs: true,
       error: null
     }),
-    [FETCH_TASKS_START]: (state: State) => ({
-      ...state,
-      progressFetchTasks: true,
-      error: null
-    }),
-    [CONN_ACC_START]: (state: State) => ({
-      ...state,
-      progressConnAcc: true,
-      error: null
-    }),
-    [TASK_START_START]: (state: State) => ({
-      ...state,
-      progressStartTask: true,
-      error: null
-    }),
-    [LIMIT_UPDATE_START]: (state: State, action) => ({
-      ...state,
-      progressLimitUpdate: true,
-      error: null
-    }),
-
     [FETCH_ACCS_SUCCESS]: (state: State, action) => ({
       ...state,
       progressFetchAccs: false,
       error: null,
       accList: action.payload.accList
+    }),
+    [FETCH_ACCS_FAIL]: (state: State, action) => ({
+      ...state,
+      progressFetchAccs: false,
+      error: action.payload.error
+    }),
+
+    [FETCH_TASKS_START]: (state: State) => ({
+      ...state,
+      progressFetchTasks: true,
+      error: null
     }),
     [FETCH_TASKS_SUCCESS]: (state: State, action) => ({
       ...state,
@@ -101,17 +163,31 @@ const instReducer = handleActions(
       error: null,
       tasksList: action.payload.tasksList
     }),
-    [CONN_ACC_SUCCESS]: (state: State, action) => ({
+    [FETCH_TASKS_FAIL]: (state: State, action) => ({
       ...state,
-      progressConnAcc: false,
-      error: null,
-      proxy: null,
-      checkpointUrl: null,
-      accList: [...state.accList, action.payload.acc]
+      progressFetchTasks: false,
+      error: action.payload.error
+    }),
+
+    [TASK_START_START]: (state: State) => ({
+      ...state,
+      progressStartTask: true,
+      error: null
     }),
     [TASK_START_SUCCESS]: (state: State, action) => ({
       ...state,
       progressStartTask: false,
+      error: null
+    }),
+    [TASK_START_FAIL]: (state: State, action) => ({
+      ...state,
+      progressStartTask: false,
+      error: action.payload.error
+    }),
+
+    [LIMIT_UPDATE_START]: (state: State, action) => ({
+      ...state,
+      progressLimitUpdate: true,
       error: null
     }),
     [LIMIT_UPDATE_SUCCESS]: (state: State, action) => ({
@@ -135,39 +211,24 @@ const instReducer = handleActions(
       )
     }),
 
-    [FETCH_ACCS_FAIL]: (state: State, action) => ({
-      ...state,
-      progressFetchAccs: false,
-      error: action.payload.error
-    }),
-    [FETCH_TASKS_FAIL]: (state: State, action) => ({
-      ...state,
-      progressFetchTasks: false,
-      error: action.payload.error
-    }),
-    [CONN_ACC_FAIL]: (state: State, action) => ({
-      ...state,
-      progressConnAcc: false,
-      error: action.payload.error
-    }),
-    [CONN_ACC_FAIL_CHECKPOINT]: (state: State, action) => ({
-      ...state,
-      progressConnAcc: false,
-      error: action.payload.error,
-      proxy: action.payload.proxy,
-      checkpointUrl: action.payload.checkpointUrl
-    }),
-
-    [TASK_START_FAIL]: (state: State, action) => ({
-      ...state,
-      progressStartTask: false,
-      error: action.payload.error
-    }),
     [LIMIT_UPDATE_FAIL]: (state: State, action) => ({
       ...state,
       progressLimitUpdate: false,
       error: action.payload.error
     }),
+
+    // [CONN_ACC_FAIL]: (state: State, action) => ({
+    //   ...state,
+    //   progressConnAcc: false,
+    //   error: action.payload.error
+    // }),
+    // [CONN_ACC_FAIL_CHECKPOINT]: (state: State, action) => ({
+    //   ...state,
+    //   progressConnAcc: false,
+    //   error: action.payload.error,
+    //   proxy: action.payload.proxy,
+    //   checkpointUrl: action.payload.checkpointUrl
+    // }),
 
     [SIGN_OUT_SUCCESS]: () => initialState,
 
@@ -191,7 +252,9 @@ export const stateSelector = (state: Object): State => state[moduleName];
  * Action Creators
  * */
 
-export const connectAcc = createAction(CONN_ACC_REQUEST);
+export const requestVerification = createAction(REQUEST_VERIFICATION_REQUEST);
+export const setVerificationType = createAction(SET_VERIFICATION_TYPE_REQUEST);
+export const verifyAcc = createAction(VERIFY_ACC_REQUEST);
 export const fetchAccs = createAction(FETCH_ACCS_REQUEST);
 export const startTask = createAction(TASK_START_REQUEST);
 export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
@@ -265,7 +328,141 @@ export function* fetchAccsSaga({
 }
 
 /* eslint-disable consistent-return */
-export function* connectAccSaga({
+export function* requestVerificationSaga({
+  payload: { username, password }
+}: {
+  payload: AccReq
+}): Generator<any, any, any> {
+  const state = yield select(stateSelector);
+
+  if (state.progressConnAcc) return true;
+
+  yield put({ type: REQUEST_VERIFICATION_START });
+
+  try {
+    const { user } = yield select(authStateSelector);
+
+    if (user.id) {
+      const ref = {
+        method: "post",
+        url: "/api/inst/request-verification",
+        baseURL,
+        data: {
+          id: user.id,
+          token: localStorage.getItem("tktoken"),
+          username,
+          password
+        },
+        headers: {
+          "Content-Type": "application/json"
+        }
+      };
+
+      const {
+        data: { proxy, checkpointUrl }
+      } = yield call(axios, ref);
+
+      yield put({
+        type: REQUEST_VERIFICATION_SUCCESS,
+        payload: {
+          proxy,
+          checkpointUrl
+        }
+      });
+    } else {
+      yield put({
+        type: REQUEST_VERIFICATION_FAIL,
+        payload: {
+          error: "Can't find user id or email"
+        }
+      });
+    }
+  } catch (res) {
+    // if (
+    //   res.response.data.error.name &&
+    //   res.response.data.error.name === "CheckpointRequiredError"
+    // ) {
+    //   yield put({
+    //     type: CONN_ACC_FAIL_CHECKPOINT,
+    //     payload: {
+    //       error: "You need to approve your log in",
+    //       proxy: res.response.data.error.data.proxy,
+    //       checkpointUrl: res.response.data.error.data.checkpointUrl
+    //     }
+    //   });
+    // } else {
+    yield put({
+      type: REQUEST_VERIFICATION_FAIL,
+      payload: {
+        error: res.response.data.error.message
+      }
+    });
+    // }
+  }
+}
+
+/* eslint-disable consistent-return */
+export function* setVerificationTypeSaga({
+  payload: { username, password, verificationType }
+}: {
+  payload: { ...AccReq, verificationType: "phone" | "email" }
+}): Generator<any, any, any> {
+  const state = yield select(stateSelector);
+
+  if (state.progressConnAcc) return true;
+
+  yield put({ type: SET_VERIFICATION_TYPE_START });
+
+  try {
+    const { user } = yield select(authStateSelector);
+
+    if (user.id) {
+      const ref = {
+        method: "post",
+        url: "/api/inst/set-verification-type",
+        baseURL,
+        data: {
+          id: user.id,
+          token: localStorage.getItem("tktoken"),
+          proxy: state.proxy,
+          checkpointUrl: state.checkpointUrl,
+          username,
+          password,
+          verificationType
+        },
+        headers: {
+          "Content-Type": "application/json"
+        }
+      };
+
+      yield call(axios, ref);
+
+      yield put({
+        type: SET_VERIFICATION_TYPE_SUCCESS,
+        payload: {
+          verificationType
+        }
+      });
+    } else {
+      yield put({
+        type: SET_VERIFICATION_TYPE_FAIL,
+        payload: {
+          error: "Can't find user id or email"
+        }
+      });
+    }
+  } catch (res) {
+    yield put({
+      type: SET_VERIFICATION_TYPE_FAIL,
+      payload: {
+        error: res.response.data.error.message
+      }
+    });
+  }
+}
+
+/* eslint-disable consistent-return */
+export function* verifyAccSaga({
   payload: { username, password, securityCode }
 }: {
   payload: { ...AccReq, securityCode: string }
@@ -274,63 +471,119 @@ export function* connectAccSaga({
 
   if (state.progressConnAcc) return true;
 
-  yield put({ type: CONN_ACC_START });
+  yield put({ type: VERIFY_ACC_START });
 
   try {
     const { user } = yield select(authStateSelector);
 
     if (user.id) {
-      const connAccRef = {
+      const ref = {
         method: "post",
-        url: "/api/inst/connect",
+        url: "/api/inst/verify-acc",
         baseURL,
         data: {
           id: user.id,
           token: localStorage.getItem("tktoken"),
+          proxy: state.proxy,
+          checkpointUrl: state.checkpointUrl,
           username,
           password,
-          proxy: state.proxy !== null ? state.proxy : undefined,
-          challengeUrl:
-            state.checkpointUrl !== null ? state.checkpointUrl : undefined,
-          securityCode: securityCode.length ? securityCode : undefined
+          securityCode
         },
         headers: {
           "Content-Type": "application/json"
         }
       };
 
-      yield call(axios, connAccRef);
+      yield call(axios, ref);
+
+      yield put({
+        type: VERIFY_ACC_SUCCESS
+      });
     } else {
       yield put({
-        type: CONN_ACC_FAIL,
+        type: VERIFY_ACC_FAIL,
         payload: {
           error: "Can't find user id or email"
         }
       });
     }
   } catch (res) {
-    if (
-      res.response.data.error.name &&
-      res.response.data.error.name === "CheckpointRequiredError"
-    ) {
-      yield put({
-        type: CONN_ACC_FAIL_CHECKPOINT,
-        payload: {
-          error: "You need to approve your log in",
-          proxy: res.response.data.error.data.proxy,
-          checkpointUrl: res.response.data.error.data.checkpointUrl
-        }
-      });
-    } else {
-      yield put({
-        type: CONN_ACC_FAIL,
-        payload: {
-          error: res.response.data.error.message
-        }
-      });
-    }
+    yield put({
+      type: VERIFY_ACC_FAIL,
+      payload: {
+        error: res.response.data.error.message
+      }
+    });
   }
 }
+
+// export function* connectAccSaga({
+//   payload: { username, password, securityCode }
+// }: {
+//   payload: { ...AccReq, securityCode: string }
+// }): Generator<any, any, any> {
+//   const state = yield select(stateSelector);
+
+//   if (state.progressConnAcc) return true;
+
+//   yield put({ type: CONN_ACC_START });
+
+//   try {
+//     const { user } = yield select(authStateSelector);
+
+//     if (user.id) {
+//       const connAccRef = {
+//         method: "post",
+//         url: "/api/inst/connect",
+//         baseURL,
+//         data: {
+//           id: user.id,
+//           token: localStorage.getItem("tktoken"),
+//           username,
+//           password,
+//           proxy: state.proxy !== null ? state.proxy : undefined,
+//           challengeUrl:
+//             state.checkpointUrl !== null ? state.checkpointUrl : undefined,
+//           securityCode: securityCode.length ? securityCode : undefined
+//         },
+//         headers: {
+//           "Content-Type": "application/json"
+//         }
+//       };
+
+//       yield call(axios, connAccRef);
+//     } else {
+//       yield put({
+//         type: CONN_ACC_FAIL,
+//         payload: {
+//           error: "Can't find user id or email"
+//         }
+//       });
+//     }
+//   } catch (res) {
+//     if (
+//       res.response.data.error.name &&
+//       res.response.data.error.name === "CheckpointRequiredError"
+//     ) {
+//       yield put({
+//         type: CONN_ACC_FAIL_CHECKPOINT,
+//         payload: {
+//           error: "You need to approve your log in",
+//           proxy: res.response.data.error.data.proxy,
+//           checkpointUrl: res.response.data.error.data.checkpointUrl
+//         }
+//       });
+//     } else {
+//       yield put({
+//         type: CONN_ACC_FAIL,
+//         payload: {
+//           error: res.response.data.error.message
+//         }
+//       });
+//     }
+//   }
+// }
 
 /* eslint-disable consistent-return */
 export function* fetchTasksSaga({
@@ -497,7 +750,11 @@ export function* updateLimitSaga({
 }
 
 export function* watchInst(): mixed {
-  yield takeEvery(CONN_ACC_REQUEST, connectAccSaga);
+  // yield takeEvery(CONN_ACC_REQUEST, connectAccSaga);
+  yield takeEvery(REQUEST_VERIFICATION_REQUEST, requestVerificationSaga);
+  yield takeEvery(SET_VERIFICATION_TYPE_REQUEST, setVerificationTypeSaga);
+  yield takeEvery(VERIFY_ACC_REQUEST, verifyAccSaga);
+
   yield takeEvery(FETCH_ACCS_REQUEST, fetchAccsSaga);
   yield takeEvery(TASK_START_REQUEST, startTaskSaga);
   yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);

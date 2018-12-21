@@ -1,5 +1,6 @@
 // @flow
 
 export type State = {|
-  visible: boolean
+  visible: boolean,
+  popupState: "loginInfo" | "verificationType" | "verificationCode"
 |};

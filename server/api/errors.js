@@ -97,6 +97,20 @@ class TaskAlreadyInProgressError extends Error {
   }
 }
 
+class AccIsAlreadyInUse extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, AccIsAlreadyInUse);
+    }
+
+    this.statusCode = 400;
+    this.name = "AccIsAlreadyInUse";
+    this.message = "This acc is already in use";
+  }
+}
+
 class NoProxyError extends Error {
   constructor(...params) {
     super(...params);
@@ -111,21 +125,21 @@ class NoProxyError extends Error {
   }
 }
 
-class CheckpointRequiredError extends Error {
-  constructor(...params) {
-    super(...params);
+// class CheckpointRequiredError extends Error {
+//   constructor(...params) {
+//     super(...params);
 
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, NoProxyError);
-    }
+//     if (Error.captureStackTrace) {
+//       Error.captureStackTrace(this, NoProxyError);
+//     }
 
-    const { checkpointUrl, proxy } = params[0];
+//     const { checkpointUrl, proxy } = params[0];
 
-    this.statusCode = 400;
-    this.name = "CheckpointRequiredError";
-    this.data = { checkpointUrl, proxy };
-  }
-}
+//     this.statusCode = 400;
+//     this.name = "CheckpointRequiredError";
+//     this.data = { checkpointUrl, proxy };
+//   }
+// }
 
 class InvalidVerificationCodeError extends Error {
   constructor(...params) {
@@ -146,9 +160,10 @@ module.exports = {
   InvalidTodoIdError,
   PaswordIsRequiredError,
   PaswordsDoNotMatchError,
+  AccIsAlreadyInUse,
   InvalidInstAccDataError,
   TaskAlreadyInProgressError,
   NoProxyError,
-  CheckpointRequiredError,
+  // CheckpointRequiredError,
   InvalidVerificationCodeError
 };
