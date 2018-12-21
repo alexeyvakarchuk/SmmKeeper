@@ -25,8 +25,8 @@ class BarChart extends PureComponent<Props, State> {
         datasets: [
           {
             data: data.map(el => el.followers).reverse(),
-            backgroundColor: "#0870BF",
-            hoverBackgroundColor: "#078CF2",
+            backgroundColor: "#DFE6E9",
+            hoverBackgroundColor: "#B1BEC3",
             borderWidth: 0
           }
         ]

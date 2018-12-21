@@ -56,9 +56,12 @@ exports.init = app =>
           name === "InvalidUserIdError" ||
           name === "InvalidTodoIdError" ||
           name === "PaswordIsRequiredError" ||
+          name === "AccIsAlreadyInUse" ||
           name === "PaswordsDoNotMatchError" ||
           name === "InvalidInstAccDataError" ||
-          name === "TaskAlreadyInProgressError"
+          name === "TaskAlreadyInProgressError" ||
+          name === "NoProxyError" ||
+          name === "InvalidVerificationCodeError"
         ) {
           ctx.status = e.statusCode;
           ctx.body = {
@@ -69,6 +72,19 @@ exports.init = app =>
 
           return true;
         }
+
+        // if (name === "CheckpointRequiredError") {
+        //   ctx.status = e.statusCode;
+
+        //   ctx.body = {
+        //     error: {
+        //       name,
+        //       data: e.data
+        //     }
+        //   };
+
+        //   return true;
+        // }
 
         ctx.body = "Error 500";
         ctx.status = 500;

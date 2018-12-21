@@ -50,6 +50,10 @@ const instAccSchema = new mongoose.Schema(
     //   followers: { type: Number },
     //   follows: { type: Number }
     // }
+    proxy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Proxy"
+    },
     fullName: { type: String },
     profileId: { type: String },
     isBusinessAccount: { type: Boolean },

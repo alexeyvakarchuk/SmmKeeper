@@ -15,9 +15,12 @@ export type Task = {|
 export type State = {|
   +accList: null | Acc[],
   +tasksList: null | Task[],
+  +proxy: null | Object,
+  +checkpointUrl: null | string,
+  +verificationType: null | string,
   +progressFetchAccs: boolean,
   +progressFetchTasks: boolean,
   +progressConnAcc: boolean,
   +progressStartTask: boolean,
-  +error: null
+  +error: null | string
 |};

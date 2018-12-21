@@ -40,9 +40,11 @@ export default class GradientButton extends PureComponent<Props, State> {
   button: ?HTMLButtonElement;
 
   render() {
+    const { className } = this.props;
+
     return (
       <button
-        className="gradientButton"
+        className={`gradientButton ${className ? className : ""}`}
         onMouseEnter={() => gradientAnimation(this.button, 0, -40)}
         onMouseLeave={() => gradientAnimation(this.button, -40, 0)}
         ref={el => (this.button = el)}
