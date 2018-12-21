@@ -126,8 +126,11 @@ class InstaProfilePage extends Component<Props, State> {
                       this.props.updateLimit(username, "ml", value)
                     }
                   />
-                  <span className="limits__text">
-                    Follows and Unfollows/hr.
+                  <span className="limits__text limits__text_doubel">
+                    <span>Follows and Unfollows/hr.</span>
+                    <span className="limits__text limits__text_red">
+                      Unsafe
+                    </span>
                   </span>
 
                   <RangeGradient
@@ -138,16 +141,6 @@ class InstaProfilePage extends Component<Props, State> {
                       this.props.updateLimit(username, "mf", value)
                     }
                   />
-                  <div className="limits__btns">
-                    <Tabs
-                      tabs={this.state.tabs}
-                      activeTab={this.state.activeTab}
-                      handleChangeTab={this.handleChangeTab}
-                    />
-                    <button className="limits__btn limits__btn_apply ">
-                      Apply
-                    </button>
-                  </div>
                 </div>
               )}
 
