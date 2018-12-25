@@ -12,7 +12,7 @@ import {
   setVerificationType,
   verifyAcc
 } from "ducks/inst";
-import { openPopup, closePopup } from "ducks/connectAccPopup";
+import { closePopup } from "ducks/connectAccPopup";
 
 class ConnectAccPopup extends PureComponent<Props, State> {
   state = {
@@ -197,7 +197,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
           </div>
         </div>,
         // $FlowFixMe
-        document.getElementById("modalRoot")
+        document.getElementById("connectAccPopup")
       )
     );
   }
@@ -217,7 +217,6 @@ export default connect(
     popupState
   }),
   dispatch => ({
-    openPopup: () => dispatch(openPopup()),
     closePopup: () => dispatch(closePopup()),
     // connectAcc: state => dispatch(connectAcc(state))
     requestVerification: state => dispatch(requestVerification(state)),

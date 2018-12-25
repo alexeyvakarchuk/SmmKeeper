@@ -17,7 +17,11 @@ import {
   SOCKET_CONN_FAIL,
   SOCKET_AUTH_SUCCESS
 } from "./const";
-import { CONN_ACC_SUCCESS, LIMIT_UPDATE_SUCCESS } from "ducks/inst/const";
+import {
+  CONN_ACC_SUCCESS,
+  TASK_START_SUCCESS,
+  LIMIT_UPDATE_SUCCESS
+} from "ducks/inst/const";
 import {
   UPDATE_PASSWORD_SOCKET_EVENT,
   SET_PASSWORD_SUCCESS
@@ -200,6 +204,13 @@ const initWebsocket = () =>
       emitter({
         type: LIMIT_UPDATE_SUCCESS,
         payload: { username, type, limitValue }
+      });
+    });
+
+    socket.on("taskStart", task => {
+      emitter({
+        type: TASK_START_SUCCESS,
+        payload: { task }
       });
     });
 

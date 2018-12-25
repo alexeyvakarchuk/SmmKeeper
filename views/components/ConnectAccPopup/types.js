@@ -18,7 +18,6 @@ export type Props = {|
   verificationType: null | string,
   error: string,
 
-  openPopup: () => void,
   closePopup: () => void,
   requestVerification: State => void,
   setVerificationType: ({ verificationType: string }) => void,

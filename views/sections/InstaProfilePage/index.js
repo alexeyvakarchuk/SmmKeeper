@@ -166,7 +166,7 @@ class InstaProfilePage extends Component<Props, State> {
           </div>
 
           <div className="row">
-            <TaskTable />
+            <TaskTable username={username} />
           </div>
         </div>
 

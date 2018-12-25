@@ -3,7 +3,8 @@ import type { Task, Acc } from "ducks/inst/types";
 
 export type Tab = {|
   id: number,
-  value: string
+  value: string,
+  ref?: string
 |};
 
 export type State = {|

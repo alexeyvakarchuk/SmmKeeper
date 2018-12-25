@@ -42,6 +42,7 @@ import {
   LIMIT_UPDATE_FAIL
 } from "./const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
+import { POPUP_CLOSE } from "ducks/startTaskPopup/const";
 import { live } from "ducks/socket";
 import redirect from "server/redirect";
 import type { State as AccReq } from "components/connectAccPopup/types";
@@ -176,6 +177,7 @@ const instReducer = handleActions(
     }),
     [TASK_START_SUCCESS]: (state: State, action) => ({
       ...state,
+      tasksList: [action.payload.task, ...state.tasksList],
       progressStartTask: false,
       error: null
     }),
@@ -641,11 +643,12 @@ export function* fetchTasksSaga({
 
 /* eslint-disable consistent-return */
 export function* startTaskSaga({
-  payload: { username, type }
+  payload: { username, type, sourceUsername }
 }: {
   payload: {
     username: string,
-    type: "mf" | "ml"
+    type: "mf" | "ml",
+    sourceUsername: string
   }
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
@@ -667,7 +670,7 @@ export function* startTaskSaga({
           token: localStorage.getItem("tktoken"),
           username,
           type,
-          sourceUsername: "instagram"
+          sourceUsername
         },
         headers: {
           "Content-Type": "application/json"
@@ -675,6 +678,8 @@ export function* startTaskSaga({
       };
 
       yield call(axios, connAccRef);
+
+      yield put({ type: POPUP_CLOSE });
     } else {
       yield put({
         type: TASK_START_FAIL,

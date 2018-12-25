@@ -11,6 +11,9 @@ const {
   InvalidInstAccDataError,
   TaskAlreadyInProgressError
 } = require("server/api/errors");
+const socket = require("server/libs/socket");
+const { resolve } = require("path");
+const FileCookieStore = require("tough-cookie-filestore2");
 
 exports.init = router =>
   router.post("/api/inst/task-start", async function(ctx) {
@@ -22,14 +25,25 @@ exports.init = router =>
       let client;
 
       try {
-        const acc = await InstAcc.findOne({ userId: user._id, username });
+        const acc = await InstAcc.findOne({
+          userId: user._id,
+          username
+        }).populate("proxy");
 
-        const { password } = acc;
+        const { password, proxy } = acc;
 
-        client = new Instagram({ username, password });
+        const cookieStore = new FileCookieStore(
+          resolve("server", `cookieStore/${username}.json`)
+        );
+
+        client = new Instagram(
+          { username, password, cookieStore },
+          { proxy: `http://${proxy.host}:${proxy.port}` }
+        );
 
         await client.login();
       } catch (e) {
+        console.log(e);
         throw new InvalidInstAccDataError();
       }
 
@@ -55,7 +69,7 @@ exports.init = router =>
           throw new TaskAlreadyInProgressError();
         }
       } else {
-        const task = await InstTask.create({
+        task = await InstTask.create({
           username,
           sourceUsername,
           sourceId,
@@ -70,9 +84,11 @@ exports.init = router =>
           break;
       }
 
-      ctx.status = 200;
+      console.log(task);
 
-      ctx.body = "Action started";
+      socket.emitter.to(id).emit("taskStart", task);
+
+      ctx.status = 200;
     } else {
       throw new InvalidUserIdError();
     }

@@ -2,6 +2,7 @@ const Instagram = require("instagram-web-api");
 const InstTask = require("server/models/InstTask");
 const InstAcc = require("server/models/InstAcc");
 const mf = require("./mf");
+const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
 const { InvalidInstAccDataError } = require("server/api/errors");
 
@@ -19,23 +20,22 @@ const startTasks = async () => {
     let client;
 
     try {
-      const acc = await InstAcc.findOne({ username });
+      const acc = await InstAcc.findOne({ username }).populate("proxy");
 
-      const { password } = acc;
-
-      console.log(acc.populate("proxy"));
+      const { password, proxy } = acc;
 
       const cookieStore = new FileCookieStore(
         resolve("server", `cookieStore/${username}.json`)
       );
 
-      const client = new Instagram(
+      client = new Instagram(
         { username, password, cookieStore },
         { proxy: `http://${proxy.host}:${proxy.port}` }
       );
 
       await client.login();
     } catch (e) {
+      console.log(e);
       throw new InvalidInstAccDataError();
     }
 

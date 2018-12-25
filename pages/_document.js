@@ -13,7 +13,8 @@ export default class MyDocument extends Document {
         <Head />
         <body>
           <Main />
-          <div id="modalRoot" />
+          <div id="connectAccPopup" />
+          <div id="startTaskPopup" />
           <NextScript />
         </body>
       </html>

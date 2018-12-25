@@ -6,11 +6,15 @@ import passwordReducer, { moduleName as passwordModule } from "ducks/password";
 import connectAccPopupReducer, {
   moduleName as connectAccPopupModule
 } from "ducks/connectAccPopup";
+import startTaskPopupReducer, {
+  moduleName as startTaskPopupModule
+} from "ducks/startTaskPopup";
 
 export default combineReducers({
   [authModule]: authReducer,
   [instModule]: instReducer,
   [socketModule]: socketReducer,
   [passwordModule]: passwordReducer,
-  [connectAccPopupModule]: connectAccPopupReducer
+  [connectAccPopupModule]: connectAccPopupReducer,
+  [startTaskPopupModule]: startTaskPopupReducer
 });
