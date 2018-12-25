@@ -1,16 +1,12 @@
 import React, { Component } from "react";
-import Select from "react-select";
-
-const options = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" }
-];
+import Dropdown from "components/Dropdown";
 
 export default class TaskTable extends Component {
   state = {
-    selectedOption: null
+    selectedOption: null,
+    menuIsOpen: false
   };
+
   handleChange = selectedOption => {
     this.setState({ selectedOption });
   };
@@ -18,12 +14,16 @@ export default class TaskTable extends Component {
   render() {
     const { selectedOption } = this.state;
 
+    const options = [
+      { value: "chocolate", label: "Chocolate" },
+      { value: "strawberry", label: "Strawberry" },
+      { value: "vanilla", label: "Vanilla" }
+    ];
+
     return (
       <section className="task-table">
         <div className="task-table__filter">
-          <Select
-            className="task-select"
-            classNamePrefix="task-select"
+          <Dropdown
             instanceId="task-select"
             value={selectedOption}
             onChange={this.handleChange}
