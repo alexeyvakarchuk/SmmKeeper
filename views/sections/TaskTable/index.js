@@ -1,9 +1,36 @@
 import React, { Component } from "react";
+import Select from "react-select";
+
+const options = [
+  { value: "chocolate", label: "Chocolate" },
+  { value: "strawberry", label: "Strawberry" },
+  { value: "vanilla", label: "Vanilla" }
+];
 
 export default class TaskTable extends Component {
+  state = {
+    selectedOption: null
+  };
+  handleChange = selectedOption => {
+    this.setState({ selectedOption });
+  };
+
   render() {
+    const { selectedOption } = this.state;
+
     return (
       <section className="task-table">
+        <div className="task-table__filter">
+          <Select
+            className="task-select"
+            classNamePrefix="task-select"
+            value={selectedOption}
+            onChange={this.handleChange}
+            options={options}
+            placeholder={"Bulk action"}
+          />
+          <button className="btn-task">Add new task</button>
+        </div>
         <table className="task-table__table table">
           <thead className="table__thead">
             <tr>

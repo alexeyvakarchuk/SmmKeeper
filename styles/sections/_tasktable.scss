@@ -1,6 +1,19 @@
 .task-table {
   width: 100%;
   padding: 30px;
+  &__filter {
+    display: flex;
+    justify-content: space-between;
+    & .task-select {
+      width: 180px;
+      color: #b1bec3;
+      font-size: 14px;
+      line-height: 15px;
+      &__control {
+        border-radius: 5px;
+      }
+    }
+  }
 }
 
 .table {
