@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import Select, { components } from "react-select";
 import SelectCaret from "icons/SelectCaret";
+import type { Props, State } from "./types";
 
 const DropdownIndicator = props => {
   return (
@@ -14,7 +15,7 @@ const DropdownIndicator = props => {
   );
 };
 
-export default class Dropdown extends Component {
+export default class Dropdown extends Component<Props, State> {
   state = {
     menuIsOpen: false
   };
