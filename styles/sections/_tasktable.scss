@@ -5,6 +5,17 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    &-left,
+    &-right {
+      display: flex;
+      align-items: center;
+    }
+    &-caption {
+      color: #b1bec3;
+      font-size: 14px;
+      line-height: 15px;
+      margin-right: 40px;
+    }
     & .task-select {
       width: 180px;
       color: #b1bec3;
@@ -13,6 +24,7 @@
       &__active {
         & .task-select__control {
           border-radius: 5px 5px 0 0;
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
         }
       }
 
@@ -28,10 +40,10 @@
       &__menu {
         border: none;
         border-radius: 0 0 5px 5px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
         margin-top: 0;
         margin-bottom: 0;
         top: unset;
-        box-shadow: unset;
         overflow: hidden;
         &-list {
           padding: 0;
