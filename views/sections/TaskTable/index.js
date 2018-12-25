@@ -24,6 +24,7 @@ export default class TaskTable extends Component {
           <Select
             className="task-select"
             classNamePrefix="task-select"
+            instanceId="task-select"
             value={selectedOption}
             onChange={this.handleChange}
             options={options}

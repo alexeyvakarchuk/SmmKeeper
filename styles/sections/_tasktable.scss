@@ -1,9 +1,10 @@
 .task-table {
   width: 100%;
-  padding: 30px;
+  padding: 15px;
   &__filter {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 20px;
     & .task-select {
       width: 180px;
       color: #b1bec3;

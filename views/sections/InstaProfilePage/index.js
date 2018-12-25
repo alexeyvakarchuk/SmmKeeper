@@ -6,6 +6,7 @@ import GradientButton from "components/GradientButton";
 import { startTask, fetchTasks, updateLimit } from "ducks/inst";
 import BarChart from "components/BarChart";
 import RangeGradient from "components/RangeGradient";
+import TaskTable from "sections/TaskTable";
 import Tabs from "components/Tabs";
 import { connect } from "react-redux";
 
@@ -162,6 +163,10 @@ class InstaProfilePage extends Component<Props, State> {
               </div>
             </div>
             {/* </div> */}
+          </div>
+
+          <div className="row">
+            <TaskTable />
           </div>
         </div>
 
