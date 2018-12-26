@@ -5,6 +5,7 @@ const mf = require("./mf");
 const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
 const { InvalidInstAccDataError } = require("server/api/errors");
+const { getProxyString } = require("server/api/utils");
 
 const startTasks = async () => {
   const tasks = await InstTask.find({
@@ -30,7 +31,9 @@ const startTasks = async () => {
 
       client = new Instagram(
         { username, password, cookieStore },
-        { proxy: `http://${proxy.host}:${proxy.port}` }
+        {
+          proxy: getProxyString(proxy)
+        }
       );
 
       await client.login();

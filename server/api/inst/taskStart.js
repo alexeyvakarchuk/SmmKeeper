@@ -14,6 +14,7 @@ const {
 const socket = require("server/libs/socket");
 const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
+const { getProxyString } = require("server/api/utils");
 
 exports.init = router =>
   router.post("/api/inst/task-start", async function(ctx) {
@@ -38,7 +39,9 @@ exports.init = router =>
 
         client = new Instagram(
           { username, password, cookieStore },
-          { proxy: `http://${proxy.host}:${proxy.port}` }
+          {
+            proxy: getProxyString(proxy)
+          }
         );
 
         await client.login();

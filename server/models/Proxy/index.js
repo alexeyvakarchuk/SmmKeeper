@@ -4,16 +4,14 @@ const config = require("server/config/default");
 const proxySchema = new mongoose.Schema({
   host: {
     type: String,
-    required: "Proxy host is required",
-    unique: true,
-    uniqueCaseInsensitive: true
+    required: "Proxy host is required"
   },
   port: {
     type: String,
     required: "Proxy port is required"
   },
   auth: {
-    username: {
+    login: {
       type: String
     },
     password: {

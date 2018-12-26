@@ -13,6 +13,7 @@ const Proxy = require("server/models/Proxy");
 const fs = require("fs");
 const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
+const { getProxyString } = require("server/api/utils");
 
 exports.init = router =>
   router.post("/api/inst/request-verification", async function(ctx) {
@@ -49,7 +50,9 @@ exports.init = router =>
 
       const client = new Instagram(
         { username, password, cookieStore },
-        { proxy: `http://${proxy.host}:${proxy.port}` }
+        {
+          proxy: getProxyString(proxy)
+        }
       );
 
       try {
