@@ -144,4 +144,64 @@
       cursor: pointer;
     }
   }
+  &__head {
+    display: flex;
+    height: 40px;
+    background-color: #fff;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-bottom: 5px;
+    &-caption {
+      display: block;
+      color: #636e73;
+      font-size: 13px;
+      text-align: center;
+      cursor: pointer;
+      width: 100%;
+      &:first-child {
+        width: 40px;
+        padding-right: 20px;
+      }
+      &:last-child {
+        width: 55px;
+        padding: 0 5px 0 25px;
+      }
+    }
+  }
+  &__task {
+    display: flex;
+    height: 100px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    padding: 0 20px;
+    &-label {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b1bec3;
+      font-size: 13px;
+      text-align: center;
+      width: 100%;
+      &:not(:last-child) {
+        border-right: 1px solid #f7f9fa;
+      }
+      &:first-child {
+        width: 40px;
+        padding-right: 20px;
+      }
+      &:last-child {
+        width: 55px;
+        padding: 0 5px 0 25px;
+      }
+      &_username {
+        max-width: 206px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
 }

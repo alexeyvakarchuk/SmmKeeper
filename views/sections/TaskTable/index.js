@@ -4,25 +4,27 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { openPopup } from "ducks/startTaskPopup";
 import Dropdown from "components/Dropdown";
+import OptionDots from "icons/OptionDots";
 import type { Props, State } from "./types";
 
 class TaskTable extends PureComponent<Props, State> {
   state = {
-    selectedOption: null
+    selectedAction: null,
+    selectedFilter: null
   };
 
-  handleChange = selectedOption => {
-    this.setState({ selectedOption });
+  handleChange = option => value => {
+    this.setState({ [option]: value });
   };
 
   render() {
-    const { selectedOption } = this.state;
+    const { selectedAction, selectedFilter } = this.state;
     const { tasksList } = this.props;
 
     const optionsAction = [
-      { value: "chocolate", label: "Chocolate" },
-      { value: "strawberry", label: "Strawberry" },
-      { value: "vanilla", label: "Vanilla" }
+      { value: "STOP", label: "STOP" },
+      { value: "PAUSE", label: "PAUSE" },
+      { value: "DONE", label: "DONE" }
     ];
     const optionsFilter = [
       { value: "Follow", label: "Follow" },
@@ -38,8 +40,8 @@ class TaskTable extends PureComponent<Props, State> {
           <div className="task-table__filter-left">
             <Dropdown
               instanceId="task-select"
-              value={selectedOption}
-              onChange={this.handleChange}
+              value={selectedAction}
+              onChange={this.handleChange("selectedAction")}
               options={optionsAction}
               placeholder={"Bulk action"}
             />
@@ -51,8 +53,8 @@ class TaskTable extends PureComponent<Props, State> {
             <span className="task-table__filter-caption">Filter:</span>
             <Dropdown
               instanceId="task-select2"
-              value={selectedOption}
-              onChange={this.handleChange}
+              value={selectedFilter}
+              onChange={this.handleChange("selectedFilter")}
               options={optionsFilter}
               placeholder={"All actions"}
             />
@@ -88,22 +90,25 @@ class TaskTable extends PureComponent<Props, State> {
               {tasksList
                 .filter(el => el.username === this.props.username)
                 .map(
-                  ({
-                    unteractionsNum,
-                    sourceUsername,
-                    type,
-                    status,
-                    startDate
-                  }) => (
+                  (
+                    {
+                      unteractionsNum,
+                      sourceUsername,
+                      type,
+                      status,
+                      startDate
+                    },
+                    index
+                  ) => (
                     <tr>
                       <td>
                         <input
                           type="checkbox"
                           className="table__checkbox"
-                          id="thisid2"
+                          id={index}
                         />
                         <label
-                          htmlFor="thisid2"
+                          htmlFor={index}
                           className="table__checkbox-label"
                         />
                       </td>
@@ -138,6 +143,42 @@ class TaskTable extends PureComponent<Props, State> {
               )
             )}
           </div> */}
+        <div className="table">
+          <div className="table__head">
+            <span className="table__head-caption">
+              <input type="checkbox" className="table__checkbox" id="thisid3" />
+              <label htmlFor="thisid3" className="table__checkbox-label" />
+            </span>
+            <span className="table__head-caption">Status</span>
+            <span className="table__head-caption">Profile</span>
+            <span className="table__head-caption">Action type</span>
+            <span className="table__head-caption">Source</span>
+            <span className="table__head-caption">Audience</span>
+            <span className="table__head-caption">Done</span>
+            <span className="table__head-caption">Result</span>
+            <span className="table__head-caption">Conversion</span>
+            <span className="table__head-caption" />
+          </div>
+          <div className="table__task">
+            <span className="table__task-label">
+              <input type="checkbox" className="table__checkbox" id="thisid4" />
+              <label htmlFor="thisid4" className="table__checkbox-label" />
+            </span>
+            <span className="table__task-label">STOP</span>
+            <span className="table__task-label table__task-label_username">
+              nikere.design adgmaoirgainrgipuanriguairo
+            </span>
+            <span className="table__task-label">Follow & 1 Like</span>
+            <span className="table__task-label">@nikere.co</span>
+            <span className="table__task-label">15 260</span>
+            <span className="table__task-label">2690</span>
+            <span className="table__task-label">243</span>
+            <span className="table__task-label">9.5%</span>
+            <span className="table__task-label">
+              <OptionDots />
+            </span>
+          </div>
+        </div>
       </section>
     );
   }
