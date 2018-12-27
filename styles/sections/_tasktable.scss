@@ -197,6 +197,15 @@
         width: 55px;
         padding: 0 5px 0 25px;
       }
+      &_green {
+        color: #00d1a7;
+      }
+      &_red {
+        color: #cc5e5e;
+      }
+      &_grey {
+        color: #636e73;
+      }
       &_username {
         max-width: 206px;
         overflow: hidden;

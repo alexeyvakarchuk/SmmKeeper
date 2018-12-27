@@ -42,16 +42,32 @@ class TaskTable extends PureComponent<Props, State> {
     const getStatus = (statusNum: number) => {
       switch (statusNum) {
         case 1:
-          return "Active";
+          return "ACTIVE";
 
         case 0:
-          return "Paused";
+          return "PAUSED";
 
         case -1:
-          return "Blocked/Pass changed";
+          return "STOPPED";
 
         default:
           return "Invalid";
+      }
+    };
+
+    const getStatusTextColor = (statusNum: number) => {
+      switch (statusNum) {
+        case 1:
+          return "table__task-label_green";
+
+        case -1:
+          return "table__task-label_red";
+
+        case 0:
+          return "table__task-label_grey";
+
+        default:
+          return "";
       }
     };
 
@@ -122,7 +138,13 @@ class TaskTable extends PureComponent<Props, State> {
                       className="table__checkbox-label"
                     />
                   </span>
-                  <span className="table__task-label">{getStatus(status)}</span>
+                  <span
+                    className={`table__task-label ${getStatusTextColor(
+                      status
+                    )}`}
+                  >
+                    {getStatus(status)}
+                  </span>
                   {/* <span className="table__task-label table__task-label_username">
                     nikere.design adgmaoirgainrgipuanriguairo
                   </span> */}
