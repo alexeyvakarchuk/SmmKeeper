@@ -15,8 +15,7 @@
     " --- Other --- ": "",
     "flow": "./node_modules/.bin/flow",
     "redis": "redis-server",
-    "test": "NODE_ENV=test NODE_PATH=./ ./node_modules/.bin/mocha ./test/**/*.js --exit",
-    "postinstall": "yarn run prod-frontend"
+    "test": "NODE_ENV=test NODE_PATH=./ ./node_modules/.bin/mocha ./test/**/*.js --exit"
   },
   "dependencies": {
     "@babel/core": "^7.2.0",
