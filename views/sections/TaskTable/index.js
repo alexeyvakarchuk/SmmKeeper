@@ -21,6 +21,11 @@ class TaskTable extends PureComponent<Props, State> {
     const { selectedAction, selectedFilter } = this.state;
     const { tasksList } = this.props;
 
+    const tasks =
+      tasksList !== null && tasksList.length
+        ? tasksList.filter(el => el.username === this.props.username)
+        : [];
+
     const optionsAction = [
       { value: "STOP", label: "STOP" },
       { value: "PAUSE", label: "PAUSE" },
@@ -33,6 +38,22 @@ class TaskTable extends PureComponent<Props, State> {
       { value: "Like", label: "Like" },
       { value: "Direct", label: "Direct" }
     ];
+
+    const getStatus = (statusNum: number) => {
+      switch (statusNum) {
+        case 1:
+          return "Active";
+
+        case 0:
+          return "Paused";
+
+        case -1:
+          return "Blocked/Pass changed";
+
+        default:
+          return "Invalid";
+      }
+    };
 
     return (
       <section className="task-table">
@@ -63,69 +84,61 @@ class TaskTable extends PureComponent<Props, State> {
             </button>
           </div>
         </div>
-        {tasksList !== null && tasksList.length ? (
-          <table className="task-table__table table">
-            <thead className="table__thead">
-              <tr>
-                <th>
-                  <input
-                    type="checkbox"
-                    className="table__checkbox"
-                    id="thisid"
-                  />
-                  <label htmlFor="thisid" className="table__checkbox-label" />
-                </th>
-                <th>Status</th>
-                <th>Profile</th>
-                <th>Action type</th>
-                <th>Source</th>
-                <th>Audience</th>
-                <th>Done</th>
-                <th>Result</th>
-                <th>Conversion</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody className="table__tbody">
-              {tasksList
-                .filter(el => el.username === this.props.username)
-                .map(
-                  (
-                    {
-                      unteractionsNum,
-                      sourceUsername,
-                      type,
-                      status,
-                      startDate
-                    },
-                    index
-                  ) => (
-                    <tr>
-                      <td>
-                        <input
-                          type="checkbox"
-                          className="table__checkbox"
-                          id={index}
-                        />
-                        <label
-                          htmlFor={index}
-                          className="table__checkbox-label"
-                        />
-                      </td>
-                      <td>{status === 1 ? "Active" : "Paused"}</td>
-                      <td>{this.props.username}</td>
-                      <td>{type}</td>
-                      <td>{sourceUsername}</td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>{unteractionsNum}</td>
-                      <td>-</td>
-                      <td />
-                    </tr>
-                  )
-                )}
-            </tbody>
-          </table>
+        {tasks.length ? (
+          <div className="table">
+            <div className="table__head">
+              <span className="table__head-caption">
+                <input
+                  type="checkbox"
+                  className="table__checkbox"
+                  id="thisid3"
+                />
+                <label htmlFor="thisid3" className="table__checkbox-label" />
+              </span>
+              <span className="table__head-caption">Status</span>
+              {/* <span className="table__head-caption">Profile</span> */}
+              <span className="table__head-caption">Action type</span>
+              <span className="table__head-caption">Source</span>
+              <span className="table__head-caption">Audience</span>
+              <span className="table__head-caption">Done</span>
+              <span className="table__head-caption">Result</span>
+              <span className="table__head-caption">Conversion</span>
+              <span className="table__head-caption" />
+            </div>
+            {tasks.map(
+              (
+                { unteractionsNum, sourceUsername, type, status, startDate },
+                index
+              ) => (
+                <div className="table__task">
+                  <span className="table__task-label">
+                    <input
+                      type="checkbox"
+                      className="table__checkbox"
+                      id="thisid4"
+                    />
+                    <label
+                      htmlFor="thisid4"
+                      className="table__checkbox-label"
+                    />
+                  </span>
+                  <span className="table__task-label">{getStatus(status)}</span>
+                  {/* <span className="table__task-label table__task-label_username">
+                    nikere.design adgmaoirgainrgipuanriguairo
+                  </span> */}
+                  <span className="table__task-label">{type}</span>
+                  <span className="table__task-label">{sourceUsername}</span>
+                  <span className="table__task-label">-</span>
+                  <span className="table__task-label">{unteractionsNum}</span>
+                  <span className="table__task-label">-</span>
+                  <span className="table__task-label">-</span>
+                  <span className="table__task-label">
+                    <OptionDots />
+                  </span>
+                </div>
+              )
+            )}
+          </div>
         ) : (
           false
         )}
@@ -143,42 +156,40 @@ class TaskTable extends PureComponent<Props, State> {
               )
             )}
           </div> */}
-        <div className="table">
-          <div className="table__head">
-            <span className="table__head-caption">
-              <input type="checkbox" className="table__checkbox" id="thisid3" />
-              <label htmlFor="thisid3" className="table__checkbox-label" />
-            </span>
-            <span className="table__head-caption">Status</span>
-            <span className="table__head-caption">Profile</span>
-            <span className="table__head-caption">Action type</span>
-            <span className="table__head-caption">Source</span>
-            <span className="table__head-caption">Audience</span>
-            <span className="table__head-caption">Done</span>
-            <span className="table__head-caption">Result</span>
-            <span className="table__head-caption">Conversion</span>
-            <span className="table__head-caption" />
-          </div>
-          <div className="table__task">
-            <span className="table__task-label">
-              <input type="checkbox" className="table__checkbox" id="thisid4" />
-              <label htmlFor="thisid4" className="table__checkbox-label" />
-            </span>
-            <span className="table__task-label">STOP</span>
-            <span className="table__task-label table__task-label_username">
-              nikere.design adgmaoirgainrgipuanriguairo
-            </span>
-            <span className="table__task-label">Follow & 1 Like</span>
-            <span className="table__task-label">@nikere.co</span>
-            <span className="table__task-label">15 260</span>
-            <span className="table__task-label">2690</span>
-            <span className="table__task-label">243</span>
-            <span className="table__task-label">9.5%</span>
-            <span className="table__task-label">
-              <OptionDots />
-            </span>
-          </div>
-        </div>
+
+        {/* {tasksList
+            .filter(el => el.username === this.props.username)
+            .map(
+              (
+                { unteractionsNum, sourceUsername, type, status, startDate },
+                index
+              ) => (
+                
+                // <tr>
+                //   <td>
+                //     <input
+                //       type="checkbox"
+                //       className="table__checkbox"
+                //       id={index}
+                //     />
+                //     <label
+                //       htmlFor={index}
+                //       className="table__checkbox-label"
+                //     />
+                //   </td>
+                //   <td>{status === 1 ? "Active" : "Paused"}</td>
+                //   <td>{this.props.username}</td>
+                //   <td>{type}</td>
+                //   <td>{sourceUsername}</td>
+                //   <td>-</td>
+                //   <td>-</td>
+                //   <td>{unteractionsNum}</td>
+                //   <td>-</td>
+                //   <td />
+                // </tr>
+              )
+            )}
+        </div> */}
       </section>
     );
   }

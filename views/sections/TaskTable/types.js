@@ -3,7 +3,8 @@ import type { Task } from "ducks/inst/types";
 import type { OptionType } from "react-select/src/types";
 
 export type State = {|
-  selectedOption: OptionType | null
+  selectedAction: OptionType | null,
+  selectedFilter: OptionType | null
 |};
 
 export type Props = {|

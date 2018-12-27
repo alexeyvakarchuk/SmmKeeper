@@ -29,12 +29,16 @@ const startTasks = async () => {
         resolve("server", `cookieStore/${username}.json`)
       );
 
+      console.log(proxy, cookieStore);
+
       client = new Instagram(
         { username, password, cookieStore },
         {
           proxy: getProxyString(proxy)
         }
       );
+
+      console.log(client);
 
       await client.login();
     } catch (e) {

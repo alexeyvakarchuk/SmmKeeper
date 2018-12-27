@@ -14,6 +14,9 @@ module.exports = (username, client) => {
 
     const { status, sourceId, end_cursor } = task;
 
+    // console.log("task ::: ", task);
+    // console.log("acc ::: ", acc);
+
     if (task && status === 1) {
       try {
         let source = await client.getFollowers({
@@ -55,11 +58,11 @@ module.exports = (username, client) => {
       } catch (e) {
         console.log(e);
 
-        if (e.name === "StatusCodeError" && e.statusCode === 429) {
-          task.status = -1;
-          await task.save();
-          cronTask.destroy();
-        }
+        // if (e.name === "StatusCodeError" && e.statusCode === 429) {
+        task.status = -1;
+        await task.save();
+        cronTask.destroy();
+        // }
       }
     } else {
       cronTask.destroy();
