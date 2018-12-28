@@ -32,7 +32,7 @@ n.prepare().then(() => {
   });
 
   const server = app.listen(config.port, () => {
-    console.log(`> Listening on http://localhost:${config.port}`);
+    console.log(`> Listening on port : ${config.port}`);
   });
 
   socket(server);

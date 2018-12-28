@@ -5,7 +5,12 @@ import TopBar from "components/TopBar";
 import Layout from "hoc/layout";
 import LeftBar from "components/LeftBar";
 import { socketConnect } from "ducks/socket";
-import { fetchAccs, fetchTasks, redirectIfInvalidUsername } from "ducks/inst";
+import {
+  fetchAccs,
+  fetchTasks,
+  updateStats,
+  redirectIfInvalidUsername
+} from "ducks/inst";
 import { checkPasswordExistence } from "ducks/password";
 import Dashboard from "sections/Dashboard";
 import { fetchUserAuth } from "utils";
@@ -51,6 +56,9 @@ class Internal extends Component<Props, State> {
 
         await store.execSagaTasks(isServer, dispatch => {
           dispatch(fetchTasks({ username: query.username, token }));
+
+          dispatch(updateStats({ username: query.username, token }));
+
           dispatch(checkPasswordExistence({ token }));
         });
       } else {

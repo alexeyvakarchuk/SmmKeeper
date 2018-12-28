@@ -16,6 +16,7 @@ export type Props = {|
   username: string,
   tasksList: null | Task[],
   progressFetchTasks: boolean,
+  progressStatsUpdate: boolean,
   accList: Acc[],
 
   fetchTasks: (username: string, token: string) => void,

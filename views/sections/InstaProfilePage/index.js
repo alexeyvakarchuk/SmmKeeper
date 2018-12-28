@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import type { Props, State } from "./types";
 import GradientButton from "components/GradientButton";
-import { startTask, fetchTasks, updateLimit } from "ducks/inst";
+import { startTask, fetchTasks, updateLimit, updateStats } from "ducks/inst";
 import BarChart from "components/BarChart";
 import RangeGradient from "components/RangeGradient";
 import TaskTable from "sections/TaskTable";
@@ -34,12 +34,16 @@ class InstaProfilePage extends Component<Props, State> {
       typeof window !== "undefined" && localStorage.getItem("tktoken");
     // console.log("need to update", this.props.username, prevProps.username);
 
-    if (
-      this.props.username !== prevProps.username &&
-      !this.props.progressFetchTasks
-    ) {
-      // $FlowFixMe
-      this.props.fetchTasks(this.props.username, token);
+    if (this.props.username !== prevProps.username) {
+      if (!this.props.progressFetchTasks) {
+        // $FlowFixMe
+        this.props.fetchTasks(this.props.username, token);
+      }
+
+      if (!this.props.progressStatsUpdate) {
+        // $FlowFixMe
+        this.props.updateStats(this.props.username, token);
+      }
     }
   }
 
@@ -200,13 +204,18 @@ class InstaProfilePage extends Component<Props, State> {
 }
 
 export default connect(
-  ({ inst: { accList, tasksList, progressFetchTasks } }) => ({
+  ({
+    inst: { accList, tasksList, progressFetchTasks, progressStatsUpdate }
+  }) => ({
     accList,
     tasksList,
-    progressFetchTasks
+    progressFetchTasks,
+    progressStatsUpdate
   }),
   dispatch => ({
     fetchTasks: (username, token) => dispatch(fetchTasks({ username, token })),
+    updateStats: (username, token) =>
+      dispatch(updateStats({ username, token })),
     startTask: (username, type) => dispatch(startTask({ username, type })),
     updateLimit: (username, type, limitValue) =>
       dispatch(updateLimit({ username, type, limitValue }))

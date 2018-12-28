@@ -8,5 +8,4 @@ if (environment === "development") {
   mongoose.set("debug", true);
 }
 
-exports.init = app =>
-  mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/smmkeeper");
+exports.init = app => mongoose.connect("mongodb://localhost/smmkeeper");

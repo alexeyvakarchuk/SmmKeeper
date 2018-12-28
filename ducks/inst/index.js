@@ -36,6 +36,10 @@ import {
   TASK_START_START,
   TASK_START_SUCCESS,
   TASK_START_FAIL,
+  STATS_UPDATE_REQUEST,
+  STATS_UPDATE_START,
+  STATS_UPDATE_SUCCESS,
+  STATS_UPDATE_FAIL,
   LIMIT_UPDATE_REQUEST,
   LIMIT_UPDATE_START,
   LIMIT_UPDATE_SUCCESS,
@@ -48,6 +52,7 @@ import redirect from "server/redirect";
 import type { State as AccReq } from "components/connectAccPopup/types";
 import { eventChannel, END } from "redux-saga";
 import { setCookie, getCookie, removeCookie } from "server/libs/cookies";
+import moment from "moment";
 
 /**
  * Constants
@@ -67,6 +72,7 @@ export const initialState: State = {
   verificationType: null,
   progressFetchAccs: false,
   progressFetchTasks: false,
+  progressStatsUpdate: false,
   progressConnAcc: false,
   progressStartTask: false,
   progressLimitUpdate: false,
@@ -170,6 +176,26 @@ const instReducer = handleActions(
       error: action.payload.error
     }),
 
+    [STATS_UPDATE_START]: (state: State) => ({
+      ...state,
+      progressStatsUpdate: true,
+      error: null
+    }),
+    [STATS_UPDATE_SUCCESS]: (state: State, action) => ({
+      ...state,
+      progressStatsUpdate: false,
+      error: null,
+      accList: state.accList.map(
+        acc =>
+          acc.username === action.payload.username ? action.payload.acc : acc
+      )
+    }),
+    [STATS_UPDATE_FAIL]: (state: State, action) => ({
+      ...state,
+      progressStatsUpdate: false,
+      error: action.payload.error
+    }),
+
     [TASK_START_START]: (state: State) => ({
       ...state,
       progressStartTask: true,
@@ -258,6 +284,7 @@ export const requestVerification = createAction(REQUEST_VERIFICATION_REQUEST);
 export const setVerificationType = createAction(SET_VERIFICATION_TYPE_REQUEST);
 export const verifyAcc = createAction(VERIFY_ACC_REQUEST);
 export const fetchAccs = createAction(FETCH_ACCS_REQUEST);
+export const updateStats = createAction(STATS_UPDATE_REQUEST);
 export const startTask = createAction(TASK_START_REQUEST);
 export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
 export const updateLimit = createAction(LIMIT_UPDATE_REQUEST);
@@ -642,6 +669,60 @@ export function* fetchTasksSaga({
 }
 
 /* eslint-disable consistent-return */
+export function* statsUpdateSaga({
+  payload: { username, token }
+}: {
+  payload: {
+    username: string,
+    token: string
+  }
+}): Generator<any, any, any> {
+  const state = yield select(stateSelector);
+
+  if (state.progressStatsUpdate) return true;
+
+  yield put({ type: STATS_UPDATE_START });
+
+  try {
+    const { user } = yield select(authStateSelector);
+
+    if (user.id) {
+      const statsUpdateRef = {
+        method: "post",
+        url: "/api/inst/update-stats",
+        baseURL,
+        data: {
+          id: user.id,
+          token,
+          username
+        },
+        headers: {
+          "Content-Type": "application/json"
+        }
+      };
+
+      const {
+        data: { acc }
+      } = yield call(axios, statsUpdateRef);
+
+      yield put({
+        type: STATS_UPDATE_SUCCESS,
+        payload: { acc, username }
+      });
+    } else {
+      throw "Can't find user id or email";
+    }
+  } catch (err) {
+    yield put({
+      type: STATS_UPDATE_FAIL,
+      payload: {
+        error: err
+      }
+    });
+  }
+}
+
+/* eslint-disable consistent-return */
 export function* startTaskSaga({
   payload: { username, type, sourceUsername }
 }: {
@@ -763,5 +844,6 @@ export function* watchInst(): mixed {
   yield takeEvery(FETCH_ACCS_REQUEST, fetchAccsSaga);
   yield takeEvery(TASK_START_REQUEST, startTaskSaga);
   yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
+  yield takeEvery(STATS_UPDATE_REQUEST, statsUpdateSaga);
   yield takeEvery(LIMIT_UPDATE_REQUEST, updateLimitSaga);
 }
