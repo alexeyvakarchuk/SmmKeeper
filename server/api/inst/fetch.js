@@ -12,7 +12,10 @@ exports.init = router =>
     if (jwt.verify(token, jwtsecret).id === id) {
       const user = await User.findById(id);
 
-      const accs = await InstAcc.find({ userId: user._id });
+      const accs = await InstAcc.find(
+        { userId: user._id },
+        "-_id -__v -interactions"
+      );
 
       // accs.forEach(el => ({
       //   ...el,

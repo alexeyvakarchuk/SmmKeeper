@@ -19,7 +19,17 @@ exports.init = router =>
       ctx.status = 200;
 
       ctx.body = {
-        acc
+        acc: acc.toObject({
+          getters: true,
+          transform: (doc, ret, options) => {
+            // remove the _id of every document before returning the result
+            delete ret._id;
+            delete ret.id;
+            delete ret.__v;
+            delete ret.interactions;
+            return ret;
+          }
+        })
       };
     } else {
       throw new InvalidUserIdError();
