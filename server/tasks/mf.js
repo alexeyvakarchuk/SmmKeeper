@@ -56,13 +56,13 @@ module.exports = (username, client) => {
         task.end_cursor = source.page_info.end_cursor;
         await task.save();
       } catch (e) {
-        console.log(e);
+        console.log("Task error(MF) ::: ", e);
 
-        // if (e.name === "StatusCodeError" && e.statusCode === 429) {
-        task.status = -1;
-        await task.save();
-        cronTask.destroy();
-        // }
+        if (e.name === "StatusCodeError" && e.statusCode === 429) {
+          task.status = -1;
+          await task.save();
+          cronTask.destroy();
+        }
       }
     } else {
       cronTask.destroy();
