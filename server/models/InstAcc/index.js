@@ -90,7 +90,10 @@ const instAccSchema = new mongoose.Schema(
       }
     ]
   },
-  { strict: false }
+  {
+    strict: false,
+    versionKey: false
+  }
 );
 
 // Will show MongoError instead of ValidationError
