@@ -54,6 +54,9 @@ class Internal extends Component<Props, State> {
           dispatch(fetchAccs({ token, queryUsername: query.username, ctx }));
         });
 
+        // New accList after fetching accs
+        const accList = store.getState().inst.accList;
+
         if (accList && accList.length) {
           await store.execSagaTasks(isServer, dispatch => {
             dispatch(fetchTasks({ username: query.username, token }));
