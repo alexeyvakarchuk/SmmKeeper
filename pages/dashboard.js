@@ -54,13 +54,15 @@ class Internal extends Component<Props, State> {
           dispatch(fetchAccs({ token, queryUsername: query.username, ctx }));
         });
 
-        await store.execSagaTasks(isServer, dispatch => {
-          dispatch(fetchTasks({ username: query.username, token }));
+        if (accList && accList.length) {
+          await store.execSagaTasks(isServer, dispatch => {
+            dispatch(fetchTasks({ username: query.username, token }));
 
-          dispatch(updateStats({ username: query.username, token }));
+            dispatch(updateStats({ username: query.username, token }));
 
-          dispatch(checkPasswordExistence({ token }));
-        });
+            dispatch(checkPasswordExistence({ token }));
+          });
+        }
       } else {
         redirect("/signIn", ctx);
       }
