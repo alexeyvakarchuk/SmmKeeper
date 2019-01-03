@@ -86,7 +86,7 @@ exports.init = router =>
 
         switch (type) {
           case "mf":
-            mf(username, client);
+            mf(username, task._id, client);
             break;
         }
 

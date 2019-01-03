@@ -3,12 +3,9 @@ const InstAcc = require("server/models/InstAcc");
 const InstTask = require("server/models/InstTask");
 const delay = require("server/utils/delay");
 
-module.exports = (username, client) => {
+module.exports = (username, taskId, client) => {
   const cronTask = cron.schedule("*/2 * * * *", async () => {
-    const task = await InstTask.findOne({
-      username,
-      type: "mf"
-    });
+    const task = await InstTask.findById(taskId);
 
     const acc = await InstAcc.findOne({ username });
 

@@ -15,7 +15,7 @@ const startTasks = async () => {
 
   // console.log("tasks ::: ", tasks);
 
-  tasks.forEach(async ({ username }) => {
+  tasks.forEach(async ({ _id, username }) => {
     // console.log("username ::: ", username);
 
     let client;
@@ -28,8 +28,6 @@ const startTasks = async () => {
       const cookieStore = new FileCookieStore(
         resolve("server", `cookieStore/${username}.json`)
       );
-
-      console.log(proxy, cookieStore);
 
       client = new Instagram(
         { username, password, cookieStore },
@@ -46,7 +44,7 @@ const startTasks = async () => {
       throw new InvalidInstAccDataError();
     }
 
-    mf(username, client);
+    mf(username, _id, client);
   });
 };
 
