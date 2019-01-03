@@ -15,7 +15,7 @@ exports.init = router =>
         {
           username
         },
-        "-_id -__v -end_cursor"
+        "-__v -end_cursor"
       );
 
       ctx.status = 200;

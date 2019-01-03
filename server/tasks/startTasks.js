@@ -36,8 +36,6 @@ const startTasks = async () => {
         }
       );
 
-      console.log(client);
-
       await client.login();
     } catch (e) {
       console.log(e);

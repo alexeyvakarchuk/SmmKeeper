@@ -9,7 +9,7 @@ import type { State } from "./types";
  * Constants
  * */
 
-export const moduleName: string = "startTaskPopup";
+export const moduleName: string = "createTaskPopup";
 
 /**
  * Reducer
@@ -19,7 +19,7 @@ export const initialState: State = {
   visible: false
 };
 
-const startTaskPopupReducer = handleActions(
+const createTaskPopupReducer = handleActions(
   {
     [POPUP_OPEN]: state => ({
       ...state,
@@ -35,7 +35,7 @@ const startTaskPopupReducer = handleActions(
   initialState
 );
 
-export default startTaskPopupReducer;
+export default createTaskPopupReducer;
 
 /**
  * Selectors

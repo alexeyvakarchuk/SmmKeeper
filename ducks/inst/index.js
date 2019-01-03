@@ -32,10 +32,10 @@ import {
   FETCH_TASKS_START,
   FETCH_TASKS_SUCCESS,
   FETCH_TASKS_FAIL,
-  TASKS_START_REQUEST,
-  TASKS_START_START,
-  TASKS_START_SUCCESS,
-  TASKS_START_FAIL,
+  TASK_CREATE_REQUEST,
+  TASK_CREATE_START,
+  TASK_CREATE_SUCCESS,
+  TASK_CREATE_FAIL,
   STATS_UPDATE_REQUEST,
   STATS_UPDATE_START,
   STATS_UPDATE_SUCCESS,
@@ -46,7 +46,7 @@ import {
   LIMIT_UPDATE_FAIL
 } from "./const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
-import { POPUP_CLOSE } from "ducks/startTaskPopup/const";
+import { POPUP_CLOSE } from "ducks/createTaskPopup/const";
 import { live } from "ducks/socket";
 import redirect from "server/redirect";
 import type { State as AccReq } from "components/connectAccPopup/types";
@@ -74,7 +74,7 @@ export const initialState: State = {
   progressFetchTasks: false,
   progressStatsUpdate: false,
   progressConnAcc: false,
-  progressStartTask: false,
+  progressCreateTask: false,
   progressLimitUpdate: false,
   error: null
 };
@@ -196,20 +196,20 @@ const instReducer = handleActions(
       error: action.payload.error
     }),
 
-    [TASKS_START_START]: (state: State) => ({
+    [TASK_CREATE_START]: (state: State) => ({
       ...state,
-      progressStartTask: true,
+      progressCreateTask: true,
       error: null
     }),
-    [TASKS_START_SUCCESS]: (state: State, action) => ({
+    [TASK_CREATE_SUCCESS]: (state: State, action) => ({
       ...state,
       tasksList: [action.payload.task, ...state.tasksList],
-      progressStartTask: false,
+      progressCreateTask: false,
       error: null
     }),
-    [TASKS_START_FAIL]: (state: State, action) => ({
+    [TASK_CREATE_FAIL]: (state: State, action) => ({
       ...state,
-      progressStartTask: false,
+      progressCreateTask: false,
       error: action.payload.error
     }),
 
@@ -285,7 +285,7 @@ export const setVerificationType = createAction(SET_VERIFICATION_TYPE_REQUEST);
 export const verifyAcc = createAction(VERIFY_ACC_REQUEST);
 export const fetchAccs = createAction(FETCH_ACCS_REQUEST);
 export const updateStats = createAction(STATS_UPDATE_REQUEST);
-export const startTasks = createAction(TASKS_START_REQUEST);
+export const createTask = createAction(TASK_CREATE_REQUEST);
 export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
 export const updateLimit = createAction(LIMIT_UPDATE_REQUEST);
 
@@ -662,22 +662,20 @@ export function* statsUpdateSaga({
 }
 
 /* eslint-disable consistent-return */
-export function* startTasksSaga({
-  payload: { username, tasks }
+export function* createTaskSaga({
+  payload: { username, type, sourceUsername }
 }: {
   payload: {
     username: string,
-    tasks: Array<{
-      type: "mf" | "ml",
-      sourceUsername: string
-    }>
+    type: "mf" | "ml",
+    sourceUsername: string
   }
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
-  if (state.progressStartTask) return true;
+  if (state.progressCreateTask) return true;
 
-  yield put({ type: TASKS_START_START });
+  yield put({ type: TASK_CREATE_START });
 
   try {
     const { user } = yield select(authStateSelector);
@@ -685,13 +683,14 @@ export function* startTasksSaga({
     if (user.id) {
       const connAccRef = {
         method: "post",
-        url: "/api/inst/tasks-start",
+        url: "/api/inst/task-create",
         baseURL,
         data: {
           id: user.id,
           token: localStorage.getItem("tktoken"),
           username,
-          tasks
+          type,
+          sourceUsername
         },
         headers: {
           "Content-Type": "application/json"
@@ -703,7 +702,7 @@ export function* startTasksSaga({
       yield put({ type: POPUP_CLOSE });
     } else {
       yield put({
-        type: TASKS_START_FAIL,
+        type: TASK_CREATE_FAIL,
         payload: {
           error: "Can't find user id or email"
         }
@@ -711,7 +710,7 @@ export function* startTasksSaga({
     }
   } catch (res) {
     yield put({
-      type: TASKS_START_FAIL,
+      type: TASK_CREATE_FAIL,
       payload: {
         error: res.response.data.error.message
       }
@@ -782,7 +781,7 @@ export function* watchInst(): mixed {
   yield takeEvery(VERIFY_ACC_REQUEST, verifyAccSaga);
 
   yield takeEvery(FETCH_ACCS_REQUEST, fetchAccsSaga);
-  yield takeEvery(TASKS_START_REQUEST, startTasksSaga);
+  yield takeEvery(TASK_CREATE_REQUEST, createTaskSaga);
   yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
   yield takeEvery(STATS_UPDATE_REQUEST, statsUpdateSaga);
   yield takeEvery(LIMIT_UPDATE_REQUEST, updateLimitSaga);

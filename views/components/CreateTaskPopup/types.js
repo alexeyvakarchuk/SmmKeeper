@@ -11,10 +11,14 @@ export type State = {|
 export type Props = {|
   accList: null | Acc[],
   popupVisible: boolean,
-  progressStartTask: boolean,
+  progressCreateTask: boolean,
   error: string,
   username: string,
 
   closePopup: () => void,
-  startTask: ({ actionSource: string, actionType: string | null }) => void
+  createTask: ({
+    username: string,
+    type: "mf" | "ml",
+    sourceUsername: string
+  }) => void
 |};

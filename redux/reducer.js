@@ -6,9 +6,9 @@ import passwordReducer, { moduleName as passwordModule } from "ducks/password";
 import connectAccPopupReducer, {
   moduleName as connectAccPopupModule
 } from "ducks/connectAccPopup";
-import startTaskPopupReducer, {
-  moduleName as startTaskPopupModule
-} from "ducks/startTaskPopup";
+import createTaskPopupReducer, {
+  moduleName as createTaskPopupModule
+} from "ducks/createTaskPopup";
 
 export default combineReducers({
   [authModule]: authReducer,
@@ -16,5 +16,5 @@ export default combineReducers({
   [socketModule]: socketReducer,
   [passwordModule]: passwordReducer,
   [connectAccPopupModule]: connectAccPopupReducer,
-  [startTaskPopupModule]: startTaskPopupReducer
+  [createTaskPopupModule]: createTaskPopupReducer
 });

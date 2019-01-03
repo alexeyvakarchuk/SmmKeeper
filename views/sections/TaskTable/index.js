@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { openPopup } from "ducks/startTaskPopup";
+import { openPopup } from "ducks/createTaskPopup";
 import Dropdown from "components/Dropdown";
 import OptionDots from "icons/OptionDots";
 import type { Props, State } from "./types";

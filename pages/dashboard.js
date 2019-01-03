@@ -16,7 +16,7 @@ import Dashboard from "sections/Dashboard";
 import { fetchUserAuth } from "utils";
 import redirect from "server/redirect";
 import ConnectAccPopup from "components/ConnectAccPopup";
-import StartTaskPopup from "components/StartTaskPopup";
+import CreateTaskPopup from "components/CreateTaskPopup";
 import { connect } from "react-redux";
 import { getCookie } from "server/libs/cookies";
 
@@ -114,7 +114,7 @@ class Internal extends Component<Props, State> {
           </div>
 
           <ConnectAccPopup />
-          <StartTaskPopup username={this.props.username} />
+          <CreateTaskPopup username={this.props.username} />
         </section>
       </Layout>
     );

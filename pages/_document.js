@@ -14,7 +14,7 @@ export default class MyDocument extends Document {
         <body>
           <Main />
           <div id="connectAccPopup" />
-          <div id="startTaskPopup" />
+          <div id="createTaskPopup" />
           <NextScript />
         </body>
       </html>

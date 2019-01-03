@@ -21,6 +21,6 @@ export type State = {|
   +progressFetchAccs: boolean,
   +progressFetchTasks: boolean,
   +progressConnAcc: boolean,
-  +progressStartTask: boolean,
+  +progressCreateTask: boolean,
   +error: null | string
 |};

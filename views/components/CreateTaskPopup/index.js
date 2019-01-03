@@ -7,10 +7,10 @@ import Tabs from "components/Tabs";
 import InputField from "components/InputField";
 import GradientButton from "components/GradientButton";
 import type { Props, State } from "./types";
-import { startTasks } from "ducks/inst";
-import { closePopup } from "ducks/startTaskPopup";
+import { createTask } from "ducks/inst";
+import { closePopup } from "ducks/createTaskPopup";
 
-class StartTaskPopup extends PureComponent<Props, State> {
+class CreateTaskPopup extends PureComponent<Props, State> {
   state = {
     actionSource: "",
     actionType: [
@@ -36,21 +36,18 @@ class StartTaskPopup extends PureComponent<Props, State> {
 
     const actionActiveType = actionType.find(el => el.id === activeTab);
 
-    this.props.startTasks(this.props.username, [
-      {
-        type:
-          actionActiveType && actionActiveType.ref
-            ? actionActiveType.ref
-            : null,
-        sourceUsername: this.state.actionSource
-      }
-    ]);
+    this.props.createTask({
+      username: this.props.username,
+      type:
+        actionActiveType && actionActiveType.ref ? actionActiveType.ref : null,
+      sourceUsername: this.state.actionSource
+    });
   };
 
   handleChangeTab = activeTab => this.setState({ activeTab });
 
   render() {
-    const { progressStartTask } = this.props;
+    const { progressCreateTask } = this.props;
 
     return (
       this.props.popupVisible &&
@@ -58,7 +55,7 @@ class StartTaskPopup extends PureComponent<Props, State> {
         <div className="popup" onClick={this.props.closePopup}>
           <div
             className={`popup__content ${
-              progressStartTask ? "popup__content_loading" : ""
+              progressCreateTask ? "popup__content_loading" : ""
             }`}
             onClick={e => e.stopPropagation()}
           >
@@ -99,7 +96,7 @@ class StartTaskPopup extends PureComponent<Props, State> {
           </div>
         </div>,
         // $FlowFixMe
-        document.getElementById("startTaskPopup")
+        document.getElementById("createTaskPopup")
       )
     );
   }
@@ -107,16 +104,16 @@ class StartTaskPopup extends PureComponent<Props, State> {
 
 export default connect(
   ({
-    inst: { accList, progressStartTask, error },
-    startTaskPopup: { visible }
+    inst: { accList, progressCreateTask, error },
+    createTaskPopup: { visible }
   }) => ({
     accList,
-    progressStartTask,
+    progressCreateTask,
     error,
     popupVisible: visible
   }),
   dispatch => ({
-    startTasks: (username, tasks) => dispatch(startTasks({ username, tasks })),
+    createTask: task => dispatch(createTask(task)),
     closePopup: () => dispatch(closePopup())
   })
-)(StartTaskPopup);
+)(CreateTaskPopup);
