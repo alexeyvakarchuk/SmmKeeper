@@ -18,7 +18,7 @@ export type Props = {|
   closePopup: () => void,
   createTask: ({
     username: string,
-    type: "mf" | "ml",
+    type: string | null,
     sourceUsername: string
   }) => void
 |};

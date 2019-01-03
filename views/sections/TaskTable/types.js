@@ -4,7 +4,8 @@ import type { OptionType } from "react-select/src/types";
 
 export type State = {|
   selectedAction: OptionType | null,
-  selectedFilter: OptionType | null
+  selectedFilter: OptionType | null,
+  selectedTasks: string[]
 |};
 
 export type Props = {|

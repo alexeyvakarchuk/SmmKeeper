@@ -131,18 +131,22 @@
     }
   }
   &__checkbox {
-    display: none;
-    &:checked ~ &-label {
+    display: flex;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #dfe6e9;
+    cursor: pointer;
+
+    &_checked {
       background-color: #dfe6e9;
     }
-    &-label {
-      display: flex;
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      border: 1px solid #dfe6e9;
-      cursor: pointer;
-    }
+    // display: none;
+    // &:checked ~ &-label {
+    //   background-color: #dfe6e9;
+    // }
+    // &-label {
+    // }
   }
   &__head {
     display: flex;

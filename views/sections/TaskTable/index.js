@@ -4,17 +4,53 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { openPopup } from "ducks/createTaskPopup";
 import Dropdown from "components/Dropdown";
-import OptionDots from "icons/OptionDots";
+import TaskTableRow from "components/TaskTableRow";
 import type { Props, State } from "./types";
 
 class TaskTable extends PureComponent<Props, State> {
   state = {
     selectedAction: null,
-    selectedFilter: null
+    selectedFilter: null,
+    selectedTasks: []
   };
 
   handleChange = option => value => {
     this.setState({ [option]: value });
+  };
+
+  handleRowSelect = (_id: string) => {
+    this.setState({
+      selectedTasks: [...this.state.selectedTasks, _id]
+    });
+  };
+
+  handleRowDeselect = (_id: string) => {
+    this.setState({
+      selectedTasks: this.state.selectedTasks.filter(el => el !== _id)
+    });
+  };
+
+  handleSelectAll = () => {
+    if (this.props.tasksList) {
+      this.setState({ selectedTasks: this.props.tasksList.map(el => el._id) });
+    }
+  };
+
+  handleDeselectAll = () => {
+    if (this.props.tasksList) {
+      this.setState({ selectedTasks: [] });
+    }
+  };
+
+  handleTheadCheckboxClick = () => {
+    if (
+      this.props.tasksList &&
+      this.state.selectedTasks.length === this.props.tasksList.length
+    ) {
+      this.handleDeselectAll();
+    } else {
+      this.handleSelectAll();
+    }
   };
 
   render() {
@@ -39,37 +75,12 @@ class TaskTable extends PureComponent<Props, State> {
       { value: "Direct", label: "Direct" }
     ];
 
-    const getStatus = (statusNum: number) => {
-      switch (statusNum) {
-        case 1:
-          return "ACTIVE";
-
-        case 0:
-          return "PAUSED";
-
-        case -1:
-          return "STOPPED";
-
-        default:
-          return "Invalid";
-      }
-    };
-
-    const getStatusTextColor = (statusNum: number) => {
-      switch (statusNum) {
-        case 1:
-          return "table__task-label_green";
-
-        case -1:
-          return "table__task-label_red";
-
-        case 0:
-          return "table__task-label_grey";
-
-        default:
-          return "";
-      }
-    };
+    const TheadCheckboxClassName = `table__checkbox ${
+      this.props.tasksList &&
+      this.state.selectedTasks.length === this.props.tasksList.length
+        ? "table__checkbox_checked"
+        : ""
+    }`;
 
     return (
       <section className="task-table">
@@ -104,12 +115,10 @@ class TaskTable extends PureComponent<Props, State> {
           <div className="table">
             <div className="table__head">
               <span className="table__head-caption">
-                <input
-                  type="checkbox"
-                  className="table__checkbox"
-                  id="thisid3"
+                <div
+                  className={TheadCheckboxClassName}
+                  onClick={this.handleTheadCheckboxClick}
                 />
-                <label htmlFor="thisid3" className="table__checkbox-label" />
               </span>
               <span className="table__head-caption">Status</span>
               {/* <span className="table__head-caption">Profile</span> */}
@@ -123,95 +132,33 @@ class TaskTable extends PureComponent<Props, State> {
             </div>
             {tasks.map(
               (
-                { unteractionsNum, sourceUsername, type, status, startDate },
+                {
+                  _id,
+                  unteractionsNum,
+                  sourceUsername,
+                  type,
+                  status,
+                  startDate
+                },
                 index
               ) => (
-                <div className="table__task">
-                  <span className="table__task-label">
-                    <input
-                      type="checkbox"
-                      className="table__checkbox"
-                      id="thisid4"
-                    />
-                    <label
-                      htmlFor="thisid4"
-                      className="table__checkbox-label"
-                    />
-                  </span>
-                  <span
-                    className={`table__task-label ${getStatusTextColor(
-                      status
-                    )}`}
-                  >
-                    {getStatus(status)}
-                  </span>
-                  {/* <span className="table__task-label table__task-label_username">
-                    nikere.design adgmaoirgainrgipuanriguairo
-                  </span> */}
-                  <span className="table__task-label">{type}</span>
-                  <span className="table__task-label">{sourceUsername}</span>
-                  <span className="table__task-label">-</span>
-                  <span className="table__task-label">{unteractionsNum}</span>
-                  <span className="table__task-label">-</span>
-                  <span className="table__task-label">-</span>
-                  <span className="table__task-label">
-                    <OptionDots />
-                  </span>
-                </div>
+                <TaskTableRow
+                  _id={_id}
+                  unteractionsNum={unteractionsNum}
+                  sourceUsername={sourceUsername}
+                  type={type}
+                  status={status}
+                  startDate={startDate}
+                  handleRowSelect={this.handleRowSelect}
+                  handleRowDeselect={this.handleRowDeselect}
+                  selectedTasks={this.state.selectedTasks}
+                />
               )
             )}
           </div>
         ) : (
           false
         )}
-
-        {/* <div className="tasksTable">
-            {tasksList.map(
-              ({
-                unteractionsNum,
-                sourceUsername,
-                type,
-                status,
-                startDate
-              }) => (
-                <div className="tasksTable__row">Task:</div>
-              )
-            )}
-          </div> */}
-
-        {/* {tasksList
-            .filter(el => el.username === this.props.username)
-            .map(
-              (
-                { unteractionsNum, sourceUsername, type, status, startDate },
-                index
-              ) => (
-                
-                // <tr>
-                //   <td>
-                //     <input
-                //       type="checkbox"
-                //       className="table__checkbox"
-                //       id={index}
-                //     />
-                //     <label
-                //       htmlFor={index}
-                //       className="table__checkbox-label"
-                //     />
-                //   </td>
-                //   <td>{status === 1 ? "Active" : "Paused"}</td>
-                //   <td>{this.props.username}</td>
-                //   <td>{type}</td>
-                //   <td>{sourceUsername}</td>
-                //   <td>-</td>
-                //   <td>-</td>
-                //   <td>{unteractionsNum}</td>
-                //   <td>-</td>
-                //   <td />
-                // </tr>
-              )
-            )}
-        </div> */}
       </section>
     );
   }
