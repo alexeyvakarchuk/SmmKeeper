@@ -163,7 +163,9 @@ class InstaProfilePage extends Component<Props, State> {
                 </div>
               </div>
               <div className="stats__chart">
-                <BarChart data={acc && acc.stats ? acc.stats : []} />
+                <BarChart
+                  data={acc && acc.stats ? acc.stats.slice(0, 14) : []}
+                />
               </div>
             </div>
             {/* </div> */}
