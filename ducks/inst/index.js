@@ -32,10 +32,10 @@ import {
   FETCH_TASKS_START,
   FETCH_TASKS_SUCCESS,
   FETCH_TASKS_FAIL,
-  TASK_START_REQUEST,
-  TASK_START_START,
-  TASK_START_SUCCESS,
-  TASK_START_FAIL,
+  TASKS_START_REQUEST,
+  TASKS_START_START,
+  TASKS_START_SUCCESS,
+  TASKS_START_FAIL,
   STATS_UPDATE_REQUEST,
   STATS_UPDATE_START,
   STATS_UPDATE_SUCCESS,
@@ -196,18 +196,18 @@ const instReducer = handleActions(
       error: action.payload.error
     }),
 
-    [TASK_START_START]: (state: State) => ({
+    [TASKS_START_START]: (state: State) => ({
       ...state,
       progressStartTask: true,
       error: null
     }),
-    [TASK_START_SUCCESS]: (state: State, action) => ({
+    [TASKS_START_SUCCESS]: (state: State, action) => ({
       ...state,
       tasksList: [action.payload.task, ...state.tasksList],
       progressStartTask: false,
       error: null
     }),
-    [TASK_START_FAIL]: (state: State, action) => ({
+    [TASKS_START_FAIL]: (state: State, action) => ({
       ...state,
       progressStartTask: false,
       error: action.payload.error
@@ -285,7 +285,7 @@ export const setVerificationType = createAction(SET_VERIFICATION_TYPE_REQUEST);
 export const verifyAcc = createAction(VERIFY_ACC_REQUEST);
 export const fetchAccs = createAction(FETCH_ACCS_REQUEST);
 export const updateStats = createAction(STATS_UPDATE_REQUEST);
-export const startTask = createAction(TASK_START_REQUEST);
+export const startTasks = createAction(TASKS_START_REQUEST);
 export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
 export const updateLimit = createAction(LIMIT_UPDATE_REQUEST);
 
@@ -553,73 +553,6 @@ export function* verifyAccSaga({
   }
 }
 
-// export function* connectAccSaga({
-//   payload: { username, password, securityCode }
-// }: {
-//   payload: { ...AccReq, securityCode: string }
-// }): Generator<any, any, any> {
-//   const state = yield select(stateSelector);
-
-//   if (state.progressConnAcc) return true;
-
-//   yield put({ type: CONN_ACC_START });
-
-//   try {
-//     const { user } = yield select(authStateSelector);
-
-//     if (user.id) {
-//       const connAccRef = {
-//         method: "post",
-//         url: "/api/inst/connect",
-//         baseURL,
-//         data: {
-//           id: user.id,
-//           token: localStorage.getItem("tktoken"),
-//           username,
-//           password,
-//           proxy: state.proxy !== null ? state.proxy : undefined,
-//           challengeUrl:
-//             state.checkpointUrl !== null ? state.checkpointUrl : undefined,
-//           securityCode: securityCode.length ? securityCode : undefined
-//         },
-//         headers: {
-//           "Content-Type": "application/json"
-//         }
-//       };
-
-//       yield call(axios, connAccRef);
-//     } else {
-//       yield put({
-//         type: CONN_ACC_FAIL,
-//         payload: {
-//           error: "Can't find user id or email"
-//         }
-//       });
-//     }
-//   } catch (res) {
-//     if (
-//       res.response.data.error.name &&
-//       res.response.data.error.name === "CheckpointRequiredError"
-//     ) {
-//       yield put({
-//         type: CONN_ACC_FAIL_CHECKPOINT,
-//         payload: {
-//           error: "You need to approve your log in",
-//           proxy: res.response.data.error.data.proxy,
-//           checkpointUrl: res.response.data.error.data.checkpointUrl
-//         }
-//       });
-//     } else {
-//       yield put({
-//         type: CONN_ACC_FAIL,
-//         payload: {
-//           error: res.response.data.error.message
-//         }
-//       });
-//     }
-//   }
-// }
-
 /* eslint-disable consistent-return */
 export function* fetchTasksSaga({
   payload: { username, token }
@@ -729,20 +662,22 @@ export function* statsUpdateSaga({
 }
 
 /* eslint-disable consistent-return */
-export function* startTaskSaga({
-  payload: { username, type, sourceUsername }
+export function* startTasksSaga({
+  payload: { username, tasks }
 }: {
   payload: {
     username: string,
-    type: "mf" | "ml",
-    sourceUsername: string
+    tasks: Array<{
+      type: "mf" | "ml",
+      sourceUsername: string
+    }>
   }
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
   if (state.progressStartTask) return true;
 
-  yield put({ type: TASK_START_START });
+  yield put({ type: TASKS_START_START });
 
   try {
     const { user } = yield select(authStateSelector);
@@ -750,14 +685,13 @@ export function* startTaskSaga({
     if (user.id) {
       const connAccRef = {
         method: "post",
-        url: "/api/inst/task-start",
+        url: "/api/inst/tasks-start",
         baseURL,
         data: {
           id: user.id,
           token: localStorage.getItem("tktoken"),
           username,
-          type,
-          sourceUsername
+          tasks
         },
         headers: {
           "Content-Type": "application/json"
@@ -769,7 +703,7 @@ export function* startTaskSaga({
       yield put({ type: POPUP_CLOSE });
     } else {
       yield put({
-        type: TASK_START_FAIL,
+        type: TASKS_START_FAIL,
         payload: {
           error: "Can't find user id or email"
         }
@@ -777,7 +711,7 @@ export function* startTaskSaga({
     }
   } catch (res) {
     yield put({
-      type: TASK_START_FAIL,
+      type: TASKS_START_FAIL,
       payload: {
         error: res.response.data.error.message
       }
@@ -848,7 +782,7 @@ export function* watchInst(): mixed {
   yield takeEvery(VERIFY_ACC_REQUEST, verifyAccSaga);
 
   yield takeEvery(FETCH_ACCS_REQUEST, fetchAccsSaga);
-  yield takeEvery(TASK_START_REQUEST, startTaskSaga);
+  yield takeEvery(TASKS_START_REQUEST, startTasksSaga);
   yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
   yield takeEvery(STATS_UPDATE_REQUEST, statsUpdateSaga);
   yield takeEvery(LIMIT_UPDATE_REQUEST, updateLimitSaga);

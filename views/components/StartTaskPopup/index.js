@@ -7,7 +7,7 @@ import Tabs from "components/Tabs";
 import InputField from "components/InputField";
 import GradientButton from "components/GradientButton";
 import type { Props, State } from "./types";
-import { startTask } from "ducks/inst";
+import { startTasks } from "ducks/inst";
 import { closePopup } from "ducks/startTaskPopup";
 
 class StartTaskPopup extends PureComponent<Props, State> {
@@ -36,12 +36,15 @@ class StartTaskPopup extends PureComponent<Props, State> {
 
     const actionActiveType = actionType.find(el => el.id === activeTab);
 
-    this.props.startTask({
-      username: this.props.username,
-      actionSource: this.state.actionSource,
-      actionType:
-        actionActiveType && actionActiveType.ref ? actionActiveType.ref : null
-    });
+    this.props.startTasks(this.props.username, [
+      {
+        type:
+          actionActiveType && actionActiveType.ref
+            ? actionActiveType.ref
+            : null,
+        sourceUsername: this.state.actionSource
+      }
+    ]);
   };
 
   handleChangeTab = activeTab => this.setState({ activeTab });
@@ -113,10 +116,7 @@ export default connect(
     popupVisible: visible
   }),
   dispatch => ({
-    startTask: ({ username, actionSource, actionType }) =>
-      dispatch(
-        startTask({ username, type: actionType, sourceUsername: actionSource })
-      ),
+    startTasks: (username, tasks) => dispatch(startTasks({ username, tasks })),
     closePopup: () => dispatch(closePopup())
   })
 )(StartTaskPopup);

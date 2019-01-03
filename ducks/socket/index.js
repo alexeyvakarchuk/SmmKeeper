@@ -19,7 +19,7 @@ import {
 } from "./const";
 import {
   CONN_ACC_SUCCESS,
-  TASK_START_SUCCESS,
+  TASKS_START_SUCCESS,
   LIMIT_UPDATE_SUCCESS
 } from "ducks/inst/const";
 import {
@@ -209,7 +209,7 @@ const initWebsocket = () =>
 
     socket.on("taskStart", task => {
       emitter({
-        type: TASK_START_SUCCESS,
+        type: TASKS_START_SUCCESS,
         payload: { task }
       });
     });

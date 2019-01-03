@@ -14,14 +14,16 @@ const {
 const socket = require("server/libs/socket");
 const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
-const { getProxyString } = require("server/api/utils");
+const { asyncForEach, getProxyString } = require("server/api/utils");
 
 exports.init = router =>
-  router.post("/api/inst/task-start", async function(ctx) {
-    const { id, token, username, sourceUsername, type } = ctx.request.body;
+  router.post("/api/inst/tasks-start", async function(ctx) {
+    const { id, token, username, tasks } = ctx.request.body;
 
     if (jwt.verify(token, jwtsecret).id === id) {
       const user = await User.findById(id);
+
+      // username, sourceUsername, type
 
       let client;
 
@@ -50,46 +52,48 @@ exports.init = router =>
         throw new InvalidInstAccDataError();
       }
 
-      const { id: sourceId } = await client.getUserByUsername({
-        username: sourceUsername
-      });
+      await asyncForEach(tasks, async ({ type, sourceUsername }) => {
+        const { id: sourceId } = await client.getUserByUsername({
+          username: sourceUsername
+        });
 
-      let task = await InstTask.findOne({
-        username,
-        sourceUsername,
-        sourceId,
-        type
-      });
-
-      // If such task was already created we'll not duplicate it
-      if (task) {
-        // If task status was set to 1 we'll not continue, because the task is already in progress
-        if (!task.status) {
-          task.status = 1;
-
-          await task.save();
-        } else {
-          throw new TaskAlreadyInProgressError();
-        }
-      } else {
-        task = await InstTask.create({
+        let task = await InstTask.findOne({
           username,
           sourceUsername,
           sourceId,
-          type,
-          status: 1
+          type
         });
-      }
 
-      switch (type) {
-        case "mf":
-          mf(username, client);
-          break;
-      }
+        // If such task was already created we'll not duplicate it
+        if (task) {
+          // If task status was set to 1 we'll not continue, because the task is already in progress
+          if (!task.status) {
+            task.status = 1;
 
-      console.log(task);
+            await task.save();
+          } else {
+            throw new TaskAlreadyInProgressError();
+          }
+        } else {
+          task = await InstTask.create({
+            username,
+            sourceUsername,
+            sourceId,
+            type,
+            status: 1
+          });
+        }
 
-      socket.emitter.to(id).emit("taskStart", task);
+        switch (type) {
+          case "mf":
+            mf(username, client);
+            break;
+        }
+
+        console.log(task);
+
+        socket.emitter.to(id).emit("taskStart", task);
+      });
 
       ctx.status = 200;
     } else {

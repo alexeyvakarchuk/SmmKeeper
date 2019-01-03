@@ -3,7 +3,7 @@
 import React, { Component } from "react";
 import type { Props, State } from "./types";
 import GradientButton from "components/GradientButton";
-import { startTask, fetchTasks, updateLimit, updateStats } from "ducks/inst";
+import { fetchTasks, updateLimit, updateStats } from "ducks/inst";
 import BarChart from "components/BarChart";
 import RangeGradient from "components/RangeGradient";
 import TaskTable from "sections/TaskTable";
@@ -77,10 +77,8 @@ class InstaProfilePage extends Component<Props, State> {
 
     return (
       <div className="instaprofile">
-        {/* <h1 className="instaprofile__name">@{username}</h1> */}
         <div className="container-fluid">
           <div className="row">
-            {/* <div className="col-profile-info"> */}
             {acc &&
               acc.stats &&
               acc.stats.length > 0 && (
@@ -114,8 +112,7 @@ class InstaProfilePage extends Component<Props, State> {
                   </div>
                 </div>
               )}
-            {/* </div> */}
-            {/* <div className="col-limits"> */}
+
             {acc &&
               acc.limits &&
               acc.limits.mf &&
@@ -149,8 +146,6 @@ class InstaProfilePage extends Component<Props, State> {
                 </div>
               )}
 
-            {/* </div> */}
-            {/* <div className="col-stats"> */}
             <div className="panel stats">
               <div className="stats__top">
                 <div className="stats__top-nav">
@@ -168,7 +163,6 @@ class InstaProfilePage extends Component<Props, State> {
                 />
               </div>
             </div>
-            {/* </div> */}
           </div>
 
           <div className="row">
@@ -218,7 +212,6 @@ export default connect(
     fetchTasks: (username, token) => dispatch(fetchTasks({ username, token })),
     updateStats: (username, token) =>
       dispatch(updateStats({ username, token })),
-    startTask: (username, type) => dispatch(startTask({ username, type })),
     updateLimit: (username, type, limitValue) =>
       dispatch(updateLimit({ username, type, limitValue }))
   })
