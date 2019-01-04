@@ -1,12 +1,13 @@
 // @flow
 
-import { all, take, takeEvery, put, call, select } from "redux-saga/effects";
-import { baseURL } from "config";
 import axios from "axios";
+import moment from "moment";
+import { all, take, takeEvery, put, call, select } from "redux-saga/effects";
+import { eventChannel, END } from "redux-saga";
 import { createAction, handleActions, combineActions } from "redux-actions";
-import { SOCKET_CONN_END } from "ducks/socket/const";
-import type { State, UserReq, Acc } from "./types";
-import { stateSelector as authStateSelector } from "ducks/auth";
+import { baseURL } from "config";
+
+// Const
 import {
   // Acc connecting const
   REQUEST_VERIFICATION_REQUEST,
@@ -44,21 +45,26 @@ import {
   LIMIT_UPDATE_START,
   LIMIT_UPDATE_SUCCESS,
   LIMIT_UPDATE_FAIL
-} from "./const";
+} from "ducks/inst/const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
+import { SOCKET_CONN_END } from "ducks/socket/const";
 import { POPUP_CLOSE } from "ducks/createTaskPopup/const";
+
+// Selectors
+import { stateSelector } from "ducks/inst/selectors";
+import { stateSelector as authStateSelector } from "ducks/auth";
+
+// Sagas
+import statsUpdateSaga from "./sagas/statsUpdateSaga";
+
+// Rest
 import { live } from "ducks/socket";
 import redirect from "server/redirect";
-import type { State as AccReq } from "components/connectAccPopup/types";
-import { eventChannel, END } from "redux-saga";
 import { setCookie, getCookie, removeCookie } from "server/libs/cookies";
-import moment from "moment";
 
-/**
- * Constants
- * */
-
-export const moduleName: string = "inst";
+// Types
+import type { State, UserReq, Acc } from "./types";
+import type { State as AccReq } from "components/connectAccPopup/types";
 
 /**
  * Reducer
@@ -245,19 +251,6 @@ const instReducer = handleActions(
       error: action.payload.error
     }),
 
-    // [CONN_ACC_FAIL]: (state: State, action) => ({
-    //   ...state,
-    //   progressConnAcc: false,
-    //   error: action.payload.error
-    // }),
-    // [CONN_ACC_FAIL_CHECKPOINT]: (state: State, action) => ({
-    //   ...state,
-    //   progressConnAcc: false,
-    //   error: action.payload.error,
-    //   proxy: action.payload.proxy,
-    //   checkpointUrl: action.payload.checkpointUrl
-    // }),
-
     [SIGN_OUT_SUCCESS]: () => initialState,
 
     [CLEAR_CONN_ERROR]: (state: State, action) => ({
@@ -273,8 +266,6 @@ export default instReducer;
 /**
  * Selectors
  * */
-
-export const stateSelector = (state: Object): State => state[moduleName];
 
 /**
  * Action Creators
@@ -608,60 +599,6 @@ export function* fetchTasksSaga({
 }
 
 /* eslint-disable consistent-return */
-export function* statsUpdateSaga({
-  payload: { username, token }
-}: {
-  payload: {
-    username: string,
-    token: string
-  }
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressStatsUpdate) return true;
-
-  yield put({ type: STATS_UPDATE_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const statsUpdateRef = {
-        method: "post",
-        url: "/api/inst/update-stats",
-        baseURL,
-        data: {
-          id: user.id,
-          token,
-          username
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      const {
-        data: { acc }
-      } = yield call(axios, statsUpdateRef);
-
-      yield put({
-        type: STATS_UPDATE_SUCCESS,
-        payload: { acc, username }
-      });
-    } else {
-      throw "Can't find user id or email";
-    }
-  } catch (err) {
-    yield put({
-      type: STATS_UPDATE_FAIL,
-      payload: {
-        error: err
-      }
-    });
-  }
-}
-
-/* eslint-disable consistent-return */
 export function* createTaskSaga({
   payload: { username, type, sourceUsername }
 }: {
@@ -775,14 +712,19 @@ export function* updateLimitSaga({
 }
 
 export function* watchInst(): mixed {
-  // yield takeEvery(CONN_ACC_REQUEST, connectAccSaga);
+  // Profile connection
   yield takeEvery(REQUEST_VERIFICATION_REQUEST, requestVerificationSaga);
   yield takeEvery(SET_VERIFICATION_TYPE_REQUEST, setVerificationTypeSaga);
   yield takeEvery(VERIFY_ACC_REQUEST, verifyAccSaga);
 
+  // Fetching data
   yield takeEvery(FETCH_ACCS_REQUEST, fetchAccsSaga);
-  yield takeEvery(TASK_CREATE_REQUEST, createTaskSaga);
-  yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
+
+  // Stats and limits
   yield takeEvery(STATS_UPDATE_REQUEST, statsUpdateSaga);
   yield takeEvery(LIMIT_UPDATE_REQUEST, updateLimitSaga);
+
+  // Tasks
+  yield takeEvery(TASK_CREATE_REQUEST, createTaskSaga);
+  yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
 }

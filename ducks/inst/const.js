@@ -1,5 +1,7 @@
 // @flow
 
+export const moduleName: string = "inst";
+
 // *** Account connecting flow ***
 export const REQUEST_VERIFICATION_REQUEST: "INST/REQUEST_VERIFICATION_REQUEST" =
   "INST/REQUEST_VERIFICATION_REQUEST";
