@@ -56,8 +56,6 @@ export default class TaskTableRow extends PureComponent<Props, State> {
       }
     };
 
-    console.log(Check);
-
     return (
       <div className="table__task">
         <span

@@ -74,7 +74,7 @@ class Internal extends Component<Props, State> {
         if (!accList || passwordExists === null) {
           store.dispatch(fetchAccs({ token, queryUsername: query.username }));
 
-          store.dispatch(fetchTasks({ username: query.username, token }));
+          // store.dispatch(fetchTasks({ username: query.username, token }));
 
           store.dispatch(checkPasswordExistence({ token }));
         } else {
@@ -86,7 +86,7 @@ class Internal extends Component<Props, State> {
         if (auth) {
           store.dispatch(fetchAccs({ token, queryUsername: query.username }));
 
-          store.dispatch(fetchTasks({ username: query.username, token }));
+          // store.dispatch(fetchTasks({ username: query.username, token }));
 
           store.dispatch(checkPasswordExistence({ token }));
         } else {
