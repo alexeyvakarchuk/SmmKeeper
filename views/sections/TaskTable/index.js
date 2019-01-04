@@ -95,24 +95,33 @@ class TaskTable extends PureComponent<Props, State> {
       <section className="task-table">
         <div className="task-table__filter">
           <div className="task-table__filter-left">
-            <Dropdown
-              instanceId="task-select"
-              value={selectedAction}
-              onChange={this.handleChange("selectedAction")}
-              options={optionsAction}
-              placeholder={"Bulk action"}
-            />
-            <button className={TaskButtonClassName}>Apply</button>
+            {!!tasks.length && (
+              <>
+                <Dropdown
+                  instanceId="task-select"
+                  value={selectedAction}
+                  onChange={this.handleChange("selectedAction")}
+                  options={optionsAction}
+                  placeholder={"Bulk action"}
+                />
+                <button className={TaskButtonClassName}>Apply</button>
+              </>
+            )}
           </div>
           <div className="task-table__filter-right">
-            <span className="task-table__filter-caption">Filter:</span>
-            <Dropdown
-              instanceId="task-select2"
-              value={selectedFilter}
-              onChange={this.handleChange("selectedFilter")}
-              options={optionsFilter}
-              placeholder={"All actions"}
-            />
+            {!!tasks.length && (
+              <>
+                <span className="task-table__filter-caption">Filter:</span>
+                <Dropdown
+                  instanceId="task-select2"
+                  value={selectedFilter}
+                  onChange={this.handleChange("selectedFilter")}
+                  options={optionsFilter}
+                  placeholder={"All actions"}
+                />
+              </>
+            )}
+
             <button className="btn-task" onClick={this.props.openPopup}>
               Add new task
             </button>
@@ -139,31 +148,33 @@ class TaskTable extends PureComponent<Props, State> {
               <span className="table__head-caption">Conversion</span>
               <span className="table__head-caption" />
             </div>
-            {tasks.map(
-              (
-                {
-                  _id,
-                  unteractionsNum,
-                  sourceUsername,
-                  type,
-                  status,
-                  startDate
-                },
-                index
-              ) => (
-                <TaskTableRow
-                  _id={_id}
-                  unteractionsNum={unteractionsNum}
-                  sourceUsername={sourceUsername}
-                  type={type}
-                  status={status}
-                  startDate={startDate}
-                  handleRowSelect={this.handleRowSelect}
-                  handleRowDeselect={this.handleRowDeselect}
-                  selectedTasks={this.state.selectedTasks}
-                />
-              )
-            )}
+            {tasks
+              .reverse()
+              .map(
+                (
+                  {
+                    _id,
+                    unteractionsNum,
+                    sourceUsername,
+                    type,
+                    status,
+                    startDate
+                  },
+                  index
+                ) => (
+                  <TaskTableRow
+                    _id={_id}
+                    unteractionsNum={unteractionsNum}
+                    sourceUsername={sourceUsername}
+                    type={type}
+                    status={status}
+                    startDate={startDate}
+                    handleRowSelect={this.handleRowSelect}
+                    handleRowDeselect={this.handleRowDeselect}
+                    selectedTasks={this.state.selectedTasks}
+                  />
+                )
+              )}
           </div>
         ) : (
           false

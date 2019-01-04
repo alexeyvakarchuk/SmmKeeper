@@ -8,6 +8,8 @@ export type Acc = {|
   stats: StatItem[]
 |};
 
+export type TaskType = "mf" | "ml";
+
 export type Task = {|
   username: string
 |};

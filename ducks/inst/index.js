@@ -7,7 +7,7 @@ import { eventChannel, END } from "redux-saga";
 import { createAction, handleActions, combineActions } from "redux-actions";
 import { baseURL } from "config";
 
-// Const
+// *** Const
 import {
   // Acc connecting const
   REQUEST_VERIFICATION_REQUEST,
@@ -47,24 +47,27 @@ import {
   LIMIT_UPDATE_FAIL
 } from "ducks/inst/const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
-import { SOCKET_CONN_END } from "ducks/socket/const";
-import { POPUP_CLOSE } from "ducks/createTaskPopup/const";
 
-// Selectors
-import { stateSelector } from "ducks/inst/selectors";
-import { stateSelector as authStateSelector } from "ducks/auth";
+// *** Sagas
 
-// Sagas
-import statsUpdateSaga from "./sagas/statsUpdateSaga";
+// Profile connection
+import requestVerificationSaga from "ducks/inst/sagas/requestVerificationSaga";
+import setVerificationTypeSaga from "ducks/inst/sagas/setVerificationTypeSaga";
+import verifyAccSaga from "ducks/inst/sagas/verifyAccSaga";
 
-// Rest
-import { live } from "ducks/socket";
-import redirect from "server/redirect";
-import { setCookie, getCookie, removeCookie } from "server/libs/cookies";
+// Fetching data
+import fetchAccsSaga from "ducks/inst/sagas/fetchAccsSaga";
 
-// Types
-import type { State, UserReq, Acc } from "./types";
-import type { State as AccReq } from "components/connectAccPopup/types";
+// Stats and limits
+import statsUpdateSaga from "ducks/inst/sagas/statsUpdateSaga";
+import updateLimitSaga from "ducks/inst/sagas/updateLimitSaga";
+
+// Tasks
+import fetchTasksSaga from "ducks/inst/sagas/fetchTasksSaga";
+import createTaskSaga from "ducks/inst/sagas/createTaskSaga";
+
+// *** Types
+import type { State } from "./types";
 
 /**
  * Reducer
@@ -209,7 +212,7 @@ const instReducer = handleActions(
     }),
     [TASK_CREATE_SUCCESS]: (state: State, action) => ({
       ...state,
-      tasksList: [action.payload.task, ...state.tasksList],
+      tasksList: [...state.tasksList, action.payload.task],
       progressCreateTask: false,
       error: null
     }),
@@ -271,445 +274,25 @@ export default instReducer;
  * Action Creators
  * */
 
+// Profile connection
 export const requestVerification = createAction(REQUEST_VERIFICATION_REQUEST);
 export const setVerificationType = createAction(SET_VERIFICATION_TYPE_REQUEST);
 export const verifyAcc = createAction(VERIFY_ACC_REQUEST);
+
+// Fetching data
 export const fetchAccs = createAction(FETCH_ACCS_REQUEST);
+
+// Stats and limits
 export const updateStats = createAction(STATS_UPDATE_REQUEST);
-export const createTask = createAction(TASK_CREATE_REQUEST);
-export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
 export const updateLimit = createAction(LIMIT_UPDATE_REQUEST);
+
+// Tasks
+export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
+export const createTask = createAction(TASK_CREATE_REQUEST);
 
 /**
  * Sagas
  * */
-
-export const redirectIfInvalidUsername = (
-  accList: Acc[],
-  queryUsername: string,
-  ctx?: Object
-) => {
-  if (accList.length) {
-    // Redirects if /app or /app/some-fake-username
-    if (!queryUsername || !accList.find(el => el.username === queryUsername)) {
-      // console.log("redirect to ", `/app/${accList[0].username}`);
-      redirect(`/app/${accList[0].username}`, ctx);
-    }
-  } else {
-    if (queryUsername) {
-      redirect(`/app`, ctx);
-    }
-  }
-};
-
-export function* fetchAccsSaga({
-  payload: { token, queryUsername, ctx }
-}: {
-  payload: { token: string, queryUsername: string, ctx?: Object }
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressFetchAccs) return true;
-
-  yield put({ type: FETCH_ACCS_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const fetchAccListRef = {
-        method: "post",
-        url: "/api/inst/fetch",
-        baseURL,
-        data: {
-          id: user.id,
-          token: token
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      const {
-        data: { accList }
-      } = yield call(axios, fetchAccListRef);
-
-      yield put({
-        type: FETCH_ACCS_SUCCESS,
-        payload: { accList }
-      });
-
-      redirectIfInvalidUsername(accList, queryUsername, ctx);
-    } else {
-      throw "Can't find user id or email";
-    }
-  } catch (err) {
-    yield put({
-      type: FETCH_ACCS_FAIL,
-      payload: {
-        error: err
-      }
-    });
-  }
-}
-
-/* eslint-disable consistent-return */
-export function* requestVerificationSaga({
-  payload: { username, password }
-}: {
-  payload: AccReq
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressConnAcc) return true;
-
-  yield put({ type: REQUEST_VERIFICATION_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const ref = {
-        method: "post",
-        url: "/api/inst/request-verification",
-        baseURL,
-        data: {
-          id: user.id,
-          token: localStorage.getItem("tktoken"),
-          username,
-          password
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      const {
-        data: { proxy, checkpointUrl }
-      } = yield call(axios, ref);
-
-      yield put({
-        type: REQUEST_VERIFICATION_SUCCESS,
-        payload: {
-          proxy,
-          checkpointUrl
-        }
-      });
-    } else {
-      yield put({
-        type: REQUEST_VERIFICATION_FAIL,
-        payload: {
-          error: "Can't find user id or email"
-        }
-      });
-    }
-  } catch (res) {
-    // if (
-    //   res.response.data.error.name &&
-    //   res.response.data.error.name === "CheckpointRequiredError"
-    // ) {
-    //   yield put({
-    //     type: CONN_ACC_FAIL_CHECKPOINT,
-    //     payload: {
-    //       error: "You need to approve your log in",
-    //       proxy: res.response.data.error.data.proxy,
-    //       checkpointUrl: res.response.data.error.data.checkpointUrl
-    //     }
-    //   });
-    // } else {
-    yield put({
-      type: REQUEST_VERIFICATION_FAIL,
-      payload: {
-        error: res.response.data.error.message
-      }
-    });
-    // }
-  }
-}
-
-/* eslint-disable consistent-return */
-export function* setVerificationTypeSaga({
-  payload: { username, password, verificationType }
-}: {
-  payload: { ...AccReq, verificationType: "phone" | "email" }
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressConnAcc) return true;
-
-  yield put({ type: SET_VERIFICATION_TYPE_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const ref = {
-        method: "post",
-        url: "/api/inst/set-verification-type",
-        baseURL,
-        data: {
-          id: user.id,
-          token: localStorage.getItem("tktoken"),
-          proxy: state.proxy,
-          checkpointUrl: state.checkpointUrl,
-          username,
-          password,
-          verificationType
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      yield call(axios, ref);
-
-      yield put({
-        type: SET_VERIFICATION_TYPE_SUCCESS,
-        payload: {
-          verificationType
-        }
-      });
-    } else {
-      yield put({
-        type: SET_VERIFICATION_TYPE_FAIL,
-        payload: {
-          error: "Can't find user id or email"
-        }
-      });
-    }
-  } catch (res) {
-    yield put({
-      type: SET_VERIFICATION_TYPE_FAIL,
-      payload: {
-        error: res.response.data.error.message
-      }
-    });
-  }
-}
-
-/* eslint-disable consistent-return */
-export function* verifyAccSaga({
-  payload: { username, password, securityCode }
-}: {
-  payload: { ...AccReq, securityCode: string }
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressConnAcc) return true;
-
-  yield put({ type: VERIFY_ACC_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const ref = {
-        method: "post",
-        url: "/api/inst/verify-acc",
-        baseURL,
-        data: {
-          id: user.id,
-          token: localStorage.getItem("tktoken"),
-          proxy: state.proxy,
-          checkpointUrl: state.checkpointUrl,
-          username,
-          password,
-          securityCode
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      yield call(axios, ref);
-
-      yield put({
-        type: VERIFY_ACC_SUCCESS
-      });
-    } else {
-      yield put({
-        type: VERIFY_ACC_FAIL,
-        payload: {
-          error: "Can't find user id or email"
-        }
-      });
-    }
-  } catch (res) {
-    yield put({
-      type: VERIFY_ACC_FAIL,
-      payload: {
-        error: res.response.data.error.message
-      }
-    });
-  }
-}
-
-/* eslint-disable consistent-return */
-export function* fetchTasksSaga({
-  payload: { username, token }
-}: {
-  payload: {
-    username: string,
-    token: string
-  }
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressFetchTasks) return true;
-
-  yield put({ type: FETCH_TASKS_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const fetchTasksRef = {
-        method: "post",
-        url: "/api/inst/fetch-tasks",
-        baseURL,
-        data: {
-          id: user.id,
-          token,
-          username
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      const {
-        data: { tasksList }
-      } = yield call(axios, fetchTasksRef);
-
-      yield put({
-        type: FETCH_TASKS_SUCCESS,
-        payload: { tasksList }
-      });
-    } else {
-      throw "Can't find user id or email";
-    }
-  } catch (err) {
-    yield put({
-      type: FETCH_TASKS_FAIL,
-      payload: {
-        error: err
-      }
-    });
-  }
-}
-
-/* eslint-disable consistent-return */
-export function* createTaskSaga({
-  payload: { username, type, sourceUsername }
-}: {
-  payload: {
-    username: string,
-    type: "mf" | "ml",
-    sourceUsername: string
-  }
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressCreateTask) return true;
-
-  yield put({ type: TASK_CREATE_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const connAccRef = {
-        method: "post",
-        url: "/api/inst/task-create",
-        baseURL,
-        data: {
-          id: user.id,
-          token: localStorage.getItem("tktoken"),
-          username,
-          type,
-          sourceUsername
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      yield call(axios, connAccRef);
-
-      yield put({ type: POPUP_CLOSE });
-    } else {
-      yield put({
-        type: TASK_CREATE_FAIL,
-        payload: {
-          error: "Can't find user id or email"
-        }
-      });
-    }
-  } catch (res) {
-    yield put({
-      type: TASK_CREATE_FAIL,
-      payload: {
-        error: res.response.data.error.message
-      }
-    });
-  }
-}
-
-/* eslint-disable consistent-return */
-export function* updateLimitSaga({
-  payload: { username, type, limitValue }
-}: {
-  payload: {
-    username: string,
-    type: "mf" | "ml",
-    limitValue: string
-  }
-}): Generator<any, any, any> {
-  const state = yield select(stateSelector);
-
-  if (state.progressLimitUpdate) return true;
-
-  yield put({ type: LIMIT_UPDATE_START });
-
-  try {
-    const { user } = yield select(authStateSelector);
-
-    if (user.id) {
-      const connAccRef = {
-        method: "post",
-        url: "/api/inst/update-limit",
-        baseURL,
-        data: {
-          id: user.id,
-          token: localStorage.getItem("tktoken"),
-          username,
-          type,
-          limitValue
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      };
-
-      yield call(axios, connAccRef);
-      console.log("Limit should update");
-    } else {
-      yield put({
-        type: LIMIT_UPDATE_FAIL,
-        payload: {
-          error: "Can't find user id or email"
-        }
-      });
-    }
-  } catch (res) {
-    yield put({
-      type: LIMIT_UPDATE_FAIL,
-      payload: {
-        error: res.response.data.error.message
-      }
-    });
-  }
-}
 
 export function* watchInst(): mixed {
   // Profile connection
@@ -725,6 +308,6 @@ export function* watchInst(): mixed {
   yield takeEvery(LIMIT_UPDATE_REQUEST, updateLimitSaga);
 
   // Tasks
-  yield takeEvery(TASK_CREATE_REQUEST, createTaskSaga);
   yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
+  yield takeEvery(TASK_CREATE_REQUEST, createTaskSaga);
 }

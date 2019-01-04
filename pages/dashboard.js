@@ -5,12 +5,8 @@ import TopBar from "components/TopBar";
 import Layout from "hoc/layout";
 import LeftBar from "components/LeftBar";
 import { socketConnect } from "ducks/socket";
-import {
-  fetchAccs,
-  fetchTasks,
-  updateStats,
-  redirectIfInvalidUsername
-} from "ducks/inst";
+import { fetchAccs, fetchTasks, updateStats } from "ducks/inst";
+import { redirectIfInvalidUsername } from "ducks/inst/utils";
 import { checkPasswordExistence } from "ducks/password";
 import Dashboard from "sections/Dashboard";
 import { fetchUserAuth } from "utils";
