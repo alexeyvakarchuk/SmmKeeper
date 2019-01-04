@@ -65,7 +65,7 @@ class TaskTable extends PureComponent<Props, State> {
 
     const optionsAction = [
       { value: "PAUSE", label: "PAUSE" },
-      { value: "CONTINUE", label: "CONTINUE" },
+      { value: "START", label: "START" },
       { value: "DELETE", label: "DELETE" }
     ];
     const optionsFilter = [
