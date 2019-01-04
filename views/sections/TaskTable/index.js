@@ -82,6 +82,14 @@ class TaskTable extends PureComponent<Props, State> {
         : ""
     }`;
 
+    const TaskButtonClassName = `btn-task btn-task_ml10 btn-task_light ${
+      this.state.selectedAction &&
+      this.state.selectedTasks &&
+      this.state.selectedTasks.length
+        ? "btn-task_light-active"
+        : ""
+    }`;
+
     return (
       <section className="task-table">
         <div className="task-table__filter">
@@ -93,9 +101,7 @@ class TaskTable extends PureComponent<Props, State> {
               options={optionsAction}
               placeholder={"Bulk action"}
             />
-            <button className="btn-task btn-task_light btn-task_ml10">
-              Apply
-            </button>
+            <button className={TaskButtonClassName}>Apply</button>
           </div>
           <div className="task-table__filter-right">
             <span className="task-table__filter-caption">Filter:</span>
