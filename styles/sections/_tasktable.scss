@@ -137,9 +137,17 @@
     border-radius: 4px;
     border: 1px solid #dfe6e9;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 10px;
+    }
 
     &_checked {
-      background-color: #dfe6e9;
+      background-color: #c3c9cc;
+      border-color: #c3c9cc;
     }
     // display: none;
     // &:checked ~ &-label {

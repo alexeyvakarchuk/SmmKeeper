@@ -29,23 +29,23 @@ class InstaProfilePage extends Component<Props, State> {
     activeTab: 1
   };
 
-  componentDidUpdate(prevProps) {
-    const token =
-      typeof window !== "undefined" && localStorage.getItem("tktoken");
-    // console.log("need to update", this.props.username, prevProps.username);
+  // componentDidUpdate(prevProps) {
+  //   const token =
+  //     typeof window !== "undefined" && localStorage.getItem("tktoken");
+  //   // console.log("need to update", this.props.username, prevProps.username);
 
-    if (this.props.username !== prevProps.username) {
-      if (!this.props.progressFetchTasks) {
-        // $FlowFixMe
-        this.props.fetchTasks(this.props.username, token);
-      }
+  //   if (this.props.username !== prevProps.username) {
+  //     if (!this.props.progressFetchTasks) {
+  //       // $FlowFixMe
+  //       this.props.fetchTasks(this.props.username, token);
+  //     }
 
-      if (!this.props.progressStatsUpdate) {
-        // $FlowFixMe
-        this.props.updateStats(this.props.username, token);
-      }
-    }
-  }
+  //     if (!this.props.progressStatsUpdate) {
+  //       // $FlowFixMe
+  //       this.props.updateStats(this.props.username, token);
+  //     }
+  //   }
+  // }
 
   handleChangeTab = activeTab => this.setState({ activeTab });
 

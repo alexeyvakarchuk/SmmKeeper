@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { openPopup } from "ducks/createTaskPopup";
 import Dropdown from "components/Dropdown";
 import TaskTableRow from "components/TaskTableRow";
+import Check from "icons/Check";
 import type { Props, State } from "./types";
 
 class TaskTable extends PureComponent<Props, State> {
@@ -70,9 +71,9 @@ class TaskTable extends PureComponent<Props, State> {
     const optionsFilter = [
       { value: "Follow", label: "Follow" },
       { value: "Follow & Like", label: "Follow & Like" },
-      { value: "Unfollow", label: "Unfollow" },
       { value: "Like", label: "Like" },
-      { value: "Direct", label: "Direct" }
+      { value: "Unfollow", label: "Unfollow" }
+      // { value: "Direct", label: "Direct" }
     ];
 
     const TheadCheckboxClassName = `table__checkbox ${
@@ -124,7 +125,9 @@ class TaskTable extends PureComponent<Props, State> {
                 <div
                   className={TheadCheckboxClassName}
                   onClick={this.handleTheadCheckboxClick}
-                />
+                >
+                  <Check />
+                </div>
               </span>
               <span className="table__head-caption">Status</span>
               {/* <span className="table__head-caption">Profile</span> */}

@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from "react";
 import OptionDots from "icons/OptionDots";
+import Check from "icons/Check";
 import type { Props, State } from "./types";
 
 export default class TaskTableRow extends PureComponent<Props, State> {
@@ -55,6 +56,8 @@ export default class TaskTableRow extends PureComponent<Props, State> {
       }
     };
 
+    console.log(Check);
+
     return (
       <div className="table__task">
         <span
@@ -67,7 +70,9 @@ export default class TaskTableRow extends PureComponent<Props, State> {
                 ? "table__checkbox_checked"
                 : ""
             }`}
-          />
+          >
+            <Check />
+          </div>
         </span>
         <span className={`table__task-label ${getStatusTextColor(status)}`}>
           {getStatus(status)}
