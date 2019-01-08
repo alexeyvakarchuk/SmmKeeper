@@ -1,99 +1,33 @@
 const jwt = require("jsonwebtoken");
 const { jwtsecret } = require("server/config/default"); // Secret key for JWT signing
 const User = require("server/models/User");
-const InstAcc = require("server/models/InstAcc");
 const InstTask = require("server/models/InstTask");
-const Instagram = require("instagram-web-api");
-const cron = require("node-cron");
-const mf = require("server/tasks/mf");
-const {
-  InvalidUserIdError,
-  InvalidInstAccDataError,
-  TaskAlreadyInProgressError
-} = require("server/api/errors");
 const socket = require("server/libs/socket");
-const { resolve } = require("path");
-const FileCookieStore = require("tough-cookie-filestore2");
-const { asyncForEach, getProxyString } = require("server/api/utils");
+const { InvalidUserIdError } = require("server/api/errors");
+const { asyncForEach } = require("server/api/utils");
 
 exports.init = router =>
-  router.post("/api/inst/pause-start", async function(ctx) {
+  router.post("/api/inst/tasks-pause", async function(ctx) {
     const { id, token, username, tasks } = ctx.request.body;
 
     if (jwt.verify(token, jwtsecret).id === id) {
       const user = await User.findById(id);
 
-      // username, sourceUsername, type
+      const res = [];
 
-      let client;
+      await asyncForEach(tasks, async taskId => {
+        const task = await InstTask.findById(taskId);
 
-      try {
-        const acc = await InstAcc.findOne({
-          userId: user._id,
-          username
-        }).populate("proxy");
+        if (task && task.status !== 0) {
+          task.status = 0;
 
-        const { password, proxy } = acc;
+          await task.save();
 
-        const cookieStore = new FileCookieStore(
-          resolve("server", `cookieStore/${username}.json`)
-        );
-
-        client = new Instagram(
-          { username, password, cookieStore },
-          {
-            proxy: getProxyString(proxy)
-          }
-        );
-
-        await client.login();
-      } catch (e) {
-        console.log(e);
-        throw new InvalidInstAccDataError();
-      }
-
-      await asyncForEach(tasks, async ({ type, sourceUsername }) => {
-        const { id: sourceId } = await client.getUserByUsername({
-          username: sourceUsername
-        });
-
-        let task = await InstTask.findOne({
-          username,
-          sourceUsername,
-          sourceId,
-          type
-        });
-
-        // If such task was already created we'll not duplicate it
-        if (task) {
-          // If task status was set to 1 we'll not continue, because the task is already in progress
-          if (!task.status) {
-            task.status = 1;
-
-            await task.save();
-          } else {
-            throw new TaskAlreadyInProgressError();
-          }
-        } else {
-          task = await InstTask.create({
-            username,
-            sourceUsername,
-            sourceId,
-            type,
-            status: 1
-          });
+          res.push(task._id);
         }
-
-        switch (type) {
-          case "mf":
-            mf(username, task._id, client);
-            break;
-        }
-
-        console.log(task);
-
-        socket.emitter.to(id).emit("taskStart", task);
       });
+
+      socket.emitter.to(id).emit("tasksPause", res);
 
       ctx.status = 200;
     } else {

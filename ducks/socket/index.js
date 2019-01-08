@@ -20,6 +20,8 @@ import {
 import {
   CONN_ACC_SUCCESS,
   TASK_CREATE_SUCCESS,
+  TASKS_PAUSE_SUCCESS,
+  TASKS_START_SUCCESS,
   LIMIT_UPDATE_SUCCESS
 } from "ducks/inst/const";
 import {
@@ -211,6 +213,20 @@ const initWebsocket = () =>
       emitter({
         type: TASK_CREATE_SUCCESS,
         payload: { task }
+      });
+    });
+
+    socket.on("tasksPause", tasks => {
+      emitter({
+        type: TASKS_PAUSE_SUCCESS,
+        payload: { tasks }
+      });
+    });
+
+    socket.on("tasksStart", tasks => {
+      emitter({
+        type: TASKS_START_SUCCESS,
+        payload: { tasks }
       });
     });
 

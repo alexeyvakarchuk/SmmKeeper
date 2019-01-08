@@ -12,5 +12,8 @@ export type Props = {|
   username: string,
   tasksList: null | Task[],
 
-  openPopup: () => void
+  openPopup: () => void,
+  pauseTasks: (username: string, string[]) => void,
+  startTasks: (username: string, string[]) => void,
+  deleteTasks: (username: string, string[]) => void
 |};

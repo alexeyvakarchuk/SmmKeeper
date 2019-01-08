@@ -24,5 +24,7 @@ export type State = {|
   +progressFetchTasks: boolean,
   +progressConnAcc: boolean,
   +progressCreateTask: boolean,
+  +porgressTasksUpdate: boolean,
+  +progressLimitUpdate: boolean,
   +error: null | string
 |};

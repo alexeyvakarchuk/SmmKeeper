@@ -3,6 +3,7 @@
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { openPopup } from "ducks/createTaskPopup";
+import { pauseTasks, startTasks, deleteTasks } from "ducks/inst";
 import Dropdown from "components/Dropdown";
 import TaskTableRow from "components/TaskTableRow";
 import Check from "icons/Check";
@@ -54,6 +55,36 @@ class TaskTable extends PureComponent<Props, State> {
     }
   };
 
+  handleTasksActionButtonClick = () => {
+    if (
+      this.state.selectedAction &&
+      this.state.selectedAction.value &&
+      this.state.selectedTasks &&
+      this.state.selectedTasks.length
+    ) {
+      const { value } = this.state.selectedAction;
+      const { selectedTasks } = this.state;
+
+      const { username, pauseTasks, startTasks, deleteTasks } = this.props;
+
+      switch (value) {
+        case "PAUSE":
+          pauseTasks(username, selectedTasks);
+          break;
+        case "START":
+          startTasks(username, selectedTasks);
+          break;
+
+        case "DELETE":
+          deleteTasks(username, selectedTasks);
+          break;
+
+        default:
+          console.log("Action undefined ::: ", value);
+      }
+    }
+  };
+
   render() {
     const { selectedAction, selectedFilter } = this.state;
     const { tasksList } = this.props;
@@ -96,30 +127,35 @@ class TaskTable extends PureComponent<Props, State> {
         <div className="task-table__filter">
           <div className="task-table__filter-left">
             {!!tasks.length && (
-              <>
+              <React.Fragment>
                 <Dropdown
-                  instanceId="task-select"
+                  instanceId="action-dropdown"
                   value={selectedAction}
                   onChange={this.handleChange("selectedAction")}
                   options={optionsAction}
                   placeholder={"Bulk action"}
                 />
-                <button className={TaskButtonClassName}>Apply</button>
-              </>
+                <button
+                  className={TaskButtonClassName}
+                  onClick={this.handleTasksActionButtonClick}
+                >
+                  Apply
+                </button>
+              </React.Fragment>
             )}
           </div>
           <div className="task-table__filter-right">
             {!!tasks.length && (
-              <>
+              <React.Fragment>
                 <span className="task-table__filter-caption">Filter:</span>
                 <Dropdown
-                  instanceId="task-select2"
+                  instanceId="filter-dropdown"
                   value={selectedFilter}
                   onChange={this.handleChange("selectedFilter")}
                   options={optionsFilter}
                   placeholder={"All actions"}
                 />
-              </>
+              </React.Fragment>
             )}
 
             <button className="btn-task" onClick={this.props.openPopup}>
@@ -172,6 +208,7 @@ class TaskTable extends PureComponent<Props, State> {
                     handleRowSelect={this.handleRowSelect}
                     handleRowDeselect={this.handleRowDeselect}
                     selectedTasks={this.state.selectedTasks}
+                    key={index}
                   />
                 )
               )}
@@ -189,6 +226,12 @@ export default connect(
     tasksList
   }),
   dispatch => ({
-    openPopup: () => dispatch(openPopup())
+    openPopup: () => dispatch(openPopup()),
+    pauseTasks: (username, selectedTasks) =>
+      dispatch(pauseTasks({ username, tasks: selectedTasks })),
+    startTasks: (username, selectedTasks) =>
+      dispatch(startTasks({ username, tasks: selectedTasks })),
+    deleteTasks: (username, selectedTasks) => {}
+    // dispatch(deleteTasks({ username, tasks: selectedTasks }))
   })
 )(TaskTable);

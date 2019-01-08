@@ -37,6 +37,14 @@ import {
   TASK_CREATE_START,
   TASK_CREATE_SUCCESS,
   TASK_CREATE_FAIL,
+  TASKS_PAUSE_REQUEST,
+  TASKS_PAUSE_START,
+  TASKS_PAUSE_SUCCESS,
+  TASKS_PAUSE_FAIL,
+  TASKS_START_REQUEST,
+  TASKS_START_START,
+  TASKS_START_SUCCESS,
+  TASKS_START_FAIL,
   STATS_UPDATE_REQUEST,
   STATS_UPDATE_START,
   STATS_UPDATE_SUCCESS,
@@ -65,6 +73,8 @@ import updateLimitSaga from "ducks/inst/sagas/updateLimitSaga";
 // Tasks
 import fetchTasksSaga from "ducks/inst/sagas/fetchTasksSaga";
 import createTaskSaga from "ducks/inst/sagas/createTaskSaga";
+import pauseTasksSaga from "ducks/inst/sagas/pauseTasksSaga";
+import startTasksSaga from "ducks/inst/sagas/startTasksSaga";
 
 // *** Types
 import type { State } from "./types";
@@ -84,6 +94,7 @@ export const initialState: State = {
   progressStatsUpdate: false,
   progressConnAcc: false,
   progressCreateTask: false,
+  porgressTasksUpdate: false,
   progressLimitUpdate: false,
   error: null
 };
@@ -182,6 +193,48 @@ const instReducer = handleActions(
     [FETCH_TASKS_FAIL]: (state: State, action) => ({
       ...state,
       progressFetchTasks: false,
+      error: action.payload.error
+    }),
+
+    [combineActions(TASKS_PAUSE_START, TASKS_START_START)]: (state: State) => ({
+      ...state,
+      porgressTasksUpdate: true,
+      error: null
+    }),
+    [TASKS_PAUSE_SUCCESS]: (state: State, action) => ({
+      ...state,
+      porgressTasksUpdate: false,
+      error: null,
+      tasksList: state.tasksList.map(
+        task =>
+          action.payload.tasks.indexOf(task._id) === -1
+            ? task
+            : {
+                ...task,
+                status: 0
+              }
+      )
+    }),
+    [TASKS_START_SUCCESS]: (state: State, action) => ({
+      ...state,
+      porgressTasksUpdate: false,
+      error: null,
+      tasksList: state.tasksList.map(
+        task =>
+          action.payload.tasks.indexOf(task._id) === -1
+            ? task
+            : {
+                ...task,
+                status: 1
+              }
+      )
+    }),
+    [combineActions(TASKS_PAUSE_FAIL, TASKS_START_FAIL)]: (
+      state: State,
+      action
+    ) => ({
+      ...state,
+      porgressTasksUpdate: false,
       error: action.payload.error
     }),
 
@@ -290,6 +343,12 @@ export const updateLimit = createAction(LIMIT_UPDATE_REQUEST);
 export const fetchTasks = createAction(FETCH_TASKS_REQUEST);
 export const createTask = createAction(TASK_CREATE_REQUEST);
 
+export const pauseTasks = createAction(TASKS_PAUSE_REQUEST);
+export const startTasks = createAction(TASKS_START_REQUEST);
+// export const deleteTasks = createAction(TASKS_DELETE_REQUEST);
+// export const startTasks = (arr: string[]) => {};
+export const deleteTasks = (arr: string[]) => {};
+
 /**
  * Sagas
  * */
@@ -310,4 +369,7 @@ export function* watchInst(): mixed {
   // Tasks
   yield takeEvery(FETCH_TASKS_REQUEST, fetchTasksSaga);
   yield takeEvery(TASK_CREATE_REQUEST, createTaskSaga);
+
+  yield takeEvery(TASKS_PAUSE_REQUEST, pauseTasksSaga);
+  yield takeEvery(TASKS_START_REQUEST, startTasksSaga);
 }
