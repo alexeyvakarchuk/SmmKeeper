@@ -55,7 +55,7 @@ module.exports = (username, taskId, client) => {
       } catch (e) {
         console.log("Task error(MF) ::: ", e);
 
-        if (e.name === "StatusCodeError" && e.statusCode === 429) {
+        if (e.name === "StatusCodeError") {
           task.status = -1;
           await task.save();
           cronTask.destroy();
