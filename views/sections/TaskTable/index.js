@@ -82,6 +82,8 @@ class TaskTable extends PureComponent<Props, State> {
         default:
           console.log("Action undefined ::: ", value);
       }
+
+      this.setState({ selectedTasks: [] });
     }
   };
 

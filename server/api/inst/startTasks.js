@@ -43,8 +43,10 @@ exports.init = router =>
 
         await client.login();
       } catch (e) {
-        console.log(e);
-        throw new InvalidInstAccDataError();
+        // console.log(e);
+        if (e.error.message !== "checkpoint_required") {
+          throw new InvalidInstAccDataError();
+        }
       }
 
       await asyncForEach(tasks, async taskId => {

@@ -73,6 +73,12 @@ exports.init = app =>
           return true;
         }
 
+        if (message === "checkpoint_required") {
+          ctx.status = 400;
+          ctx.body = {
+            checkpointUrl: e.checkpoint_url
+          };
+        }
         // if (name === "CheckpointRequiredError") {
         //   ctx.status = e.statusCode;
 

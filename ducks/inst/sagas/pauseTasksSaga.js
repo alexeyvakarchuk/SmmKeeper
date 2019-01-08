@@ -35,6 +35,7 @@ export default function* pauseTasksSaga({
 
     if (user.id) {
       const pauseTasksRef = {
+        method: "post",
         url: "/api/inst/tasks-pause",
         baseURL,
         data: {

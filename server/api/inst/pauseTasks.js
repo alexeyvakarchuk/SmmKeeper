@@ -8,6 +8,7 @@ const { asyncForEach } = require("server/api/utils");
 
 exports.init = router =>
   router.post("/api/inst/tasks-pause", async function(ctx) {
+    console.log(ctx.request.body);
     const { id, token, username, tasks } = ctx.request.body;
 
     if (jwt.verify(token, jwtsecret).id === id) {
