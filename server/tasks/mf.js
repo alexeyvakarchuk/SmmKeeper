@@ -7,7 +7,7 @@ module.exports = (username, taskId, client) => {
   const cronTask = cron.schedule("*/2 * * * *", async () => {
     const task = await InstTask.findById(taskId);
 
-    const acc = await InstAcc.findOne({ username });
+    const acc = await InstAcc.findOne({ username }).populate("proxy");
 
     const { status, sourceId, end_cursor } = task;
 
@@ -59,6 +59,15 @@ module.exports = (username, taskId, client) => {
           task.status = -1;
           await task.save();
           cronTask.destroy();
+        }
+
+        if (e.error.message === "checkpoint_required") {
+          throw new CheckpointIsRequiredError({
+            id: acc.userId,
+            username,
+            checkpointUrl: e.error.checkpoint_url,
+            proxy: acc.proxy
+          });
         }
       }
     } else {

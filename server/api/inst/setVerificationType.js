@@ -23,12 +23,12 @@ exports.init = router =>
     } = ctx.request.body;
 
     if (jwt.verify(token, jwtsecret).id === id) {
-      const connectedProfile = await InstAcc.findOne({ username });
+      // const connectedProfile = await InstAcc.findOne({ username });
 
-      // Check whether user with this username already exists
-      if (connectedProfile) {
-        throw new AccIsAlreadyInUse();
-      }
+      // // Check whether user with this username already exists
+      // if (connectedProfile) {
+      //   throw new AccIsAlreadyInUse();
+      // }
 
       const cookieStore = new FileCookieStore(
         resolve("server", `cookieStore/${username}.json`)

@@ -125,21 +125,22 @@ class NoProxyError extends Error {
   }
 }
 
-// class CheckpointRequiredError extends Error {
-//   constructor(...params) {
-//     super(...params);
+class CheckpointIsRequiredError extends Error {
+  constructor(...params) {
+    super(...params);
 
-//     if (Error.captureStackTrace) {
-//       Error.captureStackTrace(this, NoProxyError);
-//     }
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoProxyError);
+    }
 
-//     const { checkpointUrl, proxy } = params[0];
+    const { id, username, checkpointUrl, proxy } = params[0];
 
-//     this.statusCode = 400;
-//     this.name = "CheckpointRequiredError";
-//     this.data = { checkpointUrl, proxy };
-//   }
-// }
+    this.statusCode = 400;
+    this.name = "CheckpointIsRequiredError";
+    this.message = "Checkpoint is required";
+    this.data = { id, username, checkpointUrl, proxy };
+  }
+}
 
 class InvalidVerificationCodeError extends Error {
   constructor(...params) {
@@ -164,6 +165,6 @@ module.exports = {
   InvalidInstAccDataError,
   TaskAlreadyInProgressError,
   NoProxyError,
-  // CheckpointRequiredError,
+  CheckpointIsRequiredError,
   InvalidVerificationCodeError
 };

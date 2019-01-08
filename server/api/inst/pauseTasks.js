@@ -14,7 +14,7 @@ exports.init = router =>
     if (jwt.verify(token, jwtsecret).id === id) {
       const user = await User.findById(id);
 
-      const res = [];
+      let res = [];
 
       await asyncForEach(tasks, async taskId => {
         const task = await InstTask.findById(taskId);

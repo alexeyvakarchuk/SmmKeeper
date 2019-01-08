@@ -55,6 +55,7 @@ import {
   LIMIT_UPDATE_FAIL
 } from "ducks/inst/const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
+import { SOCKET_CHECKPOINT_REQUIRED } from "ducks/socket/const";
 
 // *** Sagas
 
@@ -106,7 +107,10 @@ const instReducer = handleActions(
       progressConnAcc: true,
       error: null
     }),
-    [REQUEST_VERIFICATION_SUCCESS]: (state: State, action) => ({
+    [combineActions(
+      REQUEST_VERIFICATION_SUCCESS,
+      SOCKET_CHECKPOINT_REQUIRED
+    )]: (state: State, action) => ({
       ...state,
       progressConnAcc: false,
       error: null,

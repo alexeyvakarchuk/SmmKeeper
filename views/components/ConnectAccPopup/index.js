@@ -175,7 +175,10 @@ class ConnectAccPopup extends PureComponent<Props, State> {
     return (
       this.props.popupVisible &&
       ReactDOM.createPortal(
-        <div className="popup" onClick={this.props.closePopup}>
+        <div
+          className="popup popup_connect-acc"
+          onClick={this.props.closePopup}
+        >
           <div
             className={`popup__content ${
               progressConnAcc ? "popup__content_loading" : ""

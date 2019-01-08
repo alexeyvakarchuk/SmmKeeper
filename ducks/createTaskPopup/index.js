@@ -1,8 +1,11 @@
 // @flow
 
-import { createAction, handleActions } from "redux-actions";
-import { POPUP_OPEN, POPUP_CLOSE } from "./const";
+import { createAction, handleActions, combineActions } from "redux-actions";
+
+import { POPUP_OPEN, POPUP_CLOSE } from "ducks/createTaskPopup/const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
+import { SOCKET_CHECKPOINT_REQUIRED } from "ducks/socket/const";
+
 import type { State } from "./types";
 
 /**

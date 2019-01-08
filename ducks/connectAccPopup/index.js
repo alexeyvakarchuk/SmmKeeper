@@ -1,14 +1,16 @@
 // @flow
 
-import { createAction, handleActions } from "redux-actions";
-// import { SIGN_OUT_SUCCESS } from "ducks/auth";
-// console.log(SIGN_OUT_SUCCESS);
+import { createAction, handleActions, combineActions } from "redux-actions";
+
+import { POPUP_OPEN, POPUP_CLOSE } from "ducks/connectAccPopup/const";
 import {
   REQUEST_VERIFICATION_SUCCESS,
-  SET_VERIFICATION_TYPE_SUCCESS
+  SET_VERIFICATION_TYPE_SUCCESS,
+  VERIFY_ACC_SUCCESS
 } from "ducks/inst/const";
-import { POPUP_OPEN, POPUP_CLOSE } from "./const";
+import { SOCKET_CHECKPOINT_REQUIRED } from "ducks/socket/const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
+
 import type { State } from "./types";
 
 /**
@@ -23,12 +25,13 @@ export const moduleName: string = "connectAccPopup";
 
 export const initialState: State = {
   visible: false,
-  popupState: "loginInfo"
+  popupState: "loginInfo",
+  checkpointUsername: null
 };
 
 const connectAccPopupReducer = handleActions(
   {
-    [POPUP_OPEN]: state => ({
+    [combineActions(POPUP_OPEN, SOCKET_CHECKPOINT_REQUIRED)]: state => ({
       ...state,
       visible: true
     }),
@@ -37,14 +40,19 @@ const connectAccPopupReducer = handleActions(
       visible: false
     }),
 
-    [REQUEST_VERIFICATION_SUCCESS]: state => ({
+    [combineActions(
+      REQUEST_VERIFICATION_SUCCESS,
+      SOCKET_CHECKPOINT_REQUIRED
+    )]: (state, action) => ({
       ...state,
-      popupState: "verificationType"
+      popupState: "verificationType",
+      checkpointUsername: action.payload.username || null
     }),
     [SET_VERIFICATION_TYPE_SUCCESS]: state => ({
       ...state,
       popupState: "verificationCode"
     }),
+    [VERIFY_ACC_SUCCESS]: state => initialState,
 
     [SIGN_OUT_SUCCESS]: () => initialState
   },
@@ -56,7 +64,9 @@ export default connectAccPopupReducer;
 /**
  * Selectors
  * */
-// export const stateSelector = (state: Object): State => state[moduleName];
+export const stateSelector = (state: Object): State => state[moduleName];
+export const checkpointUsernameSelector = (state: Object): State =>
+  state[moduleName].checkpointUsername;
 
 /**
  * Action Creators

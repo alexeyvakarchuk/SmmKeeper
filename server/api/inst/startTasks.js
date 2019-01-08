@@ -11,7 +11,8 @@ const FileCookieStore = require("tough-cookie-filestore2");
 const { asyncForEach, getProxyString } = require("server/api/utils");
 const {
   InvalidUserIdError,
-  InvalidInstAccDataError
+  InvalidInstAccDataError,
+  CheckpointIsRequiredError
 } = require("server/api/errors");
 
 exports.init = router =>
@@ -21,12 +22,13 @@ exports.init = router =>
     if (jwt.verify(token, jwtsecret).id === id) {
       const user = await User.findById(id);
 
-      const res = [];
+      let res = [];
 
       let client;
+      let acc;
 
       try {
-        const acc = await InstAcc.findOne({ username }).populate("proxy");
+        acc = await InstAcc.findOne({ username }).populate("proxy");
 
         const { password, proxy } = acc;
 
@@ -43,8 +45,16 @@ exports.init = router =>
 
         await client.login();
       } catch (e) {
-        // console.log(e);
-        if (e.error.message !== "checkpoint_required") {
+        console.log(e.error);
+
+        if (e.error.message === "checkpoint_required") {
+          throw new CheckpointIsRequiredError({
+            id,
+            username,
+            checkpointUrl: e.error.checkpoint_url,
+            proxy: acc.proxy
+          });
+        } else {
           throw new InvalidInstAccDataError();
         }
       }

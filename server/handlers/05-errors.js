@@ -1,3 +1,5 @@
+const socket = require("server/libs/socket");
+
 exports.init = app =>
   app.use(async (ctx, next) => {
     try {
@@ -73,24 +75,18 @@ exports.init = app =>
           return true;
         }
 
-        if (message === "checkpoint_required") {
+        if (name === "CheckpointIsRequiredError") {
           ctx.status = 400;
           ctx.body = {
-            checkpointUrl: e.checkpoint_url
+            error: {
+              message
+            }
           };
+
+          socket.emitter.to(e.data.id).emit("checkpointRequired", e.data);
+
+          return true;
         }
-        // if (name === "CheckpointRequiredError") {
-        //   ctx.status = e.statusCode;
-
-        //   ctx.body = {
-        //     error: {
-        //       name,
-        //       data: e.data
-        //     }
-        //   };
-
-        //   return true;
-        // }
 
         ctx.body = "Error 500";
         ctx.status = 500;

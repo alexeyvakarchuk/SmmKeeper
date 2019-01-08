@@ -15,8 +15,9 @@ import {
   SOCKET_CONN_SUCCESS,
   SOCKET_CONN_END,
   SOCKET_CONN_FAIL,
-  SOCKET_AUTH_SUCCESS
-} from "./const";
+  SOCKET_AUTH_SUCCESS,
+  SOCKET_CHECKPOINT_REQUIRED
+} from "ducks/socket/const";
 import {
   CONN_ACC_SUCCESS,
   TASK_CREATE_SUCCESS,
@@ -233,6 +234,25 @@ const initWebsocket = () =>
     // socket.on("toAllRoom", () => {
     //   console.log("message to all room of users!");
     // });
+
+    socket.on("checkpointRequired", data => {
+      const {
+        checkpointUrl,
+        username,
+        proxy: { auth, host, port }
+      } = data;
+
+      console.log(data);
+
+      emitter({
+        type: SOCKET_CHECKPOINT_REQUIRED,
+        payload: {
+          checkpointUrl,
+          username,
+          proxy: { auth, host, port }
+        }
+      });
+    });
 
     socket.on("unauthorized", (error, cb) => {
       if (

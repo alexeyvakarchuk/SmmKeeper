@@ -4,7 +4,10 @@ const InstAcc = require("server/models/InstAcc");
 const mf = require("./mf");
 const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
-const { InvalidInstAccDataError } = require("server/api/errors");
+const {
+  InvalidInstAccDataError,
+  CheckpointIsRequiredError
+} = require("server/api/errors");
 const { getProxyString } = require("server/api/utils");
 
 const startTasks = async () => {
@@ -19,11 +22,12 @@ const startTasks = async () => {
     // console.log("username ::: ", username);
 
     let client;
+    let acc;
 
     try {
-      const acc = await InstAcc.findOne({ username }).populate("proxy");
+      acc = await InstAcc.findOne({ username }).populate("proxy");
 
-      const { password, proxy } = acc;
+      const { _id, password, proxy } = acc;
 
       const cookieStore = new FileCookieStore(
         resolve("server", `cookieStore/${username}.json`)
@@ -39,7 +43,17 @@ const startTasks = async () => {
       await client.login();
     } catch (e) {
       console.log(e);
-      throw new InvalidInstAccDataError();
+
+      if (e.error.message === "checkpoint_required") {
+        throw new CheckpointIsRequiredError({
+          id: acc.userId,
+          username,
+          checkpointUrl: e.error.checkpoint_url,
+          proxy: acc.proxy
+        });
+      } else {
+        throw new InvalidInstAccDataError();
+      }
     }
 
     mf(username, _id, client);

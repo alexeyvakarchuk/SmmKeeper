@@ -11,6 +11,7 @@ import {
 } from "ducks/inst/const";
 
 import { stateSelector } from "ducks/inst/selectors";
+import { checkpointUsernameSelector } from "ducks/connectAccPopup";
 import { stateSelector as authStateSelector } from "ducks/auth";
 
 import type { State as AccReq } from "components/connectAccPopup/types";
@@ -33,6 +34,8 @@ export default function* verifyAccSaga({
   try {
     const { user } = yield select(authStateSelector);
 
+    const checkpointUsername = yield select(checkpointUsernameSelector);
+
     if (user.id) {
       const ref = {
         method: "post",
@@ -43,7 +46,7 @@ export default function* verifyAccSaga({
           token: localStorage.getItem("tktoken"),
           proxy: state.proxy,
           checkpointUrl: state.checkpointUrl,
-          username,
+          username: username || checkpointUsername,
           password,
           securityCode
         },

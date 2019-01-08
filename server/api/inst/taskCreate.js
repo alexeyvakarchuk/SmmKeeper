@@ -9,7 +9,8 @@ const mf = require("server/tasks/mf");
 const {
   InvalidUserIdError,
   InvalidInstAccDataError,
-  TaskAlreadyInProgressError
+  TaskAlreadyInProgressError,
+  CheckpointIsRequiredError
 } = require("server/api/errors");
 const socket = require("server/libs/socket");
 const { resolve } = require("path");
@@ -26,9 +27,10 @@ exports.init = router =>
       // username, sourceUsername, type
 
       let client;
+      let acc;
 
       try {
-        const acc = await InstAcc.findOne({
+        acc = await InstAcc.findOne({
           userId: user._id,
           username
         }).populate("proxy");
@@ -48,8 +50,18 @@ exports.init = router =>
 
         await client.login();
       } catch (e) {
-        console.log(e);
-        throw new InvalidInstAccDataError();
+        console.log(e.error);
+
+        if (e.error.message === "checkpoint_required") {
+          throw new CheckpointIsRequiredError({
+            id,
+            username,
+            checkpointUrl: e.error.checkpoint_url,
+            proxy: acc.proxy
+          });
+        } else {
+          throw new InvalidInstAccDataError();
+        }
       }
 
       // await asyncForEach(tasks, async ({ type, sourceUsername }) => {
