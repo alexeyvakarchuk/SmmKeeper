@@ -56,18 +56,32 @@ module.exports = (username, taskId, client) => {
         console.log("Task error(MF) ::: ", e);
 
         if (e.name === "StatusCodeError") {
+          if (e.error.message === "checkpoint_required") {
+            throw new CheckpointIsRequiredError({
+              id: acc.userId,
+              username,
+              checkpointUrl: e.error.checkpoint_url,
+              proxy: acc.proxy
+            });
+            acc.status = "CheckpointRequired";
+            await acc.save();
+          } else if (e.error.message === "rate limited") {
+            acc.status = "RateLimited";
+            await acc.save();
+          } else if (
+            e.error.message ===
+            "Sorry, you're following the max limit of accounts. You'll need to unfollow some accounts to start following more."
+          ) {
+            acc.status = "FollowsLimitExceeded";
+            await acc.save();
+          } else if (e.message === "403 - undefined") {
+            acc.status = "PasswordWasChanged";
+            await acc.save();
+          }
+
           task.status = -1;
           await task.save();
           cronTask.destroy();
-        }
-
-        if (e.error.message === "checkpoint_required") {
-          throw new CheckpointIsRequiredError({
-            id: acc.userId,
-            username,
-            checkpointUrl: e.error.checkpoint_url,
-            proxy: acc.proxy
-          });
         }
       }
     } else {

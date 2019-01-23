@@ -10,7 +10,10 @@ const {
   InvalidUserIdError,
   InvalidInstAccDataError,
   TaskAlreadyInProgressError,
-  CheckpointIsRequiredError
+  CheckpointIsRequiredError,
+  RateLimitedError,
+  FollowsLimitExceededError,
+  PasswordWasChangedError
 } = require("server/api/errors");
 const socket = require("server/libs/socket");
 const { resolve } = require("path");
@@ -62,6 +65,14 @@ exports.init = router =>
         } else {
           throw new InvalidInstAccDataError();
         }
+      }
+
+      if (acc.status === "RateLimited") {
+        throw new RateLimitedError();
+      } else if (acc.status === "FollowsLimitExceeded") {
+        throw new FollowsLimitExceededError();
+      } else if (acc.status === "PasswordWasChanged") {
+        throw new PasswordWasChangedError();
       }
 
       // await asyncForEach(tasks, async ({ type, sourceUsername }) => {

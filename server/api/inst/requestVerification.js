@@ -27,7 +27,7 @@ exports.init = router =>
       // Check whether user with this username already exists
       if (!connectedProfile) {
         proxy = await Proxy.findOne(
-          { connectedAccounts: { $lte: 2 } },
+          { connectedAccounts: { $eq: 0 } },
           "-_id -__v "
         );
 

@@ -156,6 +156,49 @@ class InvalidVerificationCodeError extends Error {
   }
 }
 
+class RateLimitedError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoProxyError);
+    }
+
+    this.statusCode = 400;
+    this.name = "RateLimitedError";
+    this.message =
+      "Your acc was temporary blocked for actions(IG limits were exceeded)";
+  }
+}
+
+class FollowsLimitExceededError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoProxyError);
+    }
+
+    this.statusCode = 400;
+    this.name = "FollowsLimitExceededError";
+    this.message = "Follows number exceeded for this profile";
+  }
+}
+
+class PasswordWasChangedError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, NoProxyError);
+    }
+
+    this.statusCode = 400;
+    this.name = "PasswordWasChangedError";
+    this.message = "Password was chagned by user or dropped";
+  }
+}
+
 module.exports = {
   InvalidUserIdError,
   InvalidTodoIdError,
@@ -166,5 +209,8 @@ module.exports = {
   TaskAlreadyInProgressError,
   NoProxyError,
   CheckpointIsRequiredError,
-  InvalidVerificationCodeError
+  InvalidVerificationCodeError,
+  RateLimitedError,
+  FollowsLimitExceededError,
+  PasswordWasChangedError
 };

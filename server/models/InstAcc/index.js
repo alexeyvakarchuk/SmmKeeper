@@ -21,6 +21,10 @@ const instAccSchema = new mongoose.Schema(
       type: String,
       required: "Password is required"
     },
+    status: {
+      type: String,
+      default: "Active"
+    },
     bio: { type: String },
     externalUrl: { type: String },
     limits: {

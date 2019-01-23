@@ -63,7 +63,10 @@ exports.init = app =>
           name === "InvalidInstAccDataError" ||
           name === "TaskAlreadyInProgressError" ||
           name === "NoProxyError" ||
-          name === "InvalidVerificationCodeError"
+          name === "InvalidVerificationCodeError" ||
+          name === "RateLimitedError" ||
+          name === "FollowsLimitExceededError" ||
+          name === "PasswordWasChangedError"
         ) {
           ctx.status = e.statusCode;
           ctx.body = {
