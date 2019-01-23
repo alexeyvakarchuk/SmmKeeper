@@ -55,7 +55,13 @@ module.exports = (username, taskId, client) => {
       } catch (e) {
         console.log("Task error(MF) ::: ", e);
 
+        console.log(e.name, e.error);
+
         if (e.name === "StatusCodeError") {
+          task.status = -1;
+          await task.save();
+          cronTask.destroy();
+
           if (e.error.message === "checkpoint_required") {
             throw new CheckpointIsRequiredError({
               id: acc.userId,
@@ -78,10 +84,6 @@ module.exports = (username, taskId, client) => {
             acc.status = "PasswordWasChanged";
             await acc.save();
           }
-
-          task.status = -1;
-          await task.save();
-          cronTask.destroy();
         }
       }
     } else {
