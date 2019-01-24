@@ -74,11 +74,38 @@
       img
         border-radius: 50%
         width: 50px
-      // span
-      //   font-size: 13px
-      //   color: #039be5
-      //   margin-left: 10px
-      &-active
+
+      .__react_component_tooltip
+        padding: 8px 12px
+
+      &-status
+        position: absolute
+        top: calc(50% - 5px)
+        right: -5px
+        display: flex
+        .status
+          display: block
+          width: 10px
+          height: 10px
+          box-sizing: border-box
+          border: 1px solid #fff
+          border-radius: 50%
+        &_grey
+          .status
+            background-color: #eee
+        &_green
+          .status
+            background-color: var(--second-three)
+        &_yellow
+          .status
+            background-color: var(--alert-yellow-two)
+        &_red
+          .status
+            background-color: var(--alert-red-two)
+       
+
+
+      &_active
         background-color: rgba(var(--blue), .05)
         &:before
           content: ''
@@ -87,6 +114,11 @@
           background-color: var(--main-two)
           position: absolute
           left: 0
+      
+    &__avatar
+      position: relative
+
+
     &__add
       outline: none
       margin: 10px auto 20px
@@ -108,4 +140,3 @@
         transform: translateX(-50%)
       &:after
         transform: translateX(-50%) rotate(90deg)
-
