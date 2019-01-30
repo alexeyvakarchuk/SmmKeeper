@@ -8,6 +8,8 @@ const Router = require("koa-router");
 const app = new Koa();
 const router = new Router();
 
+let clientStore = {};
+
 const handlers = fs.readdirSync(path.join(__dirname, "handlers")).sort();
 handlers.forEach(handler => require("./handlers/" + handler).init(app));
 
@@ -30,7 +32,9 @@ proxyHandlers.forEach(handler =>
 
 // *** Inst API handlers ***
 const instHandlers = fs.readdirSync(path.join(__dirname, "api/inst")).sort();
-instHandlers.forEach(handler => require("./api/inst/" + handler).init(router));
+instHandlers.forEach(handler =>
+  require("./api/inst/" + handler).init(router, clientStore)
+);
 
 router.get("/auth/success", async ctx => {
   const filePath = path.join(__dirname, "./templates/googleAuthSuccess.html");

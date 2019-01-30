@@ -2,6 +2,7 @@ const Instagram = require("instagram-web-api");
 const InstTask = require("server/models/InstTask");
 const InstAcc = require("server/models/InstAcc");
 const mf = require("./mf");
+const uf = require("./uf");
 const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
 const {
@@ -12,13 +13,12 @@ const { getProxyString } = require("server/api/utils");
 
 const startTasks = async () => {
   const tasks = await InstTask.find({
-    status: 1,
-    type: "mf"
+    status: 1
   });
 
   // console.log("tasks ::: ", tasks);
 
-  tasks.forEach(async ({ _id, username }) => {
+  tasks.forEach(async ({ _id, username, type }) => {
     // console.log("username ::: ", username);
 
     let client;
@@ -56,7 +56,18 @@ const startTasks = async () => {
       }
     }
 
-    mf(username, _id, client);
+    switch (type) {
+      case "mf":
+        mf(username, _id, client);
+        break;
+
+      case "uf":
+        uf(username, _id, client);
+        break;
+
+      default:
+        break;
+    }
   });
 };
 

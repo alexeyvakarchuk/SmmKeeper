@@ -4,7 +4,7 @@ import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import Tabs from "components/Tabs";
-import InputField from "components/InputField";
+import UserSearchInputField from "components/UserSearchInputField";
 import GradientButton from "components/GradientButton";
 import type { Props, State } from "./types";
 import { createTask } from "ducks/inst";
@@ -21,9 +21,14 @@ class CreateTaskPopup extends PureComponent<Props, State> {
       },
       {
         id: 2,
-        value: "Liking",
-        ref: "ml"
+        value: "Un-following",
+        ref: "uf"
       }
+      // {
+      //   id: 3,
+      //   value: "Liking",
+      //   ref: "ml"
+      // }
     ],
     activeTab: 1
   };
@@ -47,7 +52,7 @@ class CreateTaskPopup extends PureComponent<Props, State> {
   handleChangeTab = activeTab => this.setState({ activeTab });
 
   render() {
-    const { progressCreateTask } = this.props;
+    const { progressCreateTask, searchProgress, searchResults } = this.props;
 
     return (
       this.props.popupVisible &&
@@ -80,12 +85,18 @@ class CreateTaskPopup extends PureComponent<Props, State> {
                 handleChangeTab={this.handleChangeTab}
               />
 
-              <InputField
+              <UserSearchInputField
                 inputName="Source account username"
                 inputValue={this.state.actionSource}
                 handleChange={this.handleInputChange("actionSource")}
+                username={this.props.username}
                 style="light"
               />
+
+              {searchProgress && "Searching..."}
+
+              {!searchProgress &&
+                searchResults.map(({ username }) => <div>{username}</div>)}
 
               <GradientButton
                 className="popup__submit-button"
@@ -105,12 +116,14 @@ class CreateTaskPopup extends PureComponent<Props, State> {
 export default connect(
   ({
     inst: { accList, progressCreateTask, error },
-    createTaskPopup: { visible }
+    createTaskPopup: { visible, searchProgress, searchResults }
   }) => ({
     accList,
     progressCreateTask,
     error,
-    popupVisible: visible
+    popupVisible: visible,
+    searchProgress,
+    searchResults
   }),
   dispatch => ({
     createTask: task => dispatch(createTask(task)),

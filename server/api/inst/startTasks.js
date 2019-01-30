@@ -1,63 +1,21 @@
 const jwt = require("jsonwebtoken");
 const { jwtsecret } = require("server/config/default"); // Secret key for JWT signin
 const socket = require("server/libs/socket");
-const { resolve } = require("path");
-const Instagram = require("instagram-web-api");
 const mf = require("server/tasks/mf");
-const User = require("server/models/User");
+const uf = require("server/tasks/uf");
 const InstTask = require("server/models/InstTask");
-const InstAcc = require("server/models/InstAcc");
-const FileCookieStore = require("tough-cookie-filestore2");
-const { asyncForEach, getProxyString } = require("server/api/utils");
-const {
-  InvalidUserIdError,
-  InvalidInstAccDataError,
-  CheckpointIsRequiredError
-} = require("server/api/errors");
+const { asyncForEach } = require("server/api/utils");
+const { InvalidUserIdError } = require("server/api/errors");
+const { getInstaClient } = require("server/api/utils");
 
-exports.init = router =>
+exports.init = (router, clientStore) =>
   router.post("/api/inst/tasks-start", async function(ctx) {
     const { id, token, username, tasks } = ctx.request.body;
 
     if (jwt.verify(token, jwtsecret).id === id) {
-      const user = await User.findById(id);
+      const client = await getInstaClient(id, username, clientStore);
 
       let res = [];
-
-      let client;
-      let acc;
-
-      try {
-        acc = await InstAcc.findOne({ username }).populate("proxy");
-
-        const { password, proxy } = acc;
-
-        const cookieStore = new FileCookieStore(
-          resolve("server", `cookieStore/${username}.json`)
-        );
-
-        client = new Instagram(
-          { username, password, cookieStore },
-          {
-            proxy: getProxyString(proxy)
-          }
-        );
-
-        await client.login();
-      } catch (e) {
-        console.log(e.error);
-
-        if (e.error.message === "checkpoint_required") {
-          throw new CheckpointIsRequiredError({
-            id,
-            username,
-            checkpointUrl: e.error.checkpoint_url,
-            proxy: acc.proxy
-          });
-        } else {
-          throw new InvalidInstAccDataError();
-        }
-      }
 
       await asyncForEach(tasks, async taskId => {
         const task = await InstTask.findById(taskId);
@@ -67,6 +25,11 @@ exports.init = router =>
             case "mf":
               mf(username, taskId, client);
               break;
+
+            case "uf":
+              uf(username, taskId, client);
+              break;
+
             default:
               console.log(`Task type ${task.type} is not defined`);
               return false;

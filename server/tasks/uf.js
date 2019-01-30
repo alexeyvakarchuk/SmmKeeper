@@ -26,12 +26,12 @@ module.exports = (username, taskId, client) => {
         console.log(acc.username, source.data);
         while (
           !source.data.length ||
-          acc.interactions.some(
+          !acc.interactions.some(
             ({ username, type }) =>
               username === source.data[0].username && type === "mf"
           )
         ) {
-          source = await client.getFollowers({
+          source = await client.getFollowings({
             userId: sourceId,
             first: 1,
             after: source.page_info.end_cursor || undefined
@@ -40,12 +40,12 @@ module.exports = (username, taskId, client) => {
 
         await delay(15);
 
-        await client.follow({ userId: source.data[0].id });
+        await client.unfollow({ userId: source.data[0].id });
 
         await acc.interactions.unshift({
           username: source.data[0].username,
           taskId: task._id,
-          type: "mf"
+          type: "uf"
         });
 
         await acc.save();
@@ -54,7 +54,7 @@ module.exports = (username, taskId, client) => {
         task.end_cursor = source.page_info.end_cursor;
         await task.save();
       } catch (e) {
-        console.log("Task error(MF) ::: ", e);
+        console.log("Task error(UF) ::: ", e);
 
         console.log(e.name, e.error);
 
