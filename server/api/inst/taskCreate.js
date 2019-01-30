@@ -77,7 +77,7 @@ exports.init = (router, clientStore) =>
           break;
 
         case "uf":
-          mf(username, task._id, client);
+          uf(username, task._id, client);
           break;
       }
 
