@@ -24,6 +24,18 @@ module.exports = (username, taskId, client) => {
 
         // Will search until will not find the source acc with user haven't interacted before
         console.log(acc.username, source.data);
+
+        console.log(
+          acc.interactions.some(
+            ({ username, type }) =>
+              username === source.data[0].username && type === "mf"
+          ),
+          !acc.interactions.some(
+            ({ username, type }) =>
+              username === source.data[0].username && type === "mf"
+          )
+        );
+
         while (
           !source.data.length ||
           !acc.interactions.some(
