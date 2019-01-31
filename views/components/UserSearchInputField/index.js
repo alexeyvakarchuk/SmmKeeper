@@ -16,7 +16,12 @@ class UserSearchInputField extends Component<Props, {}> {
   };
 
   render() {
-    const { inputValue, handleChange } = this.props;
+    const {
+      inputValue,
+      handleChange,
+      searchProgress,
+      searchResults
+    } = this.props;
 
     return (
       <div className="user-search">
@@ -26,6 +31,11 @@ class UserSearchInputField extends Component<Props, {}> {
           handleChange={this.handleChange}
           style="light"
         />
+
+        {searchProgress && "Searching..."}
+
+        {!searchProgress &&
+          searchResults.map(({ username }) => <div>{username}</div>)}
       </div>
     );
   }

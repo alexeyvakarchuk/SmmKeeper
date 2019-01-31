@@ -91,12 +91,9 @@ class CreateTaskPopup extends PureComponent<Props, State> {
                 handleChange={this.handleInputChange("actionSource")}
                 username={this.props.username}
                 style="light"
+                searchProgress={searchProgress}
+                searchResults={searchResults}
               />
-
-              {searchProgress && "Searching..."}
-
-              {!searchProgress &&
-                searchResults.map(({ username }) => <div>{username}</div>)}
 
               <GradientButton
                 className="popup__submit-button"

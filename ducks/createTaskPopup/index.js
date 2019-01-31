@@ -1,7 +1,7 @@
 // @flow
 
 import { createAction, handleActions, combineActions } from "redux-actions";
-import { takeEvery, put, call, select } from "redux-saga/effects";
+import { takeLatest, fork, put, call, select } from "redux-saga/effects";
 import axios from "axios";
 import { baseURL } from "config";
 
@@ -88,8 +88,6 @@ export function* searchUsersSaga({
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
 
-  if (state.searchProgress) return true;
-
   yield put({ type: SEARCH_USERS_START });
 
   try {
@@ -134,5 +132,5 @@ export function* searchUsersSaga({
 }
 
 export function* watchCreateTaskPopup(): mixed {
-  yield takeEvery(SEARCH_USERS_REQUEST, searchUsersSaga);
+  const action = yield takeLatest(SEARCH_USERS_REQUEST, searchUsersSaga);
 }
