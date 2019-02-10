@@ -46,7 +46,10 @@ module.exports = (username, taskId, client) => {
         console.log(acc.username, source.data);
 
         if (!source.data.length) {
+          console.log(source, sourceId, acc);
+
           task.status = 0;
+          await task.save();
           cronTask.destroy();
         }
 

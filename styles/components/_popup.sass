@@ -8,7 +8,7 @@
   width: 100%
   align-items: center
   justify-content: center
-  background-color: rgba(#3C539A, .8)
+  background-color: rgba(#272727, .8)
   text-align: center
   &_connect-acc
     z-index: 1000
@@ -29,13 +29,12 @@
     flex-direction: column
     align-items: center
     justify-content: center
-    width: calc(100% - 20px)
-    max-width: 360px
-    height: calc(100% - 20px)
-    max-height: 420px
+    max-width: calc(100% - 20px)
+    // max-width: 360px
+    hmax-height: calc(100% - 20px)
     overflow-y: auto
     +max-screen(768px)
-      padding: 25px
+      padding: 30px
     h3
       font-size: 18px
       font-weight: 600
@@ -57,6 +56,8 @@
         z-index: 2
   .button
     margin-top: 40px
+    +max-screen(768px)
+      margin-top: 25px
   &__container
     width: 100%
     display: flex
