@@ -1,31 +1,41 @@
 // @flow
 
 import React, { Component } from "react";
+import classnames from "classnames";
 import type { Props } from "./types";
 
 class InputField extends Component<Props, {}> {
   static defaultProps = {
     type: "text",
-    style: "dark"
+    style: "light"
   };
 
   render() {
-    const { inputName, inputValue, handleChange, type, style } = this.props;
+    const {
+      inputName,
+      inputValue,
+      handleChange,
+      type,
+      style,
+      icon
+    } = this.props;
 
-    const className =
-      style === "dark"
-        ? "input-field__input"
-        : "input-field__input input-field__input-light";
+    const inputFieldClassName = classnames("input-field", {
+      ["input-field_with-icon"]: icon
+    });
+
+    const iconClassName = classnames("input-field__icon", {
+      ["input-field__icon_active"]: inputValue.length > 0
+    });
 
     return (
-      <div className="input-field">
-        {/* <span className="input-field__label">{inputName}</span> */}
+      <div className={inputFieldClassName}>
+        {icon && <span className={iconClassName}>{icon}</span>}
         <input
-          className={className}
+          className="input-field__input"
           type={type}
           onChange={e => handleChange(e.target.value)}
           value={inputValue}
-          // {...props}
           placeholder={inputName}
           autoCorrect="off"
           autoCapitalize="off"

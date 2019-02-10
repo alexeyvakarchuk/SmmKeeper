@@ -21,19 +21,24 @@
     font-weight: 400
     color: #c62828
   &__content
-    background-color: #ffffff
-    border-radius: 15px
-    padding: 25px
+    background-color: var(--popup-background)
+    border-radius: 10px
+    padding: 50px
     display: flex
     position: relative
     flex-direction: column
     align-items: center
-    width: 100%
-    max-width: 320px
-    overflow: hidden
+    justify-content: center
+    width: calc(100% - 20px)
+    max-width: 360px
+    height: calc(100% - 20px)
+    max-height: 420px
+    overflow-y: auto
+    +max-screen(768px)
+      padding: 25px
     h3
-      font-size: 15px
-      font-weight: 500
+      font-size: 18px
+      font-weight: 600
       line-height: 1.5
       margin-bottom: 12px
     &_loading
@@ -50,28 +55,33 @@
         left: 0
         background-color: rgba(#f5f8fc, .85)
         z-index: 2
-  &__submit-button
-    margin-top: 25px
+  .button
+    margin-top: 40px
   &__container
     width: 100%
-  &__close 
-    position: absolute
-    width: 20px
-    height: 20px
-    top: 10px
-    right: 10px
-    cursor: pointer
-    &:before, &:after
-      content: ''
-      width: 100%
-      height: 2px
-      background-color: #10cc8d
-      position: absolute
-      top: 50%
-      left: 0
-    &:before
-      transform: translateY(-50%) rotate(45deg)
-    &:after
-      transform: translateY(-50%) rotate(-45deg)
+    display: flex
+    position: relative
+    flex-direction: column
+    align-items: center
+    justify-content: center
+  // &__close 
+  //   position: absolute
+  //   width: 20px
+  //   height: 20px
+  //   top: 10px
+  //   right: 10px
+  //   cursor: pointer
+  //   &:before, &:after
+  //     content: ''
+  //     width: 100%
+  //     height: 2px
+  //     background-color: #10cc8d
+  //     position: absolute
+  //     top: 50%
+  //     left: 0
+  //   &:before
+  //     transform: translateY(-50%) rotate(45deg)
+  //   &:after
+  //     transform: translateY(-50%) rotate(-45deg)
 
 

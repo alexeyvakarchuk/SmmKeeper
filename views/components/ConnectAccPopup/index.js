@@ -3,9 +3,11 @@
 import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
+import User from "icons/User";
+import Password from "icons/Password";
 import Tabs from "components/Tabs";
 import InputField from "components/InputField";
-import GradientButton from "components/GradientButton";
+import Button from "components/Button";
 import type { Props, State } from "./types";
 import {
   requestVerification,
@@ -99,27 +101,29 @@ class ConnectAccPopup extends PureComponent<Props, State> {
     const popupContent = {
       loginInfo: (
         <div className="popup__container">
-          <h3>Enter username&password from your instagram account, please</h3>
+          <h3>Add new Instagram profile</h3>
 
           <span className="popup__error-text">{this.props.error}</span>
 
           <InputField
-            inputName="username"
+            inputName="Username"
             inputValue={this.state.username}
             handleChange={this.handleInputChange("username")}
-            style="light"
+            icon={<User />}
           />
           <InputField
             inputName="Password"
             inputValue={this.state.password}
             handleChange={this.handleInputChange("password")}
-            style="light"
             type="password"
+            icon={<Password />}
           />
-          <GradientButton
-            className="popup__submit-button"
+          <Button
             handleClick={this.handleSubmit("request-verification")}
-            value={"Confirm"}
+            value={"Continue"}
+            disabled={
+              !this.state.username.length || !this.state.password.length
+            }
           />
         </div>
       ),
@@ -135,10 +139,9 @@ class ConnectAccPopup extends PureComponent<Props, State> {
             handleChangeTab={this.handleChangeTab}
           />
 
-          <GradientButton
-            className="popup__submit-button"
+          <Button
             handleClick={this.handleSubmit("set-verification-type")}
-            value={"Confirm"}
+            value={"Continue"}
           />
         </div>
       ),
@@ -158,11 +161,9 @@ class ConnectAccPopup extends PureComponent<Props, State> {
             inputName="securityCode"
             inputValue={this.state.securityCode}
             handleChange={this.handleInputChange("securityCode")}
-            style="light"
           />
 
-          <GradientButton
-            className="popup__submit-button"
+          <Button
             handleClick={this.handleSubmit("verify-acc")}
             value={"Confirm"}
           />
@@ -185,14 +186,12 @@ class ConnectAccPopup extends PureComponent<Props, State> {
             }`}
             onClick={e => e.stopPropagation()}
           >
-            <div className="popup__close" onClick={this.props.closePopup} />
-
             {/* {this.props.checkpointUrl !== null && (
               <InputField
                 inputName="securityCode"
                 inputValue={this.state.securityCode}
                 handleChange={this.handleInputChange("securityCode")}
-                style="light"
+                
               />
             )} */}
 

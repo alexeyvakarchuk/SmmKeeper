@@ -2,29 +2,29 @@
 
 import React from "react";
 import { storiesOf } from "@storybook/react";
-import InputField from "components/InputField";
-import "styles/main.sass";
+import { actions } from "@storybook/addon-actions";
+import WrappedInputField from "./decorators/WrappedInputField";
+import User from "icons/User";
+import "styles/base/_reset.sass";
+import "styles/base/_colours.scss";
+import "styles/components/_input-field.sass";
 
-storiesOf("InputField", module).add("with text", () => {
-  let inputValue = "abc";
+// This will lead to { onClick: action('onClick'), ... }
+const eventsFromNames = actions("onClick", "onChange");
 
-  const handleChange = (value: string) => {
-    inputValue = value;
-    console.log(inputValue);
-  };
-
-  return (
-    <InputField
-      inputName="Input name"
-      inputValue={inputValue}
-      handleChange={handleChange}
-    />
-  );
-});
-// .add("with some emoji", () => (
-//   <Button>
-//     <span role="img" aria-label="so cool">
-//       😀 😎 👍 💯
-//     </span>
-//   </Button>
-// ));
+storiesOf("InputField", module)
+  .add("Default", props => {
+    return (
+      <WrappedInputField inputName="Username" {...props} {...eventsFromNames} />
+    );
+  })
+  .add("With Icon", props => {
+    return (
+      <WrappedInputField
+        inputName="Username"
+        icon={<User />}
+        {...props}
+        {...eventsFromNames}
+      />
+    );
+  });

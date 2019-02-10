@@ -29,7 +29,6 @@ class UserSearchInputField extends Component<Props, {}> {
           inputName="Source acc username"
           inputValue={inputValue}
           handleChange={this.handleChange}
-          style="light"
         />
 
         {searchProgress && "Searching..."}

@@ -16,14 +16,14 @@ module.exports = (username, taskId, client) => {
 
     if (task && status === 1) {
       try {
-        let source = await client.getFollowers({
+        let source = await client.getFollowings({
           userId: sourceId,
           first: 1,
           after: end_cursor || undefined
         });
 
         // Will search until will not find the source acc with user haven't interacted before
-        console.log(acc.username, source.data);
+        // console.log(acc.username, source.data);
 
         // console.log(
         //   acc.interactions.some(
@@ -36,12 +36,18 @@ module.exports = (username, taskId, client) => {
         //   )
         // );
 
-        while (!source.data.length) {
-          source = await client.getFollowings({
-            userId: sourceId,
-            first: 1,
-            after: source.page_info.end_cursor || undefined
-          });
+        // while (!source.data.length) {
+        //   source = await client.getFollowings({
+        //     userId: sourceId,
+        //     first: 1,
+        //     after: source.page_info.end_cursor || undefined
+        //   });
+        // }
+        console.log(acc.username, source.data);
+
+        if (!source.data.length) {
+          task.status = 0;
+          cronTask.destroy();
         }
 
         await delay(15);

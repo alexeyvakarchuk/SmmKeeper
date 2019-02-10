@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import Tabs from "components/Tabs";
 import UserSearchInputField from "components/UserSearchInputField";
-import GradientButton from "components/GradientButton";
+import Button from "components/Button";
 import type { Props, State } from "./types";
 import { createTask } from "ducks/inst";
 import { closePopup } from "ducks/createTaskPopup";
@@ -71,7 +71,7 @@ class CreateTaskPopup extends PureComponent<Props, State> {
                 inputName="securityCode"
                 inputValue={this.state.securityCode}
                 handleChange={this.handleInputChange("securityCode")}
-                style="light"
+                
               />
             )} */}
 
@@ -90,12 +90,11 @@ class CreateTaskPopup extends PureComponent<Props, State> {
                 inputValue={this.state.actionSource}
                 handleChange={this.handleInputChange("actionSource")}
                 username={this.props.username}
-                style="light"
                 searchProgress={searchProgress}
                 searchResults={searchResults}
               />
 
-              <GradientButton
+              <Button
                 className="popup__submit-button"
                 handleClick={this.handleSubmit}
                 value={"Confirm"}

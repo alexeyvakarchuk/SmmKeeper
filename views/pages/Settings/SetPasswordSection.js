@@ -6,7 +6,7 @@ import type {
   SetPasswordSectionState as State
 } from "./types";
 import InputField from "components/InputField";
-import GradientButton from "components/GradientButton";
+import Button from "components/Button";
 import { setPassword, clearMessages } from "ducks/password";
 import { connect } from "react-redux";
 
@@ -45,17 +45,15 @@ class SetPasswordSection extends PureComponent<Props, State> {
             inputName="Password"
             inputValue={this.state.password}
             handleChange={this.handleInputChange("password")}
-            style="light"
             type="password"
           />
           <InputField
             inputName="Confirm password"
             inputValue={this.state.passwordConfirm}
             handleChange={this.handleInputChange("passwordConfirm")}
-            style="light"
             type="password"
           />
-          <GradientButton
+          <Button
             handleClick={() => this.props.setPassword(this.state)}
             value={"Confirm"}
           />

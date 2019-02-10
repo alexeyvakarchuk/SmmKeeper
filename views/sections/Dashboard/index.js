@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import GradientButton from "components/GradientButton";
+import Button from "components/Button";
 import InstaProfilePage from "sections/InstaProfilePage";
 import { openPopup } from "ducks/connectAccPopup";
 import type { Props, State } from "./types";
@@ -21,7 +21,7 @@ class Dashboard extends Component<Props, State> {
           ) : (
             <div className="dashboard__empty">
               <h3>User has no connected accounts</h3>
-              <GradientButton
+              <Button
                 handleClick={this.props.openPopup}
                 value={"Connect account"}
               />

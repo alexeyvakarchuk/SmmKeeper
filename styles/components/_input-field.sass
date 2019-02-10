@@ -1,34 +1,49 @@
 .input-field
   border-radius: 4px
   width: 100%
-  max-width: 340px
+  max-width: 280px
   display: flex
-  align-items: flex-start
+  align-items: center
+  position: relative
+
+  &_with-icon
+    .input-field__input
+      padding-left: 50px
+
+
   &__input
     display: inline-block
     outline: none
     border: none
     width: 100%
     padding: 0
-    height: 45px
+    height: 40px
     border-radius: 5px
-    background-color: #242424
-    padding: 0 18px
+    padding: 0 20px
     margin: 14px 0
-    font-size: 16px
-    color: rgba(var(--green-accent), .7)
+    font-size: 14px
+    color: var(--GS-10)
     &::selection
-      background: rgba(var(--green-accent), .7)
-      color: #eee
+      background: var(--GS-10)
+      color: #fff
     &::placeholder
-      color: #757575
-    &-light
-      background-color: #ffffff
-      border: 1px solid #ECECEE
-      color: #5BB485
-      &::selection
-        background: #5BB485
-        color: #fff
+      color: #B8C0CC
+
+    
+  &__icon
+    display: block
+    position: absolute
+    width: 12px
+    left: 20px
+    svg
+      display: block
+      width: 100%
+      fill: #CFD8E6
+      transition: fill .2s ease
+    &_active
+      svg
+        fill: var(--GS-10)
+
 
   // &__button
   //   display: inline-block

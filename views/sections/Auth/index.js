@@ -5,7 +5,7 @@ import InputField from "components/InputField";
 import { connect } from "react-redux";
 import { signIn, signUp, checkGoogleAuth, clearAuthError } from "ducks/auth";
 import OutlineButton from "components/OutlineButton";
-import GradientButton from "components/GradientButton";
+import Button from "components/Button";
 import type { Props, State } from "./types";
 import { fetchUserAuth } from "utils";
 import Router from "next/router";
@@ -65,7 +65,7 @@ class AuthPage extends Component<Props, State> {
           handleChange={this.handleInputChange("password")}
         />
 
-        <GradientButton
+        <Button
           handleClick={this.handleSubmit}
           value={this.props.formState === "SignUp" ? "Sign Up" : "Sign In"}
         />

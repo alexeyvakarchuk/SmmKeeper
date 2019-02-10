@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import type { Props, State } from "./types";
-import GradientButton from "components/GradientButton";
+import Button from "components/Button";
 import { fetchTasks, updateLimit, updateStats } from "ducks/inst";
 import BarChart from "components/BarChart";
 import RangeGradient from "components/RangeGradient";
@@ -170,7 +170,7 @@ class InstaProfilePage extends Component<Props, State> {
           </div>
         </div>
 
-        {/* <GradientButton
+        {/* <Button
           handleClick={() =>
             store.dispatch(startTask({ username, type: "mf" }))
           }
