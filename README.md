@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/alexeyvakarchuk/TimeKeeper.svg?token=hEJ3ZFzxz6hQFxCcRXxD&branch=master)](https://travis-ci.com/alexeyvakarchuk/TimeKeeper)
+[![Build Status](https://travis-ci.com/alexeyvakarchuk/SmmKeeper.svg?branch=master)](https://travis-ci.com/alexeyvakarchuk/SmmKeeper)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 You need to have the Redis server and MongoDB installed. We're using redis for web sockets management with socket.io
@@ -11,14 +11,42 @@ yarn run redis
 yarn run dev
 ```
 
-Production build(client):
+Storybook for components documentation:
 
 ```sh
-yarn run prod-frontend
+yarn run storybook
 ```
 
-Production(server):
+Tests:
 
 ```sh
-yarn run prod-backend
+yarn run test
+```
+
+Production build(Next.js):
+
+```sh
+yarn run build
+```
+
+Production server commands(server):
+
+```sh
+yarn run serverStart
+```
+
+```sh
+yarn run serverReload
+```
+
+```sh
+yarn run stop
+```
+
+```sh
+yarn run monit
+```
+
+```sh
+yarn run logs
 ```
