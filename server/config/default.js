@@ -21,7 +21,7 @@ module.exports = {
       };
     }
   },
-  port: process.env.PORT || 3004,
+  port: process.env.NODE_ENV === "production" ? 3000 : 3004,
   // get domain() {
   //   return `http://localhost:${this.port}`;
   // },
