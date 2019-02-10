@@ -3,7 +3,7 @@
 
 You need to have the Redis server and MongoDB installed. We're using redis for web sockets management with socket.io
 
-Development(server+client):
+Development(server+client) on http://localhost:3004:
 
 ```sh
 mongod
