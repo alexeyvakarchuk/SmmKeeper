@@ -49,3 +49,5 @@ dump.rdb
 
 audits
 server/cookieStore
+
+pm2/logs
