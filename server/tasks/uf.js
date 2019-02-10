@@ -9,7 +9,7 @@ module.exports = (username, taskId, client) => {
 
     const acc = await InstAcc.findOne({ username }).populate("proxy");
 
-    const { status, sourceId, end_cursor } = task;
+    const { status, sourceId } = task;
 
     // console.log("task ::: ", task);
     // console.log("acc ::: ", acc);
@@ -18,8 +18,7 @@ module.exports = (username, taskId, client) => {
       try {
         let source = await client.getFollowings({
           userId: sourceId,
-          first: 1,
-          after: end_cursor || undefined
+          first: 1
         });
 
         // Will search until will not find the source acc with user haven't interacted before
@@ -66,7 +65,7 @@ module.exports = (username, taskId, client) => {
         await acc.save();
 
         task.unteractionsNum++;
-        task.end_cursor = source.page_info.end_cursor;
+        // task.end_cursor = source.page_info.end_cursor;
         await task.save();
       } catch (e) {
         console.log("Task error(UF) ::: ", e);
