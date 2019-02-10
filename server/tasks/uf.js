@@ -35,6 +35,21 @@ module.exports = (username, taskId, client) => {
         //   )
         // );
 
+        if (source.count !== 0) {
+          while (!source.data.length) {
+            source = await client.getFollowings({
+              userId: sourceId,
+              first: 1
+            });
+
+            console.log("Source - while ::: ", source);
+          }
+        } else {
+          task.status = 0;
+          await task.save();
+          cronTask.destroy();
+        }
+
         // while (!source.data.length) {
         //   source = await client.getFollowings({
         //     userId: sourceId,
@@ -46,10 +61,6 @@ module.exports = (username, taskId, client) => {
 
         if (!source.data.length) {
           console.log("Uf stopped ::: ", source, sourceId);
-
-          task.status = 0;
-          await task.save();
-          cronTask.destroy();
         }
 
         await delay(15);

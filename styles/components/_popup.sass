@@ -12,6 +12,10 @@
   text-align: center
   &_connect-acc
     z-index: 1000
+    .popup__content
+      width: 360px
+      +max-screen(768px)
+        width: 300px
   &__error-text
     display: block
     min-height: 15px
@@ -23,7 +27,7 @@
   &__content
     background-color: var(--popup-background)
     border-radius: 10px
-    padding: 50px
+    padding: 40px
     display: flex
     position: relative
     flex-direction: column
