@@ -46,7 +46,7 @@ module.exports = (username, taskId, client) => {
         console.log(acc.username, source.data);
 
         if (!source.data.length) {
-          console.log(source, sourceId, acc);
+          console.log("Uf stopped ::: ", source, sourceId);
 
           task.status = 0;
           await task.save();
