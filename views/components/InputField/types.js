@@ -8,5 +8,6 @@ export type Props = {
   handleChange(string): void,
   type?: string,
   style?: "dark" | "light",
-  icon?: React.Node
+  icon?: React.Node,
+  autocomplete?: "on" | "off"
 };
