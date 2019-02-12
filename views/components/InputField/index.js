@@ -8,7 +8,7 @@ class InputField extends Component<Props, {}> {
   static defaultProps = {
     type: "text",
     style: "light",
-    autocomplete: "off"
+    autocomplete: "new-password"
   };
 
   render() {

@@ -9,5 +9,5 @@ export type Props = {
   type?: string,
   style?: "dark" | "light",
   icon?: React.Node,
-  autocomplete?: "on" | "off"
+  autocomplete?: "on" | "off" | "new-password"
 };
