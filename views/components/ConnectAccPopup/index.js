@@ -8,13 +8,14 @@ import Password from "icons/Password";
 import Tabs from "components/Tabs";
 import InputField from "components/InputField";
 import Button from "components/Button";
-import type { Props, State } from "./types";
+import StepsBar from "components/StepsBar";
 import {
   requestVerification,
   setVerificationType,
   verifyAcc
 } from "ducks/inst";
 import { closePopup } from "ducks/connectAccPopup";
+import type { Props, State } from "./types";
 
 class ConnectAccPopup extends PureComponent<Props, State> {
   state = {
@@ -124,6 +125,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
             disabled={
               !this.state.username.length || !this.state.password.length
             }
+            progress={this.props.progressConnAcc}
           />
         </div>
       ),
@@ -142,6 +144,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
           <Button
             handleClick={this.handleSubmit("set-verification-type")}
             value={"Continue"}
+            progress={this.props.progressConnAcc}
           />
         </div>
       ),
@@ -166,12 +169,33 @@ class ConnectAccPopup extends PureComponent<Props, State> {
           <Button
             handleClick={this.handleSubmit("verify-acc")}
             value={"Confirm"}
+            disabled={!this.state.securityCode}
+            progress={this.props.progressConnAcc}
           />
         </div>
       )
     };
 
     const { progressConnAcc } = this.props;
+
+    const steps = [
+      {
+        id: "loginInfo",
+        name: "Add Info"
+      },
+      {
+        id: "verificationType",
+        name: "Verification type"
+      },
+      {
+        id: "verificationCode",
+        name: "Submit code"
+      }
+    ];
+
+    const activeStepIndex = steps.findIndex(
+      el => el.id === this.props.popupState
+    );
 
     return (
       this.props.popupVisible &&
@@ -186,6 +210,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
             }`}
             onClick={e => e.stopPropagation()}
           >
+            <StepsBar steps={steps} activeStepIndex={activeStepIndex} />
             {/* {this.props.checkpointUrl !== null && (
               <InputField
                 inputName="securityCode"
@@ -194,7 +219,6 @@ class ConnectAccPopup extends PureComponent<Props, State> {
                 
               />
             )} */}
-
             {popupContent[this.props.popupState]}
           </div>
         </div>,

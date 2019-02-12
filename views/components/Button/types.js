@@ -6,5 +6,6 @@ export type Props = {|
   value: string,
   handleClick?: function,
   className?: string,
-  disabled?: boolean
+  disabled?: boolean,
+  progress?: boolean
 |};

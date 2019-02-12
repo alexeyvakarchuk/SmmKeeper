@@ -11,9 +11,11 @@ const {
 } = require("server/api/errors");
 const Proxy = require("server/models/Proxy");
 const fs = require("fs");
+const axios = require("axios");
 const { resolve } = require("path");
 const FileCookieStore = require("tough-cookie-filestore2");
 const { getProxyString } = require("server/api/utils");
+const { baseURL } = require("config");
 
 exports.init = router =>
   router.post("/api/inst/request-verification", async function(ctx) {
@@ -63,6 +65,24 @@ exports.init = router =>
         clientData = await client.getProfile();
 
         console.log("clientData", clientData);
+
+        await axios({
+          method: "post",
+          url: "/api/inst/verify-acc",
+          baseURL,
+          data: {
+            id,
+            token,
+            proxy,
+            username,
+            password
+          },
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        ctx.status = 200;
       } catch (e) {
         console.log("Inst login error ::: ", e);
 

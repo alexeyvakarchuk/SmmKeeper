@@ -1,11 +1,12 @@
 import { configure, addDecorator } from "@storybook/react";
 import Center from "../stories/decorators/Center";
 import { withBackgrounds } from "@storybook/addon-backgrounds";
+import "styles/storybook.sass";
 
 function loadStories() {
   require("../stories/InputField.js");
   require("../stories/Button.js");
-  // You can require as many stories as you need.
+  require("../stories/StepsBar.js");
 }
 
 addDecorator(

@@ -5,8 +5,6 @@ import { storiesOf } from "@storybook/react";
 import { actions } from "@storybook/addon-actions";
 import WrappedInputField from "./decorators/WrappedInputField";
 import User from "icons/User";
-import "styles/base/_reset.sass";
-import "styles/base/_colours.scss";
 import "styles/components/_input-field.sass";
 
 // This will lead to { onClick: action('onClick'), ... }

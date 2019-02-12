@@ -53,13 +53,15 @@ export default function* requestVerificationSaga({
         data: { proxy, checkpointUrl }
       } = yield call(axios, ref);
 
-      yield put({
-        type: REQUEST_VERIFICATION_SUCCESS,
-        payload: {
-          proxy,
-          checkpointUrl
-        }
-      });
+      if (checkpointUrl) {
+        yield put({
+          type: REQUEST_VERIFICATION_SUCCESS,
+          payload: {
+            proxy,
+            checkpointUrl
+          }
+        });
+      }
     } else {
       yield put({
         type: REQUEST_VERIFICATION_FAIL,

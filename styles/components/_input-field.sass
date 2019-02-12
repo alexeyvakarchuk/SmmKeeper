@@ -1,7 +1,10 @@
+
+@import '../libs/sass-mediaqueries/media-queries'
+  
 .input-field
   border-radius: 4px
   width: 100%
-  max-width: 280px
+  max-width: 260px
   display: flex
   align-items: center
   position: relative
@@ -28,6 +31,8 @@
       color: #fff
     &::placeholder
       color: #B8C0CC
+    +max-screen(768px)
+      font-size: 16px
 
     
   &__icon

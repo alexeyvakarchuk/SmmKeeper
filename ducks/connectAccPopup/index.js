@@ -6,7 +6,8 @@ import { POPUP_OPEN, POPUP_CLOSE } from "ducks/connectAccPopup/const";
 import {
   REQUEST_VERIFICATION_SUCCESS,
   SET_VERIFICATION_TYPE_SUCCESS,
-  VERIFY_ACC_SUCCESS
+  VERIFY_ACC_SUCCESS,
+  CONN_ACC_SUCCESS
 } from "ducks/inst/const";
 import { SOCKET_CHECKPOINT_REQUIRED } from "ducks/socket/const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
@@ -52,7 +53,8 @@ const connectAccPopupReducer = handleActions(
       ...state,
       popupState: "verificationCode"
     }),
-    [VERIFY_ACC_SUCCESS]: state => initialState,
+    [combineActions(VERIFY_ACC_SUCCESS, CONN_ACC_SUCCESS)]: state =>
+      initialState,
 
     [SIGN_OUT_SUCCESS]: () => initialState
   },
