@@ -8,7 +8,7 @@ class InputField extends Component<Props, {}> {
   static defaultProps = {
     type: "text",
     style: "light",
-    autocomplete: "new-password"
+    autoComplete: "off"
   };
 
   render() {
@@ -19,7 +19,7 @@ class InputField extends Component<Props, {}> {
       type,
       style,
       icon,
-      autocomplete
+      autoComplete
     } = this.props;
 
     const inputFieldClassName = classnames("input-field", {
@@ -42,7 +42,7 @@ class InputField extends Component<Props, {}> {
           autoCorrect="off"
           autoCapitalize="off"
           spellCheck="false"
-          autoComplete={this.props.autocomplete}
+          autoComplete={this.props.autoComplete}
         />
       </div>
     );
