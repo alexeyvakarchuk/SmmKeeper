@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import User from "icons/User";
 import Password from "icons/Password";
+import Message from "icons/Message";
 import Tabs from "components/Tabs";
 import InputField from "components/InputField";
 import Button from "components/Button";
@@ -151,27 +152,32 @@ class ConnectAccPopup extends PureComponent<Props, State> {
       verificationCode: (
         <div className="popup__container">
           <h3>
-            You're almost done! Enter code from your
+            Enter a code from
             {this.props.verificationType !== null
-              ? ` ${this.props.verificationType} `
+              ? ` ${this.props.verificationType}`
               : ""}
-            message below, please
           </h3>
 
           <span className="popup__error-text">{this.props.error}</span>
 
           <InputField
-            inputName="securityCode"
+            inputName="Security Code"
             inputValue={this.state.securityCode}
             handleChange={this.handleInputChange("securityCode")}
+            icon={<Message />}
           />
 
           <Button
             handleClick={this.handleSubmit("verify-acc")}
-            value={"Confirm"}
+            value={"Submit"}
             disabled={!this.state.securityCode}
             progress={this.props.progressConnAcc}
           />
+
+          <div className="popup__caption">
+            Didn't recieve a code?
+            <span className="popup__caption-blue">Resend</span>
+          </div>
         </div>
       )
     };
@@ -244,7 +250,6 @@ export default connect(
   }),
   dispatch => ({
     closePopup: () => dispatch(closePopup()),
-    // connectAcc: state => dispatch(connectAcc(state))
     requestVerification: state => dispatch(requestVerification(state)),
     setVerificationType: state => dispatch(setVerificationType(state)),
     verifyAcc: state => dispatch(verifyAcc(state))
