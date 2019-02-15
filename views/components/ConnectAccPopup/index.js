@@ -107,8 +107,8 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 
     const resendCodeClassName = classnames("resendCode", {
       ["resendCode_clickable"]: resendCodeStatus === "clickable",
-      ["resendCode_blue"]: resendCodeStatus === "clickable",
-      ["resendCode_grey"]: resendCodeStatus === "progress",
+      ["resendCode_blue"]:
+        resendCodeStatus === "clickable" || resendCodeStatus === "progress",
       ["resendCode_green"]: resendCodeStatus === "success"
     });
 
