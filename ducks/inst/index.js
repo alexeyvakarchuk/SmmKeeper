@@ -22,6 +22,11 @@ import {
   VERIFY_ACC_START,
   VERIFY_ACC_SUCCESS,
   VERIFY_ACC_FAIL,
+  RESEND_VERIFICATION_CODE_REQUEST,
+  RESEND_VERIFICATION_CODE_START,
+  RESEND_VERIFICATION_CODE_SUCCESS,
+  RESEND_VERIFICATION_CODE_FAIL,
+  CHANGE_RESEND_CODE_STATUS,
   CONN_ACC_SUCCESS,
   // Rest
   FETCH_ACCS_REQUEST,
@@ -62,6 +67,7 @@ import { SOCKET_CHECKPOINT_REQUIRED } from "ducks/socket/const";
 // Profile connection
 import requestVerificationSaga from "ducks/inst/sagas/requestVerificationSaga";
 import setVerificationTypeSaga from "ducks/inst/sagas/setVerificationTypeSaga";
+import resendVerificationCodeSaga from "ducks/inst/sagas/resendVerificationCodeSaga";
 import verifyAccSaga from "ducks/inst/sagas/verifyAccSaga";
 
 // Fetching data
@@ -97,6 +103,7 @@ export const initialState: State = {
   progressCreateTask: false,
   porgressTasksUpdate: false,
   progressLimitUpdate: false,
+  resendCodeStatus: "clickable",
   error: null
 };
 
@@ -154,6 +161,26 @@ const instReducer = handleActions(
       ...state,
       progressConnAcc: false,
       error: action.payload.error
+    }),
+
+    [RESEND_VERIFICATION_CODE_START]: (state: State) => ({
+      ...state,
+      resendCodeStatus: "progress",
+      error: null
+    }),
+    [RESEND_VERIFICATION_CODE_SUCCESS]: (state: State, action) => ({
+      ...state,
+      error: null,
+      resendCodeStatus: "success"
+    }),
+    [RESEND_VERIFICATION_CODE_FAIL]: (state: State, action) => ({
+      ...state,
+      resendCodeStatus: "clickable",
+      error: action.payload.error
+    }),
+    [CHANGE_RESEND_CODE_STATUS]: (state: State, action) => ({
+      ...state,
+      resendCodeStatus: action.payload.resendCodeStatus
     }),
 
     [CONN_ACC_SUCCESS]: (state: State, action) => ({
@@ -335,6 +362,9 @@ export default instReducer;
 export const requestVerification = createAction(REQUEST_VERIFICATION_REQUEST);
 export const setVerificationType = createAction(SET_VERIFICATION_TYPE_REQUEST);
 export const verifyAcc = createAction(VERIFY_ACC_REQUEST);
+export const resendVerificationCode = createAction(
+  RESEND_VERIFICATION_CODE_REQUEST
+);
 
 // Fetching data
 export const fetchAccs = createAction(FETCH_ACCS_REQUEST);
@@ -361,6 +391,7 @@ export function* watchInst(): mixed {
   // Profile connection
   yield takeEvery(REQUEST_VERIFICATION_REQUEST, requestVerificationSaga);
   yield takeEvery(SET_VERIFICATION_TYPE_REQUEST, setVerificationTypeSaga);
+  yield takeEvery(RESEND_VERIFICATION_CODE_REQUEST, resendVerificationCodeSaga);
   yield takeEvery(VERIFY_ACC_REQUEST, verifyAccSaga);
 
   // Fetching data

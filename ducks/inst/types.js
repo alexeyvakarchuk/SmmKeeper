@@ -14,6 +14,8 @@ export type Task = {|
   username: string
 |};
 
+export type ResendCodeStatus = "clickable" | "progress" | "success";
+
 export type State = {|
   +accList: null | Acc[],
   +tasksList: null | Task[],
@@ -26,5 +28,7 @@ export type State = {|
   +progressCreateTask: boolean,
   +porgressTasksUpdate: boolean,
   +progressLimitUpdate: boolean,
+  +progressCodeResend: boolean,
+  +resendCodeStatus: ResendCodeStatus,
   +error: null | string
 |};

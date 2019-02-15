@@ -44,9 +44,9 @@ class TopBar extends PureComponent<Props, State> {
               <Logo />
             </a>
           </Link>
-          <span className="topbar__caption">
+          {/* <span className="topbar__caption">
             “Your personal social media booster”
-          </span>
+          </span> */}
         </div>
         <div className="topbar__controls">
           <div className="topbar__timers active">
@@ -75,11 +75,11 @@ class TopBar extends PureComponent<Props, State> {
           </div>
 
           <div className="topbar__name">
-            <img
+            {/* <img
               src="https://instagram.fdnk2-1.fna.fbcdn.net/vp/0ce58743f1cfa80bc494ecc7544224a9/5CB15748/t51.2885-19/s320x320/46060645_2167155603535731_8382210895320711168_n.jpg"
               alt=""
               className="topbar__photo"
-            />
+            /> */}
             <span
               className="topbar__name-label"
               onClick={this.toggleDropdownVisibility("settingsDropdownVisible")}

@@ -3,6 +3,8 @@
 import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
+import classnames from "classnames";
+import ThreeDots from "icons/ThreeDots";
 import User from "icons/User";
 import Password from "icons/Password";
 import Message from "icons/Message";
@@ -13,6 +15,7 @@ import StepsBar from "components/StepsBar";
 import {
   requestVerification,
   setVerificationType,
+  resendVerificationCode,
   verifyAcc
 } from "ducks/inst";
 import { closePopup } from "ducks/connectAccPopup";
@@ -100,6 +103,35 @@ class ConnectAccPopup extends PureComponent<Props, State> {
   handleChangeTab = activeTab => this.setState({ activeTab });
 
   render() {
+    const { progressConnAcc, resendCodeStatus } = this.props;
+
+    const resendCodeClassName = classnames("resendCode", {
+      ["resendCode_clickable"]: resendCodeStatus === "clickable",
+      ["resendCode_blue"]: resendCodeStatus === "clickable",
+      ["resendCode_grey"]: resendCodeStatus === "progress",
+      ["resendCode_green"]: resendCodeStatus === "success"
+    });
+
+    let resendCodeContent;
+
+    switch (resendCodeStatus) {
+      case "clickable":
+        resendCodeContent = "Resend";
+        break;
+      case "progress":
+        resendCodeContent = <ThreeDots />;
+        break;
+      case "success":
+        resendCodeContent = `Check your ${
+          this.props.verificationType !== null
+            ? ` ${this.props.verificationType}`
+            : ""
+        }`;
+        break;
+      default:
+        resendCodeContent = "";
+    }
+
     const popupContent = {
       loginInfo: (
         <div className="popup__container">
@@ -176,13 +208,21 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 
           <div className="popup__caption">
             Didn't recieve a code?
-            <span className="popup__caption-blue">Resend</span>
+            <span
+              className={resendCodeClassName}
+              onClick={() =>
+                this.props.resendVerificationCode({
+                  username: this.state.username,
+                  password: this.state.password
+                })
+              }
+            >
+              {resendCodeContent}
+            </span>
           </div>
         </div>
       )
     };
-
-    const { progressConnAcc } = this.props;
 
     const steps = [
       {
@@ -237,19 +277,29 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 
 export default connect(
   ({
-    inst: { accList, checkpointUrl, verificationType, progressConnAcc, error },
+    inst: {
+      accList,
+      checkpointUrl,
+      verificationType,
+      progressConnAcc,
+      error,
+      resendCodeStatus
+    },
     connectAccPopup: { visible, popupState }
   }) => ({
     accList,
     checkpointUrl,
     verificationType,
     progressConnAcc,
+    resendCodeStatus,
     error,
     popupVisible: visible,
     popupState
   }),
   dispatch => ({
     closePopup: () => dispatch(closePopup()),
+    resendVerificationCode: ({ username, password }) =>
+      dispatch(resendVerificationCode({ username, password })),
     requestVerification: state => dispatch(requestVerification(state)),
     setVerificationType: state => dispatch(setVerificationType(state)),
     verifyAcc: state => dispatch(verifyAcc(state))

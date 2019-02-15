@@ -20,3 +20,8 @@ export const redirectIfInvalidUsername = (
     }
   }
 };
+
+export const delay = (delay: number): Promise<any> =>
+  new Promise(res => {
+    setTimeout(res, delay * 1000);
+  });

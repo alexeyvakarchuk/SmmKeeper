@@ -1,5 +1,5 @@
 // @flow
-import type { Acc } from "ducks/inst/types";
+import type { Acc, ResendCodeStatus } from "ducks/inst/types";
 import type { Tab } from "sections/InstaProfilePage/types";
 
 export type State = {|
@@ -16,11 +16,13 @@ export type Props = {|
   progressConnAcc: boolean,
   checkpointUrl: null | string,
   verificationType: null | string,
+  resendCodeStatus: ResendCodeStatus,
   error: string,
 
   closePopup: () => void,
   requestVerification: State => void,
   setVerificationType: ({ verificationType: string }) => void,
   verifyAcc: ({ securityCode: string }) => void,
+  resendVerificationCode: ({ username: string, password: string }) => void,
   popupState: "loginInfo" | "verificationType" | "verificationCode"
 |};
