@@ -16,61 +16,6 @@
       line-height: 15px;
       margin-right: 40px;
     }
-    & .task-select {
-      width: 180px;
-      color: #b1bec3;
-      font-size: 14px;
-      line-height: 15px;
-      &__active {
-        & .task-select__control {
-          border-radius: 5px 5px 0 0;
-          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
-        }
-      }
-
-      &__control {
-        border: none;
-        border-radius: 5px 5px 5px 5px;
-        &:hover,
-        &--is-focused {
-          border-color: inherit;
-          box-shadow: none;
-        }
-      }
-      &__menu {
-        border: none;
-        border-radius: 0 0 5px 5px;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
-        margin-top: 0;
-        margin-bottom: 0;
-        top: unset;
-        overflow: hidden;
-        &-list {
-          padding: 0;
-        }
-      }
-
-      &__placeholder,
-      &__single-value {
-        color: #b1bec3;
-      }
-
-      &__indicator-separator {
-        display: none;
-      }
-      &__option {
-        height: 40px;
-        padding: 0 15px;
-        display: flex;
-        align-items: center;
-        color: #b1bec3;
-        border-top: 1px solid #f7f9fa;
-        &--is-focused,
-        &--is-selected {
-          background-color: #f5f7f7;
-        }
-      }
-    }
   }
 }
 

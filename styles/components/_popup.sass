@@ -12,10 +12,20 @@
   text-align: center
   &_connect-acc
     z-index: 1000
+    .limits__split-btn
+      margin: 53px 0
     .popup__content
       width: 360px
       +max-screen(768px)
         width: 300px
+
+  &_create-task
+    .popup__content
+      width: 360px
+      +max-screen(768px)
+        width: 300px
+  
+
   &__error-text
     display: block
     min-height: 15px
@@ -93,8 +103,7 @@
     align-items: center
     justify-content: center
 
-    .limits__split-btn
-      margin: 53px 0
+    
   // &__close 
   //   position: absolute
   //   width: 20px

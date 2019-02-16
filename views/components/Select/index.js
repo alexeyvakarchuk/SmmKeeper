@@ -15,7 +15,7 @@ const DropdownIndicator = props => {
   );
 };
 
-export default class Dropdown extends Component<Props, State> {
+export default class SelectComponent extends Component<Props, State> {
   state = {
     menuIsOpen: false
   };
@@ -24,10 +24,8 @@ export default class Dropdown extends Component<Props, State> {
     return (
       <Select
         components={{ DropdownIndicator }}
-        className={`task-select ${
-          this.state.menuIsOpen ? "task-select__active" : ""
-        }`}
-        classNamePrefix="task-select"
+        className={`select ${this.state.menuIsOpen ? "select_active" : ""}`}
+        classNamePrefix="select"
         menuIsOpen={this.state.menuIsOpen}
         onMenuOpen={() => this.setState({ menuIsOpen: true })}
         onMenuClose={() => this.setState({ menuIsOpen: false })}

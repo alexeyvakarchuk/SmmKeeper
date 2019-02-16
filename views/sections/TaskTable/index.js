@@ -4,7 +4,7 @@ import React, { PureComponent } from "react";
 import { connect } from "react-redux";
 import { openPopup } from "ducks/createTaskPopup";
 import { pauseTasks, startTasks, deleteTasks } from "ducks/inst";
-import Dropdown from "components/Dropdown";
+import Select from "components/Select";
 import TaskTableRow from "components/TaskTableRow";
 import Check from "icons/Check";
 import type { Props, State } from "./types";
@@ -101,6 +101,7 @@ class TaskTable extends PureComponent<Props, State> {
       { value: "START", label: "START" },
       { value: "DELETE", label: "DELETE" }
     ];
+
     const optionsFilter = [
       { value: "Follow", label: "Follow" },
       { value: "Follow & Like", label: "Follow & Like" },
@@ -130,7 +131,7 @@ class TaskTable extends PureComponent<Props, State> {
           <div className="task-table__filter-left">
             {!!tasks.length && (
               <React.Fragment>
-                <Dropdown
+                <Select
                   instanceId="action-dropdown"
                   value={selectedAction}
                   onChange={this.handleChange("selectedAction")}
@@ -150,7 +151,7 @@ class TaskTable extends PureComponent<Props, State> {
             {!!tasks.length && (
               <React.Fragment>
                 <span className="task-table__filter-caption">Filter:</span>
-                <Dropdown
+                <Select
                   instanceId="filter-dropdown"
                   value={selectedFilter}
                   onChange={this.handleChange("selectedFilter")}

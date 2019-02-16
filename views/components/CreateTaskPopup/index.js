@@ -3,61 +3,55 @@
 import React, { PureComponent } from "react";
 import ReactDOM from "react-dom";
 import { connect } from "react-redux";
-import Tabs from "components/Tabs";
-import UserSearchInputField from "components/UserSearchInputField";
+import Select from "components/Select";
+import InstaProfileSelect from "components/InstaProfileSelect";
 import Button from "components/Button";
 import type { Props, State } from "./types";
 import { createTask } from "ducks/inst";
-import { closePopup } from "ducks/createTaskPopup";
+import { closePopup, clearSearchResults } from "ducks/createTaskPopup";
+import type { OptionType } from "react-select/src/types";
 
 class CreateTaskPopup extends PureComponent<Props, State> {
   state = {
-    actionSource: "",
-    actionType: [
-      {
-        id: 1,
-        value: "Following",
-        ref: "mf"
-      },
-      {
-        id: 2,
-        value: "Un-following",
-        ref: "uf"
-      }
-      // {
-      //   id: 3,
-      //   value: "Liking",
-      //   ref: "ml"
-      // }
-    ],
-    activeTab: 1
+    actionType: null,
+    actionSource: null
   };
 
-  handleInputChange = (inputName: string) => (value: string) =>
+  handleInputChange = (inputName: string) => (value: OptionType | null) =>
     this.setState({ [inputName]: value });
 
   handleSubmit = () => {
-    const { actionSource, actionType, activeTab } = this.state;
-
-    const actionActiveType = actionType.find(el => el.id === activeTab);
+    const { actionSource, actionType } = this.state;
 
     this.props.createTask({
       username: this.props.username,
-      type:
-        actionActiveType && actionActiveType.ref ? actionActiveType.ref : null,
-      sourceUsername: this.state.actionSource
+      type: actionType !== null && actionType.value ? actionType.value : null,
+      sourceUsername:
+        actionSource !== null && actionSource.value ? actionSource.value : ""
     });
   };
 
-  handleChangeTab = activeTab => this.setState({ activeTab });
-
   render() {
-    const { progressCreateTask, searchProgress, searchResults } = this.props;
+    const {
+      progressCreateTask,
+      searchProgress,
+      searchResults,
+      clearSearchResults
+    } = this.props;
+
+    const taskTypes = [
+      { value: "mf", label: "Following" },
+      { value: "uf", label: "Unfollowing" },
+      { value: "ml", label: "Liking" }
+    ];
 
     return (
       this.props.popupVisible &&
       ReactDOM.createPortal(
-        <div className="popup" onClick={this.props.closePopup}>
+        <div
+          className="popup popup_create-task"
+          onClick={this.props.closePopup}
+        >
           <div
             className={`popup__content ${
               progressCreateTask ? "popup__content_loading" : ""
@@ -66,38 +60,38 @@ class CreateTaskPopup extends PureComponent<Props, State> {
           >
             <div className="popup__close" onClick={this.props.closePopup} />
 
-            {/* {this.props.checkpointUrl !== null && (
-              <InputField
-                inputName="securityCode"
-                inputValue={this.state.securityCode}
-                handleChange={this.handleInputChange("securityCode")}
-                
-              />
-            )} */}
-
             <div className="popup__container">
-              <h3>Create new task</h3>
+              <h3>Add new task</h3>
 
               <span className="popup__error-text">{this.props.error}</span>
-              <Tabs
-                tabs={this.state.actionType}
-                activeTab={this.state.activeTab}
-                handleChangeTab={this.handleChangeTab}
+
+              <Select
+                instanceId="new-task-type"
+                placeholder="Choose task type"
+                value={this.state.actionType}
+                onChange={this.handleInputChange("actionType")}
+                options={taskTypes}
               />
 
-              <UserSearchInputField
-                inputName="Source account username"
-                inputValue={this.state.actionSource}
+              <InstaProfileSelect
+                instanceId="user-search"
+                placeholder="Source account username"
+                value={this.state.actionSource}
                 handleChange={this.handleInputChange("actionSource")}
                 username={this.props.username}
                 searchProgress={searchProgress}
                 searchResults={searchResults}
+                clearSearchResults={clearSearchResults}
               />
 
               <Button
                 className="popup__submit-button"
                 handleClick={this.handleSubmit}
-                value={"Confirm"}
+                value="Add task"
+                disabled={
+                  this.state.actionType === null ||
+                  this.state.actionSource === null
+                }
               />
             </div>
           </div>
@@ -123,6 +117,7 @@ export default connect(
   }),
   dispatch => ({
     createTask: task => dispatch(createTask(task)),
-    closePopup: () => dispatch(closePopup())
+    closePopup: () => dispatch(closePopup()),
+    clearSearchResults: () => dispatch(clearSearchResults())
   })
 )(CreateTaskPopup);

@@ -154,7 +154,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
           />
           <Button
             handleClick={this.handleSubmit("request-verification")}
-            value={"Continue"}
+            value="Continue"
             disabled={
               !this.state.username.length || !this.state.password.length
             }
@@ -176,7 +176,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 
           <Button
             handleClick={this.handleSubmit("set-verification-type")}
-            value={"Continue"}
+            value="Continue"
             progress={this.props.progressConnAcc}
           />
         </div>
@@ -201,7 +201,7 @@ class ConnectAccPopup extends PureComponent<Props, State> {
 
           <Button
             handleClick={this.handleSubmit("verify-acc")}
-            value={"Submit"}
+            value="Submit"
             disabled={!this.state.securityCode}
             progress={this.props.progressConnAcc}
           />

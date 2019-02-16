@@ -6,6 +6,7 @@ import "styles/storybook.sass";
 function loadStories() {
   require("../stories/InputField.js");
   require("../stories/Button.js");
+  require("../stories/Select.js");
   require("../stories/StepsBar.js");
 }
 

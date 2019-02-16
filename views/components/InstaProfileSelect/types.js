@@ -1,17 +1,22 @@
 // @flow
 
 import type { SearchUserResult } from "ducks/createTaskPopup/types";
+import type { OptionType } from "react-select/src/types";
 
 export type Props = {
   inputName: string,
-  inputValue: string,
+  placeholder: string,
   username: string,
-  type?: string,
-  style?: "dark" | "light",
   searchProgress: boolean,
   searchResults: SearchUserResult[],
+  value: OptionType | null,
 
-  handleChange(string): void,
+  handleChange: string => void,
+  clearSearchResults: () => void,
 
   searchUsers: (searchPhase: string, username: string) => void
 };
+
+export type State = {|
+  menuIsOpen: boolean
+|};

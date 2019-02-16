@@ -10,7 +10,8 @@ import {
   POPUP_CLOSE,
   SEARCH_USERS_REQUEST,
   SEARCH_USERS_START,
-  SEARCH_USERS_SUCCESS
+  SEARCH_USERS_SUCCESS,
+  CLEAR_SEARCH_RESULTS
 } from "ducks/createTaskPopup/const";
 import { SIGN_OUT_SUCCESS } from "ducks/auth/const";
 import { SOCKET_CHECKPOINT_REQUIRED } from "ducks/socket/const";
@@ -57,6 +58,11 @@ const createTaskPopupReducer = handleActions(
       searchResults: action.payload.searchResults
     }),
 
+    [CLEAR_SEARCH_RESULTS]: state => ({
+      ...state,
+      searchResults: []
+    }),
+
     [SIGN_OUT_SUCCESS]: () => initialState
   },
   initialState
@@ -76,6 +82,7 @@ export const stateSelector = (state: Object): State => state[moduleName];
 export const openPopup = createAction(POPUP_OPEN);
 export const closePopup = createAction(POPUP_CLOSE);
 export const searchUsers = createAction(SEARCH_USERS_REQUEST);
+export const clearSearchResults = createAction(CLEAR_SEARCH_RESULTS);
 
 /**
  * Sagas

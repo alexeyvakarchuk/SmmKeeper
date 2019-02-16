@@ -1,12 +1,11 @@
 // @flow
 import type { Acc } from "ducks/inst/types";
 import type { SearchUserResult } from "ducks/createTaskPopup/types";
-import type { Tab } from "sections/InstaProfilePage/types";
+import type { OptionType } from "react-select/src/types";
 
 export type State = {|
-  actionSource: string,
-  actionType: Tab[],
-  activeTab: number
+  actionSource: OptionType | null,
+  actionType: OptionType | null
 |};
 
 export type Props = {|
@@ -19,6 +18,7 @@ export type Props = {|
   searchResults: SearchUserResult[],
 
   closePopup: () => void,
+  clearSearchResults: () => void,
   createTask: ({
     username: string,
     type: string | null,
