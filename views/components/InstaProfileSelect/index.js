@@ -17,7 +17,10 @@ const Option = props => {
       ref={innerRef}
       {...innerProps}
     >
-      <img src={profilePic} className="option__image" alt={username} />
+      <div
+        style={{ backgroundImage: `url(${profilePic})` }}
+        className="option__image"
+      />
       <span className="option__name">{username}</span>
       <span className="option__followers">{followers}</span>
     </div>
