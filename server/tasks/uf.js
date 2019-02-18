@@ -11,9 +11,6 @@ module.exports = (username, taskId, client) => {
 
     const { status, sourceId } = task;
 
-    // console.log("task ::: ", task);
-    // console.log("acc ::: ", acc);
-
     if (task && status === 1) {
       try {
         let source = await client.getFollowings({
@@ -21,63 +18,42 @@ module.exports = (username, taskId, client) => {
           first: 1
         });
 
-        // Will search until will not find the source acc with user haven't interacted before
-        // console.log(acc.username, source.data);
-
-        // console.log(
-        //   acc.interactions.some(
-        //     ({ username, type }) =>
-        //       username === source.data[0].username && type === "mf"
-        //   ),
-        //   !acc.interactions.some(
-        //     ({ username, type }) =>
-        //       username === source.data[0].username && type === "mf"
-        //   )
-        // );
+        console.log(acc.username, source);
 
         if (source.count !== 0) {
-          while (!source.data.length) {
-            source = await client.getFollowings({
-              userId: sourceId,
-              first: 1
-            });
-
-            console.log("Source - while ::: ", source);
-          }
+          // while (!source.data.length) {
+          //   source = await client.getFollowings({
+          //     userId: sourceId,
+          //     first: 1
+          //   });
+          //   console.log("Source - while ::: ", source);
+          // }
         } else {
+          // Will be 0 when task is finished
           task.status = 0;
           await task.save();
           cronTask.destroy();
         }
 
-        // while (!source.data.length) {
-        //   source = await client.getFollowings({
-        //     userId: sourceId,
-        //     first: 1,
-        //     after: source.page_info.end_cursor || undefined
-        //   });
-        // }
-        console.log(acc.username, source.data);
+        if (source.data.length) {
+          await delay(15);
 
-        if (!source.data.length) {
-          console.log("Uf stopped ::: ", source, sourceId);
+          await client.unfollow({ userId: source.data[0].id });
+
+          await acc.interactions.unshift({
+            username: source.data[0].username,
+            taskId: task._id,
+            type: "uf"
+          });
+
+          await acc.save();
+
+          task.unteractionsNum++;
+          // task.end_cursor = source.page_info.end_cursor;
+          await task.save();
+        } else {
+          console.log("Uf missed ::: ", source, sourceId);
         }
-
-        await delay(15);
-
-        await client.unfollow({ userId: source.data[0].id });
-
-        await acc.interactions.unshift({
-          username: source.data[0].username,
-          taskId: task._id,
-          type: "uf"
-        });
-
-        await acc.save();
-
-        task.unteractionsNum++;
-        // task.end_cursor = source.page_info.end_cursor;
-        await task.save();
       } catch (e) {
         console.log("Task error(UF) ::: ", e);
 
