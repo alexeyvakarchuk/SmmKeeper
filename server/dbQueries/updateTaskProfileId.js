@@ -1,6 +1,7 @@
 // const mongoose = require("mongoose");
 
 const InstAcc = require("../models/InstAcc");
+const InstTask = require("../models/InstTask");
 
 const { asyncForEach } = require("../api/utils");
 
@@ -9,20 +10,21 @@ const { asyncForEach } = require("../api/utils");
 // mongoose.connect("mongodb://localhost/smmkeeper");
 
 (async () => {
-  const accs = await InstAcc.find({});
+  const tasks = await InstTask.find({});
 
-  await asyncForEach(accs, async ({ profileId }) => {
-    // const acc = await InstAcc.findOne({ profileId }, "interactions");
+  await asyncForEach(tasks, async ({ username }) => {
+    const { profileId } = await InstAcc.findOne({ username }, "profileId");
+
+    console.log(profileId);
 
     try {
-      await InstAcc.update(
-        { profileId },
+      await InstTask.updateMany(
+        { username },
         {
           $set: {
-            "interactions.$[].profileId": profileId
+            profileId
           }
-        },
-        { multi: true }
+        }
       );
 
       // await acc.save();

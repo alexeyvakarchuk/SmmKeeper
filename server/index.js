@@ -14,6 +14,7 @@ const handler = routes.getRequestHandler(n);
 
 n.prepare().then(() => {
   require("./dbQueries/addProfileId");
+  require("./dbQueries/updateTaskProfileId");
 
   // Restarts tasks for all the tasks withs status=1
   require("./tasks/startTasks");
