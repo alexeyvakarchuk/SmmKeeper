@@ -4,7 +4,12 @@ const config = require("server/config/default");
 const instTaskSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: "Interaction username is required"
+    required: "Task username is required"
+  },
+  profileId: {
+    type: String,
+    required: "Task profileId is required",
+    index: true
   },
   sourceUsername: {
     type: String,

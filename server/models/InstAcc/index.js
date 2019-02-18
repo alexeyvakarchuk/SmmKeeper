@@ -78,6 +78,11 @@ const instAccSchema = new mongoose.Schema(
           required: "Interaction username is required",
           index: true
         },
+        profileId: {
+          type: String,
+          required: "Interaction profileId is required",
+          index: true
+        },
         taskId: {
           type: mongoose.Schema.Types.ObjectId,
           required: "Task Id is required"

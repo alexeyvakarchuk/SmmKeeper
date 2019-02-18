@@ -64,6 +64,7 @@ exports.init = (router, clientStore) =>
       } else {
         task = await InstTask.create({
           username,
+          profileId: acc.profileId,
           sourceUsername,
           sourceId,
           type,

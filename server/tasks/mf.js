@@ -24,6 +24,9 @@ module.exports = (username, taskId, client) => {
 
         // Will search until will not find the source acc with user haven't interacted before
         console.log(acc.username, source.data);
+
+        // TODO: Change username to profileId
+
         while (
           !source.data.length ||
           acc.interactions.some(
@@ -44,6 +47,7 @@ module.exports = (username, taskId, client) => {
 
         await acc.interactions.unshift({
           username: source.data[0].username,
+          profileId: source.data[0].id,
           taskId: task._id,
           type: "mf"
         });

@@ -9,47 +9,54 @@ module.exports = (username, taskId, client) => {
 
     const acc = await InstAcc.findOne({ username }).populate("proxy");
 
-    const { status, sourceId } = task;
+    const { status, sourceId, end_cursor } = task;
 
     if (task && status === 1) {
       try {
         let source = await client.getFollowings({
           userId: sourceId,
-          first: 1
+          first: 1,
+          after: end_cursor || undefined
         });
 
         console.log(acc.username, source);
 
-        if (source.count !== 0) {
-          // while (!source.data.length) {
-          //   source = await client.getFollowings({
-          //     userId: sourceId,
-          //     first: 1
-          //   });
-          //   console.log("Source - while ::: ", source);
-          // }
-        } else {
-          // Will be 0 when task is finished
+        if (source.count === 0) {
           task.status = 0;
           await task.save();
           cronTask.destroy();
         }
 
+        // TODO: Change username to profileId
+
         if (source.data.length) {
-          await delay(15);
+          if (
+            acc.interactions.some(
+              ({ username, type }) =>
+                username === source.data[0].username && type === "mf"
+            )
+          ) {
+            await delay(15);
 
-          await client.unfollow({ userId: source.data[0].id });
+            await client.unfollow({ userId: source.data[0].id });
 
-          await acc.interactions.unshift({
-            username: source.data[0].username,
-            taskId: task._id,
-            type: "uf"
-          });
+            await acc.interactions.unshift({
+              username: source.data[0].username,
+              profileId: source.data[0].id,
+              taskId: task._id,
+              type: "uf"
+            });
 
-          await acc.save();
+            await acc.save();
 
-          task.unteractionsNum++;
-          // task.end_cursor = source.page_info.end_cursor;
+            task.unteractionsNum++;
+            // task.end_cursor = source.page_info.end_cursor;
+          } else {
+            console.log("UF not unique ::: ", source, sourceId);
+          }
+
+          task.end_cursor = source.page_info.end_cursor;
+
           await task.save();
         } else {
           console.log("Uf missed ::: ", source, sourceId);
