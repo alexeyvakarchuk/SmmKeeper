@@ -13,6 +13,8 @@ const routes = require("./routes");
 const handler = routes.getRequestHandler(n);
 
 n.prepare().then(() => {
+  require("./dbQueries/addProfileId");
+
   // Restarts tasks for all the tasks withs status=1
   require("./tasks/startTasks");
   require("./tasks/watchStats");
