@@ -27,6 +27,13 @@ module.exports = (username, taskId, client) => {
           cronTask.destroy();
         }
 
+        if (!source.data.length) {
+          source = await client.getFollowings({
+            userId: sourceId,
+            first: 1
+          });
+        }
+
         // TODO: Change username to profileId
 
         if (source.data.length) {
