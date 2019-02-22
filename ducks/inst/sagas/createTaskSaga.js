@@ -14,18 +14,19 @@ import { POPUP_CLOSE } from "ducks/createTaskPopup/const";
 import { stateSelector } from "ducks/inst/selectors";
 import { stateSelector as authStateSelector } from "ducks/auth";
 
-import type { TaskType } from "ducks/inst/types";
+import type { TaskType, TaskFilters } from "ducks/inst/types";
 
 // *** Creates new task and starts it's execution
 
 /* eslint-disable consistent-return */
 export default function* createTaskSaga({
-  payload: { username, type, sourceUsername }
+  payload: { username, type, sourceUsername, filters }
 }: {
   payload: {
     username: string,
     type: TaskType,
-    sourceUsername: string
+    sourceUsername: string,
+    filters: TaskFilters
   }
 }): Generator<any, any, any> {
   const state = yield select(stateSelector);
@@ -47,7 +48,8 @@ export default function* createTaskSaga({
           token: localStorage.getItem("tktoken"),
           username,
           type,
-          sourceUsername
+          sourceUsername,
+          filters
         },
         headers: {
           "Content-Type": "application/json"

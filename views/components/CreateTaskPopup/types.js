@@ -1,11 +1,12 @@
 // @flow
-import type { Acc } from "ducks/inst/types";
+import type { Acc, TaskFilters } from "ducks/inst/types";
 import type { SearchUserResult } from "ducks/createTaskPopup/types";
 import type { OptionType } from "react-select/src/types";
 
 export type State = {|
   actionSource: OptionType | null,
-  actionType: OptionType | null
+  actionType: OptionType | null,
+  filters: TaskFilters
 |};
 
 export type Props = {|

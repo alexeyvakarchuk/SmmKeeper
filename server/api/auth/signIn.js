@@ -30,7 +30,8 @@ exports.init = router =>
         ctx.body = {
           user: {
             id: user._id,
-            email: user.email
+            email: user.email,
+            isAdmin: user.isAdmin
           },
           token
         };

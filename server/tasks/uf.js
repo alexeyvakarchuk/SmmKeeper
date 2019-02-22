@@ -38,6 +38,7 @@ module.exports = (username, taskId, client) => {
 
         if (source.data.length) {
           if (
+            !task.filters.unique ||
             acc.interactions.some(
               ({ username, type }) =>
                 username === source.data[0].username && type === "mf"

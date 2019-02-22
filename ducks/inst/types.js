@@ -14,6 +14,10 @@ export type Task = {|
   username: string
 |};
 
+export type TaskFilters = {|
+  unique: boolean
+|};
+
 export type ResendCodeStatus = "clickable" | "progress" | "success";
 
 export type State = {|

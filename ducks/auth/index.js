@@ -63,7 +63,8 @@ const authReducer = handleActions(
       ...initialState,
       user: {
         id: action.payload.user.id,
-        email: action.payload.user.email
+        email: action.payload.user.email,
+        isAdmin: action.payload.user.isAdmin
       }
     }),
     [combineActions(SIGN_IN_FAIL, SIGN_UP_FAIL, SIGN_OUT_FAIL)]: (

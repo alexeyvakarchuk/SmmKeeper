@@ -7,6 +7,7 @@ function loadStories() {
   require("../stories/InputField.js");
   require("../stories/Button.js");
   require("../stories/Select.js");
+  require("../stories/CheckBox.js");
   require("../stories/StepsBar.js");
 }
 

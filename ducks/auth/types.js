@@ -22,7 +22,8 @@ export type UserReq = {|
 
 export type User = {|
   +id: string,
-  +email: string
+  +email: string,
+  +isAdmin: boolean
 |};
 
 export type State = {|

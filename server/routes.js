@@ -10,4 +10,5 @@ const routes = require("next-routes");
 
 module.exports = routes()
   .add("dashboard-default", "/app", "dashboard")
-  .add("dashboard-with-username", "/app/:username", "dashboard");
+  .add("dashboard-with-username", "/app/:username", "dashboard")
+  .add("admin", "/admin", "admin");

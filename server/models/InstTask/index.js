@@ -35,6 +35,12 @@ const instTaskSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  filters: {
+    unique: {
+      type: Boolean,
+      default: true
+    }
+  },
   end_cursor: {
     type: String
   }

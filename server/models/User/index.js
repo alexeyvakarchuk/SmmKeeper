@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema(
       validate: [value => validator.validate(value), "Email is invalid"],
       index: true
     },
+    isAdmin: {
+      type: Boolean,
+      required: "Is Admin value is required",
+      default: false
+    },
     passwordHash: {
       type: String
     },

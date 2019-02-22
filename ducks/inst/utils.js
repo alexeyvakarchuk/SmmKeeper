@@ -1,7 +1,7 @@
 // @flow
 
 import redirect from "server/redirect";
-import type { Acc } from "ducks/inst/types";
+import type { Acc, User } from "ducks/inst/types";
 
 export const redirectIfInvalidUsername = (
   accList: Acc[],

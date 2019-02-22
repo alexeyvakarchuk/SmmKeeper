@@ -22,9 +22,6 @@ export const fetchUserAuth = async (store, token) => {
 
       return true;
     } catch (error) {
-      // console.log(error);
-      // localStorage.removeItem("tktoken");
-
       return false;
     }
   } else {
@@ -44,14 +41,22 @@ export const redirectIfAuthentificated = async ctx => {
     const auth = await fetchUserAuth(store, token);
 
     if (auth) {
-      redirect("/app", ctx);
+      if (store.getState().auth.user.isAdmin === true) {
+        redirect("/admin", ctx);
+      } else {
+        redirect("/app", ctx);
+      }
     }
   } else {
     if (!store.getState().auth.user) {
       const auth = await fetchUserAuth(store, token);
 
       if (auth) {
-        redirect("/app");
+        if (store.getState().auth.user.isAdmin === true) {
+          redirect("/admin");
+        } else {
+          redirect("/app");
+        }
       }
     }
   }

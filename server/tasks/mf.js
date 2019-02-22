@@ -29,10 +29,11 @@ module.exports = (username, taskId, client) => {
 
         while (
           !source.data.length ||
-          acc.interactions.some(
-            ({ username, type }) =>
-              username === source.data[0].username && type === "mf"
-          )
+          (task.filters.unique &&
+            acc.interactions.some(
+              ({ username, type }) =>
+                username === source.data[0].username && type === "mf"
+            ))
         ) {
           source = await client.getFollowers({
             userId: sourceId,

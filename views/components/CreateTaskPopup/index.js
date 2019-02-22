@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import Select from "components/Select";
 import InstaProfileSelect from "components/InstaProfileSelect";
+import CheckBox from "components/CheckBox";
 import Button from "components/Button";
 import type { Props, State } from "./types";
 import { createTask } from "ducks/inst";
@@ -14,20 +15,27 @@ import type { OptionType } from "react-select/src/types";
 class CreateTaskPopup extends PureComponent<Props, State> {
   state = {
     actionType: null,
-    actionSource: null
+    actionSource: null,
+    filters: {
+      unique: true
+    }
   };
 
   handleInputChange = (inputName: string) => (value: OptionType | null) =>
     this.setState({ [inputName]: value });
 
+  handleChangeFilter = (filterName: string) => (value: boolean) =>
+    this.setState({ filters: { ...this.state.filters, [filterName]: value } });
+
   handleSubmit = () => {
-    const { actionSource, actionType } = this.state;
+    const { actionSource, actionType, filters } = this.state;
 
     this.props.createTask({
       username: this.props.username,
       type: actionType !== null && actionType.value ? actionType.value : null,
       sourceUsername:
-        actionSource !== null && actionSource.value ? actionSource.value : ""
+        actionSource !== null && actionSource.value ? actionSource.value : "",
+      filters
     });
   };
 
@@ -82,6 +90,12 @@ class CreateTaskPopup extends PureComponent<Props, State> {
                 searchProgress={searchProgress}
                 searchResults={searchResults}
                 clearSearchResults={clearSearchResults}
+              />
+
+              <CheckBox
+                label="Only unique profiles"
+                checked={this.state.filters.unique}
+                handleChange={this.handleChangeFilter("unique")}
               />
 
               <Button

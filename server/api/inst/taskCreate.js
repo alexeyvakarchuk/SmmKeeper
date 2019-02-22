@@ -19,7 +19,14 @@ const { getInstaClient } = require("server/api/utils");
 
 exports.init = (router, clientStore) =>
   router.post("/api/inst/task-create", async function(ctx) {
-    const { id, token, username, type, sourceUsername } = ctx.request.body;
+    const {
+      id,
+      token,
+      username,
+      type,
+      sourceUsername,
+      filters
+    } = ctx.request.body;
 
     if (jwt.verify(token, jwtsecret).id === id) {
       const user = await User.findById(id);
@@ -48,7 +55,8 @@ exports.init = (router, clientStore) =>
         username,
         sourceUsername,
         sourceId,
-        type
+        type,
+        filters
       });
 
       // If such task was already created we'll not duplicate it
@@ -68,6 +76,7 @@ exports.init = (router, clientStore) =>
           sourceUsername,
           sourceId,
           type,
+          filters,
           status: 1
         });
       }

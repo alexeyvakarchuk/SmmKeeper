@@ -69,7 +69,8 @@ exports.init = router => {
           authResolve({
             user: {
               email: user.email,
-              id: user._id
+              id: user._id,
+              isAdmin: user.isAdmin
             },
             token
           });

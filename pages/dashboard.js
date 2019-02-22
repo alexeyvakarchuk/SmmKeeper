@@ -46,45 +46,63 @@ class Internal extends Component<Props, State> {
       const auth = await fetchUserAuth(store, token);
 
       if (auth) {
-        await store.execSagaTasks(isServer, dispatch => {
-          dispatch(fetchAccs({ token, queryUsername: query.username, ctx }));
-        });
+        // User value after fetching auth
+        const { user } = store.getState().auth;
 
-        // New accList after fetching accs
-        const accList = store.getState().inst.accList;
-
-        if (accList && accList.find(el => el.username === query.username)) {
+        if (user.isAdmin === true) {
+          redirect(`/admin`, ctx);
+        } else {
           await store.execSagaTasks(isServer, dispatch => {
-            dispatch(fetchTasks({ username: query.username, token }));
-
-            dispatch(updateStats({ username: query.username, token }));
-
-            dispatch(checkPasswordExistence({ token }));
+            dispatch(fetchAccs({ token, queryUsername: query.username, ctx }));
           });
+
+          // New accList after fetching accs
+          const accList = store.getState().inst.accList;
+
+          if (accList && accList.find(el => el.username === query.username)) {
+            await store.execSagaTasks(isServer, dispatch => {
+              dispatch(fetchTasks({ username: query.username, token }));
+
+              dispatch(updateStats({ username: query.username, token }));
+
+              dispatch(checkPasswordExistence({ token }));
+            });
+          }
         }
       } else {
         redirect("/signIn", ctx);
       }
     } else {
       if (storeState.auth.user) {
-        if (!accList || passwordExists === null) {
-          store.dispatch(fetchAccs({ token, queryUsername: query.username }));
-
-          // store.dispatch(fetchTasks({ username: query.username, token }));
-
-          store.dispatch(checkPasswordExistence({ token }));
+        if (storeState.auth.user.isAdmin === true) {
+          redirect(`/admin`);
         } else {
-          redirectIfInvalidUsername(accList, query.username);
+          if (!accList || passwordExists === null) {
+            store.dispatch(fetchAccs({ token, queryUsername: query.username }));
+
+            // store.dispatch(fetchTasks({ username: query.username, token }));
+
+            store.dispatch(checkPasswordExistence({ token }));
+          } else {
+            redirectIfInvalidUsername(accList, query.username);
+          }
         }
       } else {
         const auth = await fetchUserAuth(store, token);
 
         if (auth) {
-          store.dispatch(fetchAccs({ token, queryUsername: query.username }));
+          // User value after fetching auth
+          const { user } = store.getState().auth;
 
-          // store.dispatch(fetchTasks({ username: query.username, token }));
+          if (user.isAdmin === true) {
+            redirect(`/admin`);
+          } else {
+            store.dispatch(fetchAccs({ token, queryUsername: query.username }));
 
-          store.dispatch(checkPasswordExistence({ token }));
+            // store.dispatch(fetchTasks({ username: query.username, token }));
+
+            store.dispatch(checkPasswordExistence({ token }));
+          }
         } else {
           redirect("/signIn");
         }

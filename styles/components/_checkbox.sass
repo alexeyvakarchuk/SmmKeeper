@@ -1,0 +1,40 @@
+@import '../libs/sass-mediaqueries/media-queries'
+  
+.checkbox
+  display: flex
+  align-items: center
+  user-select: none
+  
+  &__check
+    display: flex
+    width: 20px
+    height: 20px
+    border-radius: 4px
+    border: 1px solid #dfe6e9
+    background-color: transparent
+    cursor: pointer
+    align-items: center
+    justify-content: center
+    transition: all .1s ease
+    svg
+      display: block
+      width: 10px
+
+  &__label
+    display: block
+    font-size: 14px
+    margin-left: 14px
+    cursor: pointer
+    color: var(--GS-7)
+    transition: all .1s ease
+
+  &_checked
+    .checkbox__check
+      background-color: var(--BC-blue-1)
+      border-color: var(--BC-blue-1)
+
+    .checkbox__label
+      color: var(--GS-10)
+
+  
+    
