@@ -10,6 +10,16 @@ const Option = props => {
   const { innerProps, innerRef } = props;
   const { username, profilePic, followers } = props.data;
 
+  const getRoundedFollowers = followers => {
+    if (followers > 1000000) {
+      return Math.round(followers / 1000000) + "m";
+    } else if (followers > 1000) {
+      return Math.round(followers / 1000) + "k";
+    }
+
+    return followers;
+  };
+
   return (
     <div
       className="option"
@@ -22,7 +32,9 @@ const Option = props => {
         className="option__image"
       />
       <span className="option__name">{username}</span>
-      <span className="option__followers">{followers}</span>
+      <span className="option__followers">
+        {getRoundedFollowers(followers)}
+      </span>
     </div>
   );
 };
