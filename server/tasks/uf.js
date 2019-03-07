@@ -37,6 +37,7 @@ module.exports = (username, taskId, client) => {
             userId: sourceId,
             first: 1
           });
+          console.log("client ::: ", client);
         }
 
         console.log("If (!source.data.length) ::: ", acc.username, source);
