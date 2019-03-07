@@ -19,7 +19,12 @@ module.exports = (username, taskId, client) => {
           after: end_cursor || undefined
         });
 
-        console.log(acc.username, source);
+        console.log(
+          "Source initial request ::: ",
+          acc.username,
+          source,
+          !source.data.length
+        );
 
         if (source.count === 0) {
           task.status = 0;
@@ -33,6 +38,8 @@ module.exports = (username, taskId, client) => {
             first: 1
           });
         }
+
+        console.log("If (!source.data.length) ::: ", acc.username, source);
 
         // TODO: Change username to profileId
 
